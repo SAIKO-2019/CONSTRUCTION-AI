@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SAIKO Construction AI</title>
+  <meta name="description" content="Construction management and AI assistant prototype for SAIKO Builders Inc." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">S</div>
+        <div>
+          <div class="brand-name">SAIKO</div>
+          <div class="brand-sub">BUILDERS INC.</div>
+        </div>
+      </div>
+
+      <nav class="nav" id="nav">
+        <button class="nav-item active" data-view="dashboard"><span>▦</span>Dashboard</button>
+        <button class="nav-item" data-view="projects"><span>▣</span>Projects</button>
+        <button class="nav-item" data-view="assistant"><span>✦</span>AI Assistant</button>
+        <button class="nav-item" data-view="estimate"><span>▤</span>Estimate / BOQ</button>
+        <button class="nav-item" data-view="cost"><span>▥</span>Cost Database</button>
+        <button class="nav-item" data-view="contracts"><span>▧</span>Contracts & Documents</button>
+        <button class="nav-item" data-view="billing"><span>₱</span>Billing & Payments</button>
+        <button class="nav-item" data-view="vo"><span>↻</span>Variation Orders / EOT</button>
+        <button class="nav-item" data-view="procurement"><span>🛒</span>Procurement</button>
+        <button class="nav-item" data-view="monitoring"><span>▰</span>Project Monitoring</button>
+      </nav>
+
+      <div class="sidebar-user">
+        <div class="avatar">JK</div>
+        <div>
+          <strong>John Karl S. Quizon</strong>
+          <span>Quantity Surveyor</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="search-wrap">
+          <span class="search-icon">⌕</span>
+          <input id="globalSearch" placeholder="Search projects, documents, or ask Construction AI..." />
+        </div>
+        <div class="top-actions">
+          <button class="icon-btn" title="Notifications">🔔<span class="badge">3</span></button>
+          <div class="mini-avatar">JK</div>
+        </div>
+      </header>
+
+      <section id="dashboard" class="view active-view">
+        <div class="hero">
+          <div class="hero-overlay"></div>
+          <div class="hero-content">
+            <small>WELCOME BACK, JOHN KARL</small>
+            <h1>Your Construction<br/>Assistant, Always Ready.</h1>
+            <p>Estimate. Plan. Build. Document. All in one place.</p>
+          </div>
+          <div class="hero-quote">“Better planning.<br/>Smoother projects.<br/>Stronger results.”<span>— SAIKO BUILDERS INC.</span></div>
+        </div>
+
+        <div class="content-grid">
+          <div class="workspace">
+            <div class="feature-grid">
+              <button class="feature-card" data-open="estimate">
+                <div class="feature-icon blue">▤</div>
+                <div><h3>Estimate / BOQ</h3><p>Generate quantities, cost estimates, and quotations.</p></div>
+                <span class="arrow">→</span>
+              </button>
+              <button class="feature-card" data-open="contracts">
+                <div class="feature-icon green">▧</div>
+                <div><h3>Contracts & Documents</h3><p>Create contracts, VO, EOT, letters, and more.</p></div>
+                <span class="arrow">→</span>
+              </button>
+              <button class="feature-card" data-open="monitoring">
+                <div class="feature-icon orange">▰</div>
+                <div><h3>Project Monitoring</h3><p>Track progress, accomplishment, and costs.</p></div>
+                <span class="arrow">→</span>
+              </button>
+              <button class="feature-card" data-open="procurement">
+                <div class="feature-icon violet">🛒</div>
+                <div><h3>Procurement</h3><p>Compare prices, RFQs, and purchase tracking.</p></div>
+                <span class="arrow">→</span>
+              </button>
+            </div>
+
+            <div class="panel projects-panel">
+              <div class="panel-head"><h2>Active Projects</h2><button class="link-btn" data-open="projects">View All</button></div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Project Name</th><th>Location</th><th>Status</th><th>Progress</th><th>Target</th></tr></thead>
+                  <tbody id="projectRows"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="bottom-grid">
+              <div class="panel quick-panel">
+                <div class="panel-head"><h2>Quick Actions</h2></div>
+                <div class="quick-actions">
+                  <button id="newEstimateBtn">＋ New Estimate</button>
+                  <button data-open="estimate">▤ Generate BOQ</button>
+                  <button data-open="contracts">▧ Create Contract</button>
+                  <button data-open="billing">₱ Compute Billing</button>
+                  <button data-open="vo">↻ Prepare Variation Order</button>
+                  <button data-open="assistant">✦ Ask Construction AI</button>
+                </div>
+              </div>
+              <div class="panel resources-panel">
+                <div class="panel-head"><h2>Company Resources</h2></div>
+                <div class="resource-grid">
+                  <div><b>₱</b><span>Standard Rates</span><small>Labor, materials, equipment</small></div>
+                  <div><b>▧</b><span>Templates</span><small>Contracts, letters, reports</small></div>
+                  <div><b>▣</b><span>Standards</span><small>NBCP, NSCP, references</small></div>
+                  <div><b>⌁</b><span>Supplier Directory</span><small>Accredited suppliers</small></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="ai-panel">
+            <div class="ai-head"><div><span class="spark">✦</span><strong>Construction AI</strong></div><span class="online">● Online</span></div>
+            <div class="ai-messages" id="aiMessages">
+              <div class="bot-message">Hi John Karl! 👋<br/>I’m your Construction AI Assistant. How can I help you today?</div>
+              <div class="chips">
+                <button>Estimate a project</button><button>Create a BOQ</button><button>Draft a contract</button><button>Compute billing</button>
+              </div>
+            </div>
+            <form class="ai-input" id="aiForm">
+              <input id="aiInput" placeholder="Type your message here..." autocomplete="off" />
+              <button type="submit">➤</button>
+            </form>
+          </aside>
+        </div>
+      </section>
+
+      <section id="projects" class="view module-view">
+        <div class="module-header"><div><small>PROJECT MANAGEMENT</small><h1>Projects</h1><p>Manage active, completed, and planned construction projects.</p></div><button class="primary-btn" id="addProjectBtn">＋ Add Project</button></div>
+        <div class="stats-grid" id="projectStats"></div>
+        <div class="panel"><div class="panel-head"><h2>Project Portfolio</h2><input class="table-search" id="projectSearch" placeholder="Search project..."/></div><div class="table-wrap"><table><thead><tr><th>Project</th><th>Location</th><th>Status</th><th>Progress</th><th>Target</th></tr></thead><tbody id="allProjectRows"></tbody></table></div></div>
+      </section>
+
+      <section id="estimate" class="view module-view">
+        <div class="module-header"><div><small>QUANTITY SURVEYING</small><h1>Estimate / BOQ</h1><p>Create preliminary estimates and detailed bill of quantities.</p></div><button class="primary-btn" id="createEstimateBtn">＋ Create Estimate</button></div>
+        <div class="estimate-layout">
+          <div class="panel estimate-form-panel">
+            <div class="panel-head"><h2>Quick Estimate</h2></div>
+            <form id="estimateForm" class="form-grid">
+              <label>Project Name<input id="estProject" value="New Residential Project" required /></label>
+              <label>Location<input id="estLocation" value="Pampanga" required /></label>
+              <label>Floor Area (sqm)<input id="estArea" type="number" min="1" value="200" required /></label>
+              <label>Construction Rate / sqm<input id="estRate" type="number" min="1" value="35000" required /></label>
+              <label>Contingency (%)<input id="estCont" type="number" min="0" value="5" /></label>
+              <label>Contractor Markup (%)<input id="estMarkup" type="number" min="0" value="10" /></label>
+              <button class="primary-btn full" type="submit">Generate Preliminary Estimate</button>
+            </form>
+          </div>
+          <div class="panel estimate-result">
+            <div class="panel-head"><h2>Estimate Summary</h2><span class="pill">PRELIMINARY</span></div>
+            <div id="estimateOutput" class="empty-state">Fill out the form and generate an estimate.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="assistant" class="view module-view">
+        <div class="module-header"><div><small>AI WORKSPACE</small><h1>Construction AI Assistant</h1><p>Ask about estimating, contracts, billing, construction methodology, and project documentation.</p></div></div>
+        <div class="full-chat panel">
+          <div class="full-chat-messages" id="fullAiMessages">
+            <div class="bot-message">Ready. Try: <b>“Create a preliminary BOQ for a 200 sqm two-storey residence.”</b></div>
+          </div>
+          <form class="full-chat-input" id="fullAiForm"><textarea id="fullAiInput" placeholder="Ask Construction AI..."></textarea><button class="primary-btn" type="submit">Send</button></form>
+        </div>
+      </section>
+
+      <section id="cost" class="view module-view generic-module"></section>
+      <section id="contracts" class="view module-view generic-module"></section>
+      <section id="billing" class="view module-view generic-module"></section>
+      <section id="vo" class="view module-view generic-module"></section>
+      <section id="procurement" class="view module-view generic-module"></section>
+      <section id="monitoring" class="view module-view generic-module"></section>
+    </main>
+  </div>
+
+  <dialog id="projectDialog">
+    <form method="dialog" id="projectForm" class="dialog-card">
+      <div class="dialog-head"><h2>Add Project</h2><button value="cancel">✕</button></div>
+      <label>Project Name<input id="pName" required /></label>
+      <label>Location<input id="pLocation" required /></label>
+      <label>Status<select id="pStatus"><option>Planning</option><option>On-going</option><option>Design Phase</option><option>Architectural Phase</option></select></label>
+      <label>Progress (%)<input id="pProgress" type="number" min="0" max="100" value="0" /></label>
+      <div class="dialog-actions"><button value="cancel" class="secondary-btn">Cancel</button><button id="saveProjectBtn" value="default" class="primary-btn">Save Project</button></div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
