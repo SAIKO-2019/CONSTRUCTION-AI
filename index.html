@@ -45,6 +45,8 @@
         <button data-view="billing">₱ Billing & Payments</button>
         <button data-view="schedule">◫ Schedule Tracker</button>
         <button data-view="progress">◩ Actual Progress</button>
+        <button data-view="inventory">▥ Inventory / Purchases</button>
+        <button data-view="budget">◒ Budget Monitoring</button>
         <button data-view="files">▤ Project Files</button>
         <button data-view="templates">▧ Templates</button>
         <button data-view="assistant">✦ Construction AI</button>
@@ -54,7 +56,13 @@
     </aside>
 
     <main class="main">
-      <header class="topbar"><input id="globalSearch" placeholder="Search projects, billing, schedules, files..."/><div class="mini-avatar">U</div></header>
+      <header class="topbar">
+      <input id="globalSearch" placeholder="Search projects, billing, schedules, files..."/>
+      <label class="workspace-project">Project Folder
+        <select id="workspaceProject"></select>
+      </label>
+      <div class="mini-avatar">U</div>
+    </header>
 
       <section id="dashboard" class="view active-view">
         <div class="page-head"><div><small>CONSTRUCTION MANAGEMENT</small><h1>Dashboard</h1><p>Live overview of projects, billing, schedule, progress, and files.</p></div></div>
@@ -72,23 +80,47 @@
       </section>
 
       <section id="billing" class="view">
-        <div class="page-head"><div><small>FINANCIAL CONTROL</small><h1>Billing & Payments</h1><p>Automatic billing totals, received payments, outstanding balance, retention, and recoupment.</p></div><button id="addBillingBtn" class="primary-btn">+ Add Billing</button></div>
+        <div class="page-head"><div><small>FINANCIAL CONTROL</small><h1>Billing & Payments</h1><p>Per-project billings, labor/equipment/subcontractor payments, retention, recoupment, dates, and accomplishment.</p></div><button id="addBillingBtn" class="primary-btn">+ Add Billing</button></div>
+        <div class="toolbar panel compact-toolbar"><label>Project Folder<select id="billingProjectFilter"></select></label><span class="muted">Client billings are receivables. Labor, Equipment and Subcontractor records are treated as project costs.</span></div>
         <div id="billingKPIs" class="kpi-grid"></div>
-        <div class="panel"><div class="bulk-actions"><label class="select-all-wrap"><input id="billingSelectAll" type="checkbox"> Select all</label><span id="billingSelectedCount" class="selection-count">0 selected</span><button id="deleteSelectedBillingBtn" class="danger-btn" disabled>Delete Selected</button><button id="clearBillingSelectionBtn" class="secondary-btn">Clear Selection</button></div><div class="table-wrap"><table><thead><tr><th class="check-col"></th><th>Project</th><th>Billing</th><th>Gross</th><th>Retention</th><th>Recoupment</th><th>Net Due</th><th>Received</th><th>Outstanding</th><th>Status</th><th>Action</th></tr></thead><tbody id="billingRows"></tbody></table></div></div>
+        <div class="panel"><div class="bulk-actions"><label class="select-all-wrap"><input id="billingSelectAll" type="checkbox"> Select all</label><span id="billingSelectedCount" class="selection-count">0 selected</span><button id="deleteSelectedBillingBtn" class="danger-btn" disabled>Delete Selected</button><button id="clearBillingSelectionBtn" class="secondary-btn">Clear Selection</button></div><div class="table-wrap"><table><thead><tr><th class="check-col"></th><th>Project</th><th>Type</th><th>Billing / VO</th><th>Accomp. %</th><th>Gross</th><th>Retention</th><th>Recoupment</th><th>Net Due</th><th>Received / Paid</th><th>Outstanding</th><th>Request</th><th>Paid</th><th>Input By</th><th>Status</th><th>Action</th></tr></thead><tbody id="billingRows"></tbody></table></div></div>
       </section>
 
       <section id="schedule" class="view">
         <div class="page-head"><div><small>PLANNING</small><h1>Schedule Tracker</h1><p>Upload an Excel schedule. Planned accomplishment and agenda are computed day by day.</p></div></div>
         <div class="toolbar panel"><label>Project<select id="scheduleProject"></select></label><label class="file-label">Upload Excel<input id="scheduleFile" type="file" accept=".xlsx,.xls,.csv"></label><button id="importScheduleBtn" class="primary-btn">Import Schedule</button></div>
         <div id="scheduleSummary" class="kpi-grid"></div>
+        <div class="dashboard-grid">
+          <div class="panel"><div class="panel-head"><h2>S-Curve</h2><span class="muted">Planned vs actual weighted accomplishment</span></div><div id="sCurveChart" class="chart-box"></div></div>
+          <div class="panel"><div class="panel-head"><h2>Recovery / Methodology Guidance</h2><span id="scheduleHealthBadge" class="smart-badge">AUTO</span></div><div id="recoveryPlan" class="recovery-plan"></div></div>
+        </div>
         <div class="panel"><div class="panel-head"><h2>Schedule Activities</h2><span class="muted">Expected columns: Activity, Start Date, End Date, Weight (%)</span></div><div class="bulk-actions"><label class="select-all-wrap"><input id="scheduleSelectAll" type="checkbox"> Select all</label><span id="scheduleSelectedCount" class="selection-count">0 selected</span><button id="deleteSelectedScheduleBtn" class="danger-btn" disabled>Delete Selected</button><button id="clearScheduleSelectionBtn" class="secondary-btn">Clear Selection</button></div><div class="table-wrap"><table><thead><tr><th class="check-col"></th><th>Activity</th><th>Start</th><th>End</th><th>Weight %</th><th>Planned % Today</th><th>Actual %</th><th>Contribution</th><th>Action</th></tr></thead><tbody id="scheduleRows"></tbody></table></div></div>
       </section>
 
       <section id="progress" class="view">
         <div class="page-head"><div><small>SITE ACCOMPLISHMENT</small><h1>Actual Progress</h1><p>Manually enter activity accomplishment. Overall actual % is weighted automatically.</p></div></div>
-        <div class="toolbar panel"><label>Project<select id="progressProject"></select></label><button id="addProgressBtn" class="primary-btn">+ Add / Update Activity</button></div>
+        <div class="toolbar panel"><label>Project<select id="progressProject"></select></label><button id="loadBoqScopesBtn" class="secondary-btn">Load BOQ Scopes</button><button id="addProgressBtn" class="primary-btn">+ Add / Update Activity</button></div>
         <div id="progressSummary" class="kpi-grid"></div>
-        <div class="panel"><div class="bulk-actions"><label class="select-all-wrap"><input id="progressSelectAll" type="checkbox"> Select all</label><span id="progressSelectedCount" class="selection-count">0 selected</span><button id="deleteSelectedProgressBtn" class="danger-btn" disabled>Delete Selected</button><button id="clearProgressSelectionBtn" class="secondary-btn">Clear Selection</button></div><div class="table-wrap"><table><thead><tr><th class="check-col"></th><th>Activity</th><th>Weight %</th><th>Actual %</th><th>Weighted Contribution</th><th>Updated</th><th>Action</th></tr></thead><tbody id="progressRows"></tbody></table></div></div>
+        <div class="panel"><div class="bulk-actions"><label class="select-all-wrap"><input id="progressSelectAll" type="checkbox"> Select all</label><span id="progressSelectedCount" class="selection-count">0 selected</span><button id="deleteSelectedProgressBtn" class="danger-btn" disabled>Delete Selected</button><button id="clearProgressSelectionBtn" class="secondary-btn">Clear Selection</button></div><div class="table-wrap"><table><thead><tr><th class="check-col"></th><th>Activity / BOQ Scope</th><th>Cost Type</th><th>BOQ Budget</th><th>Weight %</th><th>Actual %</th><th>Weighted Contribution</th><th>Actual Cost</th><th>Balance to Budget</th><th>Updated</th><th>Action</th></tr></thead><tbody id="progressRows"></tbody></table></div></div>
+      </section>
+
+
+      <section id="inventory" class="view">
+        <div class="page-head"><div><small>ACCOUNTING / PROCUREMENT</small><h1>Inventory / Purchases</h1><p>Per-project request, purchase, supplier, category, BOQ scope, paid amount, balance, and encoder history.</p></div><button id="addInventoryBtn" class="primary-btn">+ Add Inventory Entry</button></div>
+        <div class="toolbar panel"><label>Project Folder<select id="inventoryProject"></select></label><label>Category Filter<select id="inventoryCategoryFilter"><option value="">All Categories</option><option>Materials</option><option>Labor</option><option>Equipment</option><option>Subcontractor</option><option>Other</option></select></label></div>
+        <div id="inventoryKPIs" class="kpi-grid"></div>
+        <div class="panel"><div class="table-wrap"><table><thead><tr><th>Date Request</th><th>Date Purchase</th><th>Category</th><th>BOQ Scope</th><th>Description</th><th>Qty</th><th>Unit</th><th>Unit Cost</th><th>Total</th><th>Paid</th><th>Balance</th><th>Supplier</th><th>Input By</th><th>Action</th></tr></thead><tbody id="inventoryRows"></tbody></table></div></div>
+      </section>
+
+      <section id="budget" class="view">
+        <div class="page-head"><div><small>COST CONTROL</small><h1>Budget Monitoring</h1><p>Contract value, discount, billing, inventory, subcontractor/labor/equipment costs, running cost, earned value, and running profit.</p></div></div>
+        <div class="toolbar panel"><label>Project Folder<select id="budgetProject"></select></label></div>
+        <div id="budgetKPIs" class="kpi-grid"></div>
+        <div class="dashboard-grid">
+          <div class="panel"><div class="panel-head"><h2>Cost Allocation</h2><span class="muted">Actual / committed project cost</span></div><div id="budgetPie" class="chart-box"></div></div>
+          <div class="panel"><div class="panel-head"><h2>Cost by Category</h2><span class="muted">Materials, labor, equipment and subcontractors</span></div><div id="budgetBars" class="chart-box"></div></div>
+        </div>
+        <div class="panel"><div class="panel-head"><h2>Budget Summary</h2></div><div id="budgetSummaryTable" class="table-wrap"></div></div>
       </section>
 
       <section id="files" class="view">
@@ -140,15 +172,54 @@
     </main>
   </div>
 
-  <dialog id="projectDialog"><form id="projectForm" class="dialog-card"><div class="dialog-head"><h2>Project</h2><button type="button" data-close="projectDialog">×</button></div><label>Project Name<input id="pName" required></label><label>Client<input id="pClient"></label><label>Location<input id="pLocation"></label><label>Contract Amount<input id="pContract" type="number" min="0" step="0.01"></label><label>Start Date<input id="pStart" type="date"></label><label>Target Date<input id="pTarget" type="date"></label><label>Status<select id="pStatus"><option>Planning</option><option>For Mobilization</option><option>On-going</option><option>On Hold</option><option>Completed</option></select></label><label>Actual Progress %<input id="pProgress" type="number" min="0" max="100" step="0.01" value="0"></label><div class="dialog-actions"><button type="button" class="secondary-btn" data-close="projectDialog">Cancel</button><button class="primary-btn" type="submit">Save Project</button></div></form></dialog>
+  <dialog id="projectDialog"><form id="projectForm" class="dialog-card wide"><div class="dialog-head"><h2>Project</h2><button type="button" data-close="projectDialog">×</button></div><div class="form-grid"><label>Project Name<input id="pName" required></label><label>Client<input id="pClient"></label><label>Location<input id="pLocation"></label><label>Original Contract Amount<input id="pOriginalContract" type="number" min="0" step="0.01"></label><label>Discount Amount<input id="pDiscount" type="number" min="0" step="0.01" value="0"></label><label>Net Contract Amount<input id="pContract" type="number" min="0" step="0.01" readonly></label><label>Start Date<input id="pStart" type="date"></label><label>Target Date<input id="pTarget" type="date"></label><label>Status<select id="pStatus"><option>Planning</option><option>For Mobilization</option><option>On-going</option><option>On Hold</option><option>Completed</option></select></label><label>Actual Progress %<input id="pProgress" type="number" min="0" max="100" step="0.01" value="0"></label></div><div class="dialog-actions"><button type="button" class="secondary-btn" data-close="projectDialog">Cancel</button><button class="primary-btn" type="submit">Save Project</button></div></form></dialog>
 
-  <dialog id="billingDialog"><form id="billingForm" class="dialog-card wide"><div class="dialog-head"><h2>Billing Record</h2><button type="button" data-close="billingDialog">×</button></div><div class="form-grid"><label>Project<select id="bProject" required></select></label><label>Billing No.<input id="bNo" required placeholder="Billing No. 3"></label><label>Gross Billing Amount<input id="bGross" type="number" min="0" step="0.01" required></label><label>Retention %<input id="bRetention" type="number" min="0" max="100" step="0.01" value="5"></label><label>Recoupment %<input id="bRecoup" type="number" min="0" max="100" step="0.01" value="30"></label><label>Date Submitted<input id="bSubmitted" type="date"></label><label>Received Payment<input id="bReceived" type="number" min="0" step="0.01" value="0"></label><label>Date Paid<input id="bPaidDate" type="date"></label></div><div id="billingCalc" class="calc-box"></div><div class="dialog-actions"><button type="button" class="secondary-btn" data-close="billingDialog">Cancel</button><button class="primary-btn" type="submit">Save Billing</button></div></form></dialog>
+  <dialog id="billingDialog"><form id="billingForm" class="dialog-card wide"><div class="dialog-head"><h2>Billing / Payment Record</h2><button type="button" data-close="billingDialog">×</button></div>
+  <div class="form-grid">
+    <label>Project<select id="bProject" required></select></label>
+    <label>Type<select id="bType"><option>Client Billing</option><option>Labor</option><option>Equipment</option><option>Subcontractor</option><option>Other</option></select></label>
+    <label>Billing No.<input id="bNo" required placeholder="Billing No. 3"></label>
+    <label>Variation No.<input id="bVariation" placeholder="VO-01 / optional"></label>
+    <label>Gross Amount<input id="bGross" type="number" min="0" step="0.01" required></label>
+    <label>Accomplishment %<input id="bAccomplishment" type="number" min="0" max="100" step="0.01" value="0"></label>
+    <label class="check-field"><input id="bUseRetention" type="checkbox"> Apply Retention</label>
+    <label>Retention %<input id="bRetention" type="number" min="0" max="100" step="0.01" value="5"></label>
+    <label class="check-field"><input id="bUseRecoupment" type="checkbox"> Apply Recoupment</label>
+    <label>Recoupment %<input id="bRecoup" type="number" min="0" max="100" step="0.01" value="30"></label>
+    <label>Date Request<input id="bRequestDate" type="date"></label>
+    <label>Received / Paid Amount<input id="bReceived" type="number" min="0" step="0.01" value="0"></label>
+    <label>Date Paid<input id="bPaidDate" type="date"></label>
+    <label>Encoded By<input id="bInputBy" readonly></label>
+  </div>
+  <div id="billingRuleNote" class="smart-note"></div>
+  <div id="billingCalc" class="calc-box"></div>
+  <div class="dialog-actions"><button type="button" class="secondary-btn" data-close="billingDialog">Cancel</button><button class="primary-btn" type="submit">Save Billing</button></div>
+</form></dialog>
 
-  <dialog id="progressDialog"><form id="progressForm" class="dialog-card"><div class="dialog-head"><h2>Activity Progress</h2><button type="button" data-close="progressDialog">×</button></div><label>Activity<input id="aActivity" required></label><label>Weight %<input id="aWeight" type="number" min="0" max="100" step="0.01" required></label><label>Actual Accomplishment %<input id="aActual" type="number" min="0" max="100" step="0.01" required></label><div class="dialog-actions"><button type="button" class="secondary-btn" data-close="progressDialog">Cancel</button><button class="primary-btn" type="submit">Save Progress</button></div></form></dialog>
+  <dialog id="progressDialog"><form id="progressForm" class="dialog-card"><div class="dialog-head"><h2>Activity Progress</h2><button type="button" data-close="progressDialog">×</button></div><label>Activity / BOQ Scope<input id="aActivity" list="boqActivityList" required><datalist id="boqActivityList"></datalist></label><label>Weight %<input id="aWeight" type="number" min="0" max="100" step="0.01" required></label><label>Actual Accomplishment %<input id="aActual" type="number" min="0" max="100" step="0.01" required></label><div id="progressCostHint" class="smart-note"></div><div class="dialog-actions"><button type="button" class="secondary-btn" data-close="progressDialog">Cancel</button><button class="primary-btn" type="submit">Save Progress</button></div></form></dialog>
+
+  <dialog id="inventoryDialog"><form id="inventoryForm" class="dialog-card wide"><div class="dialog-head"><h2>Inventory / Purchase Entry</h2><button type="button" data-close="inventoryDialog">×</button></div><div class="form-grid">
+    <label>Project<select id="iProject" required></select></label>
+    <label>Category<select id="iCategory"><option>Materials</option><option>Labor</option><option>Equipment</option><option>Subcontractor</option><option>Other</option></select></label>
+    <label>BOQ Scope<select id="iBoqItem"><option value="">Unassigned</option></select></label>
+    <label>Description<input id="iDescription" required></label>
+    <label>Quantity<input id="iQty" type="number" min="0" step="0.0001" value="1"></label>
+    <label>Unit<input id="iUnit" placeholder="pcs / kg / lot / day"></label>
+    <label>Unit Cost<input id="iUnitCost" type="number" min="0" step="0.01" value="0"></label>
+    <label>Total Amount<input id="iTotal" type="number" min="0" step="0.01" readonly></label>
+    <label>Paid Amount<input id="iPaid" type="number" min="0" step="0.01" value="0"></label>
+    <label>Balance<input id="iBalance" type="number" min="0" step="0.01" readonly></label>
+    <label>Date Request<input id="iDateRequest" type="date"></label>
+    <label>Date Purchase<input id="iDatePurchase" type="date"></label>
+    <label>Supplier / Payee<input id="iSupplier"></label>
+    <label>Reference No.<input id="iReference"></label>
+    <label>Input By<input id="iInputBy" readonly></label>
+  </div><div class="dialog-actions"><button type="button" class="secondary-btn" data-close="inventoryDialog">Cancel</button><button class="primary-btn" type="submit">Save Entry</button></div></form></dialog>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=10"></script>
+  <script src="app.js?v=13"></script>
+  <script src="v13.js?v=13"></script>
 </body>
 </html>

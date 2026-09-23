@@ -38,3 +38,28 @@
 .danger-btn:disabled{opacity:.45;cursor:not-allowed}
 .danger-link{background:#fff;color:#b91c1c;border:1px solid #fecaca;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer}
 .danger-link:hover{background:#fef2f2}
+
+/* v13 Project Cost Control */
+.workspace-project{display:flex;align-items:center;gap:8px;font-size:12px;color:#64748b;white-space:nowrap}
+.workspace-project select{min-width:220px;border:1px solid #dbe3ef;border-radius:10px;padding:10px;background:#fff}
+.compact-toolbar{padding:12px 16px}
+.check-field{display:flex!important;align-items:center;gap:10px;padding-top:25px}
+.check-field input{width:auto!important}
+.chart-box{min-height:280px;padding:18px}
+.scurve-svg{width:100%;height:260px;overflow:visible}
+.chart-legend{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:#64748b;margin-top:8px}
+.legend-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.recovery-plan{padding:18px;display:grid;gap:12px}
+.recovery-item{border:1px solid #e5e7eb;border-radius:10px;padding:12px;background:#fff}
+.recovery-item strong{display:block;margin-bottom:4px}
+.budget-pie-wrap{display:flex;align-items:center;gap:24px;justify-content:center;min-height:240px;flex-wrap:wrap}
+.budget-pie{width:180px;height:180px;border-radius:50%;position:relative}
+.budget-pie::after{content:'';position:absolute;inset:28px;background:#fff;border-radius:50%}
+.pie-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;font-weight:800}
+.bar-list{display:grid;gap:14px}
+.bar-row{display:grid;grid-template-columns:130px 1fr 120px;gap:12px;align-items:center}
+.bar-track{height:16px;background:#eef2f7;border-radius:999px;overflow:hidden}
+.bar-fill{height:100%;background:#2563eb;border-radius:999px}
+.cost-positive{color:#15803d}.cost-negative{color:#b91c1c}
+.inventory-scope{max-width:260px;white-space:normal}
+@media(max-width:900px){.workspace-project{display:none}.bar-row{grid-template-columns:100px 1fr 90px}}

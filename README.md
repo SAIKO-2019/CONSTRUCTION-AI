@@ -31,3 +31,24 @@ Saved Project Files now have a Delete action. The user can choose between deleti
 
 ## v12.3
 Bulk selection/delete added to Projects, Billing, Schedule, Actual Progress, Project Files, and Templates.
+
+
+## v13 Project Cost Control
+Adds:
+- Project Folder selector across modules
+- Original contract amount, discount, and net contract amount
+- Expanded Billing / Payments fields: type, gross, accomplishment %, retention %, recoupment %, request date, paid date, billing no., VO no., encoder
+- Retention / recoupment rules for Labor, Equipment and Subcontractor
+- BOQ-driven Actual Progress
+- Progress History for actual S-curve trend
+- Automatic planned vs actual S-curve
+- Automatic recovery / methodology guidance when behind schedule
+- Per-project Inventory / Purchases with request/purchase dates, supplier, paid, balance and encoder
+- BOQ scope linking for purchases
+- Budget Monitoring with running cost, earned value, running profit and projected profit
+- Cost allocation pie chart and category bar chart
+- Estimated remaining BOQ spend for materials and labor
+- Construction AI context expanded with BOQ, schedule, inventory, progress and budget data
+
+### Required once
+Run `v13-project-cost-control.sql` in Supabase SQL Editor.
