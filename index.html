@@ -234,17 +234,17 @@
 
   <dialog id="projectDialog">
     <form method="dialog" id="projectForm" class="dialog-card">
-      <div class="dialog-head"><h2>Add Project</h2><button value="cancel">✕</button></div>
+      <div class="dialog-head"><h2>Add Project</h2><button type="button" id="closeProjectDialogBtn">✕</button></div>
       <label>Project Name<input id="pName" required /></label>
       <label>Location<input id="pLocation" required /></label>
       <label>Status<select id="pStatus"><option>Planning</option><option>On-going</option><option>Design Phase</option><option>Architectural Phase</option></select></label>
       <label>Progress (%)<input id="pProgress" type="number" min="0" max="100" value="0" /></label>
-      <div class="dialog-actions"><button value="cancel" class="secondary-btn">Cancel</button><button id="saveProjectBtn" value="default" class="primary-btn">Save Project</button></div>
+      <div class="dialog-actions"><button type="button" id="cancelProjectBtn" class="secondary-btn">Cancel</button><button id="saveProjectBtn" value="default" class="primary-btn">Save Project</button></div>
     </form>
   </dialog>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="config.js"></script>
-  <script src="app.js"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>

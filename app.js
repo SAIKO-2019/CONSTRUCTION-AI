@@ -1,6 +1,6 @@
 const cfg=window.SAIKO_CONFIG||{};
 const configReady=cfg.SUPABASE_URL && cfg.SUPABASE_PUBLISHABLE_KEY && !cfg.SUPABASE_URL.includes('PASTE_') && !cfg.SUPABASE_PUBLISHABLE_KEY.includes('PASTE_');
-const sb=configReady?window.supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_PUBLISHABLE_KEY):null;
+const sb=(configReady && window.supabase && typeof window.supabase.createClient==='function')?window.supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_PUBLISHABLE_KEY):null;
 const PROFILE_TABLE='SAIKO BUILDERS';
 const loginGate=document.getElementById('loginGate');
 const loginForm=document.getElementById('loginForm');
@@ -80,23 +80,40 @@ loginForm.addEventListener('submit',async e=>{
   loginError.textContent=''; await authorizeSession(data.user);
 });
 signupForm.addEventListener('submit',async e=>{
-  e.preventDefault(); signupError.textContent='Creating account...';
+  e.preventDefault();
+  signupError.classList.remove('success-msg');
+  signupError.textContent='Creating account...';
   if(!sb){ signupError.textContent='Supabase is not configured yet.'; return; }
   const full_name=document.getElementById('signupName').value.trim();
   const email=document.getElementById('signupEmail').value.trim();
   const department=document.getElementById('signupDepartment').value;
   const password=document.getElementById('signupPassword').value;
   const password2=document.getElementById('signupPassword2').value;
+  if(!full_name||!email||!department||!password){ signupError.textContent='Please complete all required fields.'; return; }
+  if(password.length<6){ signupError.textContent='Password must be at least 6 characters.'; return; }
   if(password!==password2){ signupError.textContent='Passwords do not match.'; return; }
-  const {data,error}=await sb.auth.signUp({email,password,options:{data:{full_name,department,role:'viewer'}}});
-  if(error){ signupError.textContent=error.message; return; }
-  if(data?.session?.user){
-    await ensureProfile(data.session.user);
-    signupError.textContent='';
-    await authorizeSession(data.session.user);
-  }else{
+
+  const submitBtn=signupForm.querySelector('button[type="submit"]');
+  if(submitBtn){ submitBtn.disabled=true; submitBtn.textContent='Creating account...'; }
+  try{
+    const {data,error}=await sb.auth.signUp({
+      email,
+      password,
+      options:{data:{full_name,department,role:'viewer',status:'active'}}
+    });
+    if(error){ signupError.textContent=error.message; return; }
+
     signupError.classList.add('success-msg');
-    signupError.textContent='Account created. Check your email for the confirmation link, then sign in.';
+    if(data?.session?.user){
+      signupError.textContent='Account created successfully. Signing you in...';
+      await authorizeSession(data.session.user);
+    }else{
+      signupError.textContent='Account created. Check your email for the confirmation link, then sign in.';
+    }
+  }catch(err){
+    signupError.textContent=err?.message||'Unable to create account. Please try again.';
+  }finally{
+    if(submitBtn){ submitBtn.disabled=false; submitBtn.textContent='Create account'; }
   }
 });
 document.getElementById('forgotPasswordBtn').addEventListener('click',async()=>{
@@ -130,7 +147,8 @@ async function loadUsers(){
 document.getElementById('refreshUsersBtn')?.addEventListener('click',loadUsers);
 bootstrapAuth();
 
-let projects = [];
+let projects = JSON.parse(localStorage.getItem('saiko_projects')||'[]');
+function saveProjects(){ localStorage.setItem('saiko_projects',JSON.stringify(projects)); }
 
 const moduleCopy = {
   cost:{eyebrow:'COST CONTROL',title:'Cost Database',desc:'Maintain labor, material, equipment, and subcontractor rates.',cards:[['Material Rates','Store and update construction material prices.'],['Labor Rates','Maintain skilled, helper, foreman, and crew rates.'],['Equipment Rates','Track owned and rented equipment rates.']]},
@@ -157,17 +175,25 @@ function renderProjects(list=projects){
 renderProjects();
 
 function showView(id){
+  const target=document.getElementById(id);
+  if(!target){ showToast('Module not found yet.'); return; }
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active-view'));
-  document.getElementById(id).classList.add('active-view');
+  target.classList.add('active-view');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.view===id));
   window.scrollTo({top:0,behavior:'smooth'});
 }
-document.querySelectorAll('[data-view]').forEach(btn=>btn.addEventListener('click',()=>showView(btn.dataset.view)));
-document.querySelectorAll('[data-open]').forEach(btn=>btn.addEventListener('click',()=>showView(btn.dataset.open)));
+document.addEventListener('click',e=>{
+  const viewBtn=e.target.closest('[data-view]');
+  if(viewBtn){ e.preventDefault(); showView(viewBtn.dataset.view); return; }
+  const openBtn=e.target.closest('[data-open]');
+  if(openBtn){ e.preventDefault(); showView(openBtn.dataset.open); return; }
+  const generic=e.target.closest('[data-generic-action]');
+  if(generic){ e.preventDefault(); showToast(generic.dataset.genericAction+' is ready for the next database step.'); }
+});
 
 Object.entries(moduleCopy).forEach(([id,m])=>{
   const section=document.getElementById(id);
-  section.innerHTML=`<div class="module-header"><div><small>${m.eyebrow}</small><h1>${m.title}</h1><p>${m.desc}</p></div><button class="primary-btn">＋ New</button></div><div class="generic-grid">${m.cards.map(c=>`<div class="generic-card"><h3>${c[0]}</h3><p>${c[1]}</p><button>Open Module →</button></div>`).join('')}</div>`;
+  section.innerHTML=`<div class="module-header"><div><small>${m.eyebrow}</small><h1>${m.title}</h1><p>${m.desc}</p></div><button class="primary-btn" data-generic-action="${m.title} - New record">＋ New</button></div><div class="generic-grid">${m.cards.map(c=>`<div class="generic-card"><h3>${c[0]}</h3><p>${c[1]}</p><button data-generic-action="${c[0]}">Open Module →</button></div>`).join('')}</div>`;
 });
 
 function addMessage(container, text, who='bot'){
@@ -210,7 +236,24 @@ function startNewEstimate(){
 }
 ['newEstimateBtn','createEstimateBtn'].forEach(id=>document.getElementById(id)?.addEventListener('click',startNewEstimate));
 
-const projectDialog=document.getElementById('projectDialog');document.getElementById('addProjectBtn').addEventListener('click',()=>projectDialog.showModal());
-document.getElementById('projectForm').addEventListener('submit',e=>{e.preventDefault();projects.unshift({name:document.getElementById('pName').value,location:document.getElementById('pLocation').value,status:document.getElementById('pStatus').value,progress:+document.getElementById('pProgress').value||0,target:'—',color:'#2f6fde'});renderProjects();projectDialog.close();e.target.reset()});
+const projectDialog=document.getElementById('projectDialog');document.getElementById('addProjectBtn')?.addEventListener('click',()=>{ if(projectDialog?.showModal) projectDialog.showModal(); });
+document.getElementById('closeProjectDialogBtn')?.addEventListener('click',()=>projectDialog?.close());
+document.getElementById('cancelProjectBtn')?.addEventListener('click',()=>projectDialog?.close());
+document.getElementById('projectForm').addEventListener('submit',e=>{e.preventDefault();projects.unshift({name:document.getElementById('pName').value,location:document.getElementById('pLocation').value,status:document.getElementById('pStatus').value,progress:+document.getElementById('pProgress').value||0,target:'—',color:'#2f6fde'});saveProjects();renderProjects();projectDialog.close();e.target.reset();showToast('Project saved.');});
 document.getElementById('projectSearch').addEventListener('input',e=>{const q=e.target.value.toLowerCase();renderProjects(projects.filter(p=>(p.name+' '+p.location+' '+p.status).toLowerCase().includes(q)))});
 document.getElementById('globalSearch').addEventListener('keydown',e=>{if(e.key==='Enter'){const q=e.target.value.trim();if(!q)return;showView('assistant');fullInput.value=q;fullForm.requestSubmit();e.target.value=''}});
+
+
+function showToast(message){
+  let t=document.getElementById('appToast');
+  if(!t){ t=document.createElement('div'); t.id='appToast'; t.className='app-toast'; document.body.appendChild(t); }
+  t.textContent=message; t.classList.add('show'); clearTimeout(window.__saikoToast); window.__saikoToast=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+document.querySelectorAll('.icon-btn').forEach(btn=>btn.addEventListener('click',()=>showToast('No new notifications yet.')));
+
+if(!window.HTMLDialogElement || !HTMLDialogElement.prototype.showModal){
+  document.getElementById('addProjectBtn')?.addEventListener('click',()=>{
+    const name=prompt('Project name'); if(!name) return; const location=prompt('Location')||''; projects.unshift({name,location,status:'Planning',progress:0,target:'—',color:'#2f6fde'}); saveProjects(); renderProjects(); showToast('Project saved.');
+  });
+}
