@@ -70,3 +70,54 @@ Changes requested:
 
 ### Required once
 Run `v14-integrated-control.sql` in Supabase SQL Editor.
+
+## v14.1 Billing / VO Record Type
+- Billing entry is now explicitly either **Billing** or **Variation Order (VO)**.
+- One Record No. field changes automatically to Billing No. or Variation Order No.
+- Database saves only one identifier at a time (`billing_no` OR `variation_no`), never both.
+
+
+## v14.2 Quotation Workspace + Ongoing Schedule Health
+- Replaces the old Pending Works sidebar module with a separate **For Quotation** workspace.
+- Quotation opportunities are kept separate from ongoing projects.
+- Each quotation project can store a BOQ/costing file or Google Sheets link.
+- Tracks running estimated cost, quoted amount, projected profit and margin.
+- Dashboard now shows quotation totals.
+- Ongoing projects now show their own mini S-curve, Projected %, Actual %, status, and schedule variance:
+  - Ahead = variance > +2%
+  - On Track = within ±2%
+  - Behind / slippage = variance < -2%
+
+
+## v14.3 Per-Project Cost Folders
+For every ongoing project, cost records are organized into folder-style views:
+- Materials
+- Labor
+- Overhead
+- Equipment
+- Subcontractor
+- Other
+
+Each folder is still part of the same project cost ledger and feeds Budget Monitoring / Running Cost. The folder view only filters and organizes the project's accounting records.
+
+
+## v14.4 Automatic Project Report Generator
+Adds a per-project **Project Reports** module that can automatically assemble:
+- Project overview
+- Planned vs actual S-curve
+- Schedule status / slippage / ahead percentage
+- Actual progress by BOQ scope
+- Budget monitoring
+- Cost folders
+- Client and subcontractor billing
+- Recovery / methodology guidance
+
+Outputs:
+- On-screen report preview
+- Print / Save as PDF via the browser
+- Downloadable PPTX presentation
+
+The generated PPTX filename follows the selected uploaded report template name when a matching template exists.
+
+### Template note
+Uploaded report templates are currently used for template selection, naming, and report-type matching. The generator produces a standardized SAIKO slide layout. Pixel-for-pixel editing of arbitrary uploaded PPTX/PDF/Word layouts would require a separate template parser/mapping layer.

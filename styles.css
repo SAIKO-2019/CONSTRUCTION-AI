@@ -77,3 +77,61 @@
 .status-pill.pending{background:#fff7ed;color:#9a3412}
 .status-pill.verify{background:#eff6ff;color:#1d4ed8}
 .status-pill.complete{background:#f0fdf4;color:#166534}
+
+/* v14.2 quotation + ongoing project health */
+.quotation-import-panel{padding:16px}
+.ongoing-schedule-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:16px;padding:16px}
+.schedule-health-card{border:1px solid #e5e7eb;border-radius:14px;padding:16px;background:#fff}
+.schedule-health-card h3{margin:0 0 6px;font-size:17px}
+.schedule-health-meta{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:#64748b;margin-bottom:12px}
+.mini-scurve{height:150px;margin:8px 0}
+.health-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.health-metric{padding:10px;border-radius:10px;background:#f8fafc}
+.health-metric span{display:block;font-size:11px;color:#64748b}
+.health-metric strong{display:block;margin-top:4px}
+.status-ahead{color:#15803d}.status-behind{color:#b91c1c}.status-ontrack{color:#1d4ed8}
+.quote-link{max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* v14.3 per-project cost folders */
+.project-cost-folders{display:flex;gap:10px;flex-wrap:wrap;padding:12px 0 14px}
+.cost-folder{border:1px solid #dbe3ef;background:#fff;border-radius:12px;padding:10px 14px;font-weight:700;color:#334155;cursor:pointer}
+.cost-folder:hover{background:#f8fafc}
+.cost-folder.active{background:#0f2a44;color:#fff;border-color:#0f2a44}
+.folder-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;padding:16px}
+.folder-card{border:1px solid #e5e7eb;border-radius:14px;padding:16px;background:#fff;cursor:pointer;transition:.15s}
+.folder-card:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(15,42,68,.08)}
+.folder-card .folder-icon{font-size:26px;margin-bottom:8px}
+.folder-card h3{margin:0 0 4px;font-size:16px}
+.folder-card .folder-total{font-size:20px;font-weight:800;margin-top:8px}
+.folder-card small{color:#64748b}
+.project-folder-panel{margin-bottom:16px}
+
+/* v14.4 Project Reports */
+.report-builder{padding:18px}
+.report-section-picker{display:flex;gap:14px;flex-wrap:wrap;padding:14px 0}
+.report-section-picker label{display:flex;align-items:center;gap:7px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:9px 11px;font-size:13px}
+.report-actions{justify-content:flex-end}
+.report-preview-panel{margin-top:16px}
+.report-preview{padding:22px;background:#e5e7eb;min-height:420px}
+.report-page{background:#fff;max-width:1120px;margin:0 auto 22px;padding:34px;box-shadow:0 8px 30px rgba(15,23,42,.08);page-break-after:always}
+.report-page:last-child{page-break-after:auto}
+.report-title{display:flex;justify-content:space-between;gap:20px;border-bottom:3px solid #0f2a44;padding-bottom:14px;margin-bottom:20px}
+.report-title h1{margin:0;color:#0f2a44}
+.report-title small{color:#64748b}
+.report-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.report-metric{border:1px solid #e5e7eb;border-radius:10px;padding:12px}
+.report-metric span{display:block;font-size:11px;color:#64748b}
+.report-metric strong{display:block;font-size:18px;margin-top:3px}
+.report-table{width:100%;border-collapse:collapse;margin-top:12px}
+.report-table th,.report-table td{border:1px solid #d1d5db;padding:8px;font-size:12px;text-align:left}
+.report-table th{background:#f8fafc}
+.report-section-title{margin:18px 0 8px;color:#0f2a44}
+.report-note{border-left:4px solid #f59e0b;background:#fffbeb;padding:12px;margin:10px 0}
+.report-scurve{height:260px}
+@media print{
+  body *{visibility:hidden!important}
+  #reportPreview,#reportPreview *{visibility:visible!important}
+  #reportPreview{position:absolute;left:0;top:0;background:#fff;width:100%;padding:0}
+  .report-page{box-shadow:none;margin:0;max-width:none;min-height:100vh}
+}
+@media(max-width:900px){.report-grid{grid-template-columns:1fr 1fr}}

@@ -77,16 +77,34 @@ function calcBillingV14(){
 ['bGross','bRetention','bRecoup','bReceived','bIssuedAmount'].forEach(id=>{if($(id))$(id).oninput=calcBillingV14});
 $('bUseRetention').onchange=updateBillingRule;$('bUseRecoupment').onchange=updateBillingRule;$('bType').onchange=updateBillingRule;
 
+function updateRecordTypeUI(){
+  const type=$('bRecordType')?.value||'Billing';
+  const label=$('bRecordNoLabel');
+  if(!label)return;
+  if(type==='VO'){
+    label.childNodes[0].nodeValue='Variation Order No. ';
+    $('bNo').placeholder='VO-01';
+  }else{
+    label.childNodes[0].nodeValue='Billing No. ';
+    $('bNo').placeholder='Billing No. 3';
+  }
+}
+if($('bRecordType')) $('bRecordType').onchange=updateRecordTypeUI;
+
+
 $('addBillingBtn').onclick=()=>{
   $('billingForm').reset();syncProjectSelects();syncProjectSelectsV13();
   const ws=$('workspaceProject')?.value;if(ws)$('bProject').value=ws;
-  $('bType').value='Client Billing';$('bRetention').value=5;$('bRecoup').value=30;$('bInputBy').value=profileName();
+  $('bType').value='Client Billing';$('bRecordType').value='Billing';updateRecordTypeUI();$('bRetention').value=5;$('bRecoup').value=30;$('bInputBy').value=profileName();
   $('bUseRetention').checked=false;$('bUseRecoupment').checked=false;updateBillingRule();calcBillingV14();$('billingDialog').showModal();
 };
 $('billingForm').onsubmit=async e=>{
   e.preventDefault();const c=calcBillingV14(),type=$('bType').value;
   const row={
-    project_id:$('bProject').value,billing_no:$('bNo').value.trim(),variation_no:$('bVariation').value.trim()||null,billing_type:type,
+    project_id:$('bProject').value,
+    billing_no:$('bRecordType').value==='Billing' ? $('bNo').value.trim() : null,
+    variation_no:$('bRecordType').value==='VO' ? $('bNo').value.trim() : null,
+    billing_type:type,
     transaction_side:type==='Client Billing'?'receivable':'payable',accomplishment_percent:Number($('bAccomplishment').value||0),
     issued_amount:c.issued,subcontract_balance:c.subcontractBalance,gross_amount:c.gross,
     retention_applicable:$('bUseRetention').checked,retention_percent:c.retPct,retention_amount:c.ret,
@@ -111,7 +129,7 @@ renderBilling = function(){
   $('billingRows').innerHTML=rows.length?rows.map(b=>`<tr>
     <td class="check-col"><input class="billing-row-check" type="checkbox" value="${b.id}" ${selectedBillingIds.has(String(b.id))?'checked':''}></td>
     <td>${esc(proj(b.project_id)?.project_name||'—')}</td><td>${esc(b.billing_type||'Client Billing')}</td>
-    <td><strong>${esc(b.billing_no)}</strong>${b.variation_no?`<br><small>${esc(b.variation_no)}</small>`:''}${b.billing_type==='Subcontractor Billing'?`<br><small>Issued: ${money(b.issued_amount||0)} | Balance: ${money(b.subcontract_balance||0)}</small>`:''}</td>
+    <td><strong>${b.variation_no?`VO: ${esc(b.variation_no)}`:`Billing: ${esc(b.billing_no||'—')}`}</strong>${b.billing_type==='Subcontractor Billing'?`<br><small>Issued: ${money(b.issued_amount||0)} | Balance: ${money(b.subcontract_balance||0)}</small>`:''}</td>
     <td>${pct(b.accomplishment_percent||0)}</td><td>${money(b.gross_amount)}</td><td>${money(b.retention_amount)}</td><td>${money(b.recoupment_amount)}</td>
     <td>${money(b.net_due)}</td><td>${money(b.received_amount)}</td><td>${money(b.outstanding_amount)}</td><td>${b.date_request||b.date_submitted||'—'}</td><td>${b.date_paid||'—'}</td><td>${esc(b.input_by_name||'—')}</td><td>${esc(b.status)}</td>
     <td><div class="row-actions"><button class="icon-action" onclick="addPayment('${b.id}')">${b.billing_type==='Subcontractor Billing'?'Add Payment':'Receive Payment'}</button><button class="icon-action" onclick="generateBilling('${b.id}')">Download</button><button class="danger-link" onclick="deleteBilling('${b.id}')">Delete</button></div></td>

@@ -47,7 +47,8 @@
         <button data-view="progress">◩ Actual Progress</button>
         <button data-view="inventory">▥ Inventory / Purchases</button>
         <button data-view="budget">◒ Budget Monitoring</button>
-        <button data-view="pending">☑ Pending Works</button>
+        <button data-view="reports">▣ Project Reports</button>
+        <button data-view="quotation">⌁ For Quotation</button>
         <button data-view="files">▤ Project Files</button>
         <button data-view="templates">▧ Templates</button>
         <button data-view="assistant">✦ Construction AI</button>
@@ -73,10 +74,18 @@
           <div class="panel"><div class="panel-head"><h2>Today / Next Agenda</h2><button class="text-btn" data-go="schedule">Open Tracker</button></div><div id="agendaList" class="list-stack"></div></div>
         </div>
         <div class="panel"><div class="panel-head"><h2>Billing Snapshot</h2><button class="text-btn" data-go="billing">Open Billing</button></div><div id="billingSnapshot" class="summary-cards"></div></div>
-      </section>
+      
+        <div class="panel"><div class="panel-head"><h2>Ongoing Projects — Schedule Health</h2><button class="link-btn" data-jump="schedule">Open Schedule Tracker</button></div><div id="ongoingScheduleDashboard" class="ongoing-schedule-grid"></div></div>
+        <div class="panel"><div class="panel-head"><h2>For Quotation Snapshot</h2><button class="link-btn" data-jump="quotation">Open For Quotation</button></div><div id="quotationDashboardSnapshot" class="kpi-grid inset"></div></div>
+
+</section>
 
       <section id="projects" class="view">
         <div class="page-head"><div><small>PROJECT MANAGEMENT</small><h1>Projects</h1><p>Encode projects once, then use them across billing, schedules, files, and AI.</p></div><button id="addProjectBtn" class="primary-btn">+ Add Project</button></div>
+        <div class="panel project-folder-panel">
+          <div class="panel-head"><h2>Project Cost Folders</h2><span class="muted">Open the cost ledger directly by category for the selected project.</span></div>
+          <div id="projectFolderCards" class="folder-card-grid"></div>
+        </div>
         <div class="panel"><div class="bulk-actions"><label class="select-all-wrap"><input id="projectSelectAll" type="checkbox"> Select all</label><span id="projectSelectedCount" class="selection-count">0 selected</span><button id="deleteSelectedProjectBtn" class="danger-btn" disabled>Delete Selected</button><button id="clearProjectSelectionBtn" class="secondary-btn">Clear Selection</button></div><div class="table-wrap"><table><thead><tr><th class="check-col"></th><th>Project</th><th>Client</th><th>Location</th><th>Contract</th><th>Status</th><th>Actual %</th><th>Action</th></tr></thead><tbody id="projectRows"></tbody></table></div></div>
       </section>
 
@@ -107,8 +116,18 @@
 
 
       <section id="inventory" class="view">
-        <div class="page-head"><div><small>ACCOUNTING / PROCUREMENT</small><h1>Inventory / Cost Ledger</h1><p>Spreadsheet-style project ledger for Overhead, Materials, Labor and other project costs.</p></div><div class="row-actions"><button id="addInventoryRowBtn" class="primary-btn">+ Add Row</button><button id="addInventoryColumnBtn" class="secondary-btn">+ Add Column</button></div></div>
-        <div class="toolbar panel"><label>Project Folder<select id="inventoryProject"></select></label><label>Category Filter<select id="inventoryCategoryFilter"><option value="">All Categories</option><option>Overhead</option><option>Materials</option><option>Labor</option><option>Equipment</option><option>Subcontractor</option><option>Other</option></select></label></div>
+        <div class="page-head"><div><small>ACCOUNTING / PROCUREMENT</small><h1>Inventory / Cost Ledger</h1><p>Spreadsheet-style project ledger organized into per-project folders for Materials, Labor, Overhead, Equipment, Subcontractor and Other costs.</p></div><div class="row-actions"><button id="addInventoryRowBtn" class="primary-btn">+ Add Row</button><button id="addInventoryColumnBtn" class="secondary-btn">+ Add Column</button></div></div>
+        <div class="toolbar panel"><label>Project Folder<select id="inventoryProject"></select></label></div>
+        <div class="project-cost-folders" id="projectCostFolders">
+          <button class="cost-folder active" data-cost-folder="all">All</button>
+          <button class="cost-folder" data-cost-folder="Materials">Materials</button>
+          <button class="cost-folder" data-cost-folder="Labor">Labor</button>
+          <button class="cost-folder" data-cost-folder="Overhead">Overhead</button>
+          <button class="cost-folder" data-cost-folder="Equipment">Equipment</button>
+          <button class="cost-folder" data-cost-folder="Subcontractor">Subcontractor</button>
+          <button class="cost-folder" data-cost-folder="Other">Other</button>
+        </div>
+        <div id="costFolderSummary" class="kpi-grid"></div>
         <div id="inventoryKPIs" class="kpi-grid"></div>
         <div class="panel"><div class="sheet-toolbar"><span class="smart-badge">Spreadsheet Mode</span><span class="muted">Edit cells directly. Add rows/columns as needed.</span></div><div class="table-wrap"><table id="inventorySheet"><thead id="inventoryHead"></thead><tbody id="inventoryRows"></tbody></table></div></div>
       </section>
@@ -125,12 +144,58 @@
       </section>
 
 
-      <section id="pending" class="view">
-        <div class="page-head"><div><small>WORK COMPLETION CONTROL</small><h1>Pending Works</h1><p>Tasks remain pending until all required evidence is uploaded and completion requirements are satisfied.</p></div><button id="addPendingBtn" class="primary-btn">+ Add Pending Work</button></div>
-        <div class="toolbar panel"><label>Project Folder<select id="pendingProject"></select></label><label>Status<select id="pendingStatusFilter"><option value="">All</option><option>Pending</option><option>For Verification</option><option>Completed</option></select></label></div>
+
+      <section id="reports" class="view">
+        <div class="page-head"><div><small>AUTOMATIC REPORTING</small><h1>Project Reports</h1><p>Generate presentation-ready and print-ready reports directly from each project's live data.</p></div></div>
+
+        <div class="panel report-builder">
+          <div class="form-grid">
+            <label>Project<select id="reportProject"></select></label>
+            <label>Report Type<select id="reportType"><option>Project Presentation Report</option><option>Weekly Progress Report</option><option>Monthly Progress Report</option><option>Executive Project Summary</option></select></label>
+            <label>Template<select id="reportTemplate"></select></label>
+            <label>Report Date<input id="reportDate" type="date"></label>
+            <label>Prepared By<input id="reportPreparedBy"></label>
+            <label>Reporting Period<input id="reportPeriod" placeholder="e.g. Week 12 / September 2026"></label>
+          </div>
+
+          <div class="report-section-picker">
+            <label><input type="checkbox" class="report-section" value="overview" checked> Project Overview</label>
+            <label><input type="checkbox" class="report-section" value="schedule" checked> Schedule / S-Curve</label>
+            <label><input type="checkbox" class="report-section" value="progress" checked> Actual Progress</label>
+            <label><input type="checkbox" class="report-section" value="budget" checked> Budget Monitoring</label>
+            <label><input type="checkbox" class="report-section" value="billing" checked> Billing / Subcontractor</label>
+            <label><input type="checkbox" class="report-section" value="costs" checked> Cost Folders</label>
+            <label><input type="checkbox" class="report-section" value="risks" checked> Delay / Recovery Guidance</label>
+          </div>
+
+          <div class="dialog-actions report-actions">
+            <button id="previewReportBtn" class="secondary-btn">Preview Report</button>
+            <button id="printReportBtn" class="secondary-btn">Print / Save PDF</button>
+            <button id="downloadReportPptxBtn" class="primary-btn">Download PPTX</button>
+          </div>
+          <div class="smart-note">The report uses the selected project data automatically. If you upload a matching report template in Templates, the system will associate the generated report with that template type and filename.</div>
+        </div>
+
+        <div class="panel report-preview-panel">
+          <div class="panel-head"><h2>Report Preview</h2><span id="reportPreviewMeta" class="muted"></span></div>
+          <div id="reportPreview" class="report-preview"></div>
+        </div>
+      </section>
+      <section id="quotation" class="view">
+        <div class="page-head"><div><small>PRE-CONSTRUCTION / ESTIMATING</small><h1>For Quotation</h1><p>Separate quotation workspace for prospective projects. Upload BOQ files or attach a Google Sheets link to track estimated cost, quoted amount, running amount, and projected profit.</p></div><button id="addPendingBtn" class="primary-btn">+ Add Quotation Project</button></div>
+        <div class="toolbar panel"><label>Quotation Project<select id="pendingProject"></select></label><label>Status<select id="pendingStatusFilter"><option value="">All</option><option>For Quotation</option><option>Submitted</option><option>Awarded</option><option>Lost</option></select></label></div>
         <div id="pendingKPIs" class="kpi-grid"></div>
+        <div class="panel quotation-import-panel">
+          <div class="form-grid">
+            <label>Upload BOQ / Costing File<input id="quotationBoqFile" type="file" accept=".xlsx,.xls,.csv,.pdf"></label>
+            <label>Google Sheets Link<input id="quotationGsheetLink" placeholder="https://docs.google.com/spreadsheets/..."></label>
+            <label>Quoted Amount<input id="quotationQuotedAmount" type="number" min="0" step="0.01" placeholder="0.00"></label>
+            <label>Current Running Amount<input id="quotationRunningAmount" type="number" min="0" step="0.01" placeholder="0.00"></label>
+          </div>
+          <div class="dialog-actions"><button id="saveQuotationDataBtn" class="primary-btn">Save / Update Quotation Data</button></div>
+        </div>
         <div id="pendingAlert" class="smart-note"></div>
-        <div class="panel"><div class="table-wrap"><table><thead><tr><th>Project</th><th>Work Item</th><th>Assigned To</th><th>Target Date</th><th>Required Evidence</th><th>Uploaded Evidence</th><th>Status</th><th>Last Update</th><th>Action</th></tr></thead><tbody id="pendingRows"></tbody></table></div></div>
+        <div class="panel"><div class="table-wrap"><table><thead><tr><th>Quotation Project</th><th>Client</th><th>Estimator</th><th>Target Submission</th><th>BOQ / GSheet</th><th>Estimated Cost</th><th>Quoted Amount</th><th>Projected Profit</th><th>Status</th><th>Action</th></tr></thead><tbody id="pendingRows"></tbody></table></div></div>
       </section>
       <section id="files" class="view">
         <div class="page-head"><div><small>DOCUMENT CONTROL</small><h1>Project Files</h1><p>Store plans, contracts, billings, reports, schedules, photos, and quotations in the cloud.</p></div></div>
@@ -154,7 +219,7 @@
 
       <section id="templates" class="view">
         <div class="page-head"><div><small>TEMPLATE LIBRARY</small><h1>Document Templates</h1><p>Upload sample billing/document formats once and reuse them for generated files.</p></div></div>
-        <div class="toolbar panel"><label>Template Type<select id="templateType"><option>Billing Excel</option><option>Progress Report</option><option>Contract</option><option>VO / EOT</option><option>Quotation</option></select></label><label class="file-label">Choose template<input id="templateFile" type="file"></label><button id="uploadTemplateBtn" class="primary-btn">Upload Template</button></div>
+        <div class="toolbar panel"><label>Template Type<select id="templateType"><option>Billing Excel</option><option>Progress Report</option><option>Contract</option><option>VO / EOT</option><option>Quotation</option><option>Project Presentation Report</option><option>Weekly Progress Report</option><option>Monthly Progress Report</option></select></label><label class="file-label">Choose template<input id="templateFile" type="file"></label><button id="uploadTemplateBtn" class="primary-btn">Upload Template</button></div>
         <div class="panel">
           <div class="bulk-actions">
             <label class="select-all-wrap"><input id="templateSelectAll" type="checkbox"> Select all</label>
@@ -187,8 +252,9 @@
   <div class="form-grid">
     <label>Project<select id="bProject" required></select></label>
     <label>Billing Type<select id="bType"><option>Client Billing</option><option>Subcontractor Billing</option></select></label>
-    <label>Billing No.<input id="bNo" required placeholder="Billing No. 3"></label>
-    <label>Variation No.<input id="bVariation" placeholder="VO-01 / optional"></label>
+    <label>Record Type<select id="bRecordType"><option value="Billing">Billing</option><option value="VO">Variation Order (VO)</option></select></label>
+    <label id="bRecordNoLabel">Billing No.<input id="bNo" required placeholder="Billing No. 3"></label>
+    <input id="bVariation" type="hidden">
     <label>Gross Billing Amount<input id="bGross" type="number" min="0" step="0.01" required></label>
     <label>Accomplishment %<input id="bAccomplishment" type="number" min="0" max="100" step="0.01" value="0"></label><label>Issued / Contract Amount<input id="bIssuedAmount" type="number" min="0" step="0.01" placeholder="For subcontractor billing"></label>
     <label class="check-field"><input id="bUseRetention" type="checkbox"> Apply Retention</label>
@@ -208,16 +274,16 @@
   <dialog id="progressDialog"><form id="progressForm" class="dialog-card"><div class="dialog-head"><h2>Activity Progress</h2><button type="button" data-close="progressDialog">×</button></div><label>Activity / BOQ Scope<input id="aActivity" list="boqActivityList" required><datalist id="boqActivityList"></datalist></label><label>Weight %<input id="aWeight" type="number" min="0" max="100" step="0.01" required></label><label>Actual Accomplishment %<input id="aActual" type="number" min="0" max="100" step="0.01" required></label><div id="progressCostHint" class="smart-note"></div><div class="dialog-actions"><button type="button" class="secondary-btn" data-close="progressDialog">Cancel</button><button class="primary-btn" type="submit">Save Progress</button></div></form></dialog>
 
 
-  <dialog id="pendingDialog"><form id="pendingForm" class="dialog-card wide"><div class="dialog-head"><h2>Pending Work</h2><button type="button" data-close="pendingDialog">×</button></div><div class="form-grid">
-    <label>Project<select id="pwProject" required></select></label>
-    <label>Work Item<input id="pwWorkItem" required></label>
-    <label>Assigned To<input id="pwAssignedTo"></label>
-    <label>Target Date<input id="pwTargetDate" type="date"></label>
-    <label>Required Evidence / Data<input id="pwRequiredEvidence" placeholder="e.g. completion photo, signed checklist, test result"></label>
+  <dialog id="pendingDialog"><form id="pendingForm" class="dialog-card wide"><div class="dialog-head"><h2>Quotation Project</h2><button type="button" data-close="pendingDialog">×</button></div><div class="form-grid">
+    <label>Project / Opportunity Name<input id="pwWorkItem" required></label>
+    <label>Client<input id="pwClient"></label>
+    <label>Estimator / Assigned To<input id="pwAssignedTo"></label>
+    <label>Target Submission<input id="pwTargetDate" type="date"></label>
+    <label>Status<select id="pwStatus"><option>For Quotation</option><option>Submitted</option><option>Awarded</option><option>Lost</option></select></label>
     <label>Notes<input id="pwNotes"></label>
-  </div><div class="dialog-actions"><button type="button" class="secondary-btn" data-close="pendingDialog">Cancel</button><button class="primary-btn" type="submit">Save Pending Work</button></div></form></dialog>
+  </div><div class="dialog-actions"><button type="button" class="secondary-btn" data-close="pendingDialog">Cancel</button><button class="primary-btn" type="submit">Save Quotation Project</button></div></form></dialog>
 
-  <dialog id="pendingEvidenceDialog"><form id="pendingEvidenceForm" class="dialog-card"><div class="dialog-head"><h2>Upload Completion Evidence</h2><button type="button" data-close="pendingEvidenceDialog">×</button></div>
+  <dialog id="pendingEvidenceDialog" style="display:none"><form id="pendingEvidenceForm" class="dialog-card"><div class="dialog-head"><h2>Upload Completion Evidence</h2><button type="button" data-close="pendingEvidenceDialog">×</button></div>
     <input id="pePendingId" type="hidden">
     <label>Evidence File<input id="peFile" type="file" required></label>
     <label>Evidence Note<input id="peNote" placeholder="Optional description"></label>
@@ -249,5 +315,8 @@
   <script src="app.js?v=13"></script>
   <script src="v13.js?v=13"></script>
   <script src="v14.js?v=14"></script>
+  <script src="v14.2.js?v=142"></script>
+  <script src="v14.3.js?v=143"></script>
+  <script src="v14.4.js?v=144"></script>
 </body>
 </html>
