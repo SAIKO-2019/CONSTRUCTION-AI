@@ -223,3 +223,34 @@ html[data-density="compact"] td,
 html[data-density="compact"] th{padding:7px 9px!important}
 html[data-density="compact"] .kpi{padding:12px!important}
 html[data-density="compact"] .sidebar button{padding-top:9px!important;padding-bottom:9px!important}
+
+/* v14.8 Multi-user collaboration */
+.collaboration-dialog{max-width:980px}
+.collab-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.collab-list,.activity-feed{display:grid;gap:9px}
+.collab-person,.collab-lock,.activity-item{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+  border:1px solid #e5e7eb;border-radius:10px;padding:10px 12px;background:#fff
+}
+.collab-person-main,.activity-main{display:flex;gap:10px;align-items:flex-start}
+.collab-dot{width:9px;height:9px;border-radius:50%;background:#22c55e;margin-top:5px;flex:0 0 auto}
+.collab-dot.idle{background:#f59e0b}
+.collab-meta{font-size:11px;color:#64748b}
+.collab-lock.mine{border-color:#86efac}
+.collab-lock.other{border-color:#fca5a5;background:#fff7f7}
+.edit-locked{
+  outline:2px solid #ef4444!important;
+  background:#fff1f2!important;
+  cursor:not-allowed!important
+}
+.edit-mine{outline:2px solid #22c55e!important}
+.lock-badge{
+  display:inline-flex;align-items:center;border-radius:999px;padding:3px 8px;
+  font-size:10px;font-weight:700;background:#fee2e2;color:#991b1b
+}
+html[data-theme="dark"] .collab-person,
+html[data-theme="dark"] .collab-lock,
+html[data-theme="dark"] .activity-item{background:#111827;border-color:#334155}
+html[data-theme="dark"] .collab-lock.other{background:#27181b;border-color:#7f1d1d}
+html[data-theme="dark"] .collab-meta{color:#94a3b8}
+@media(max-width:760px){.collab-grid{grid-template-columns:1fr}}

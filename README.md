@@ -157,3 +157,25 @@ Preferences are stored in Supabase per authenticated user, so one employee's set
 
 ### Required once
 Run `v14.7-user-preferences.sql` in Supabase SQL Editor.
+
+
+## v14.8 Multi-user Collaboration Safety
+This version adds a collaboration layer on top of v14.7.
+
+### Included
+- Multiple users can remain signed in and work at the same time.
+- Live/recent user presence by module.
+- Team Activity panel.
+- Atomic record locks for shared spreadsheet-style Inventory rows.
+- Conflict warning when another user is already editing the same Inventory row.
+- Automatic lock expiry to avoid abandoned locks.
+- Inventory history snapshots before each cell update.
+- Recent activity log for Projects, Billing/VO, Progress, Inventory, and Quotation saves.
+- Logout remains per session and does not log out other users.
+- Per-user theme/profile settings from v14.7 are preserved.
+
+### Required once
+Run `v14.8-collaboration.sql` in Supabase SQL Editor after the existing v14.7 migration.
+
+### Note
+The strongest row-level edit lock is currently applied to Inventory because it is the app's direct spreadsheet-style simultaneous editing surface. Other forms are logged in the activity feed; new records do not conflict with one another.

@@ -59,6 +59,7 @@
         <div id="sidebarAvatar" class="avatar">U</div>
         <div class="sidebar-user-info"><strong id="sidebarName">User</strong><span id="sidebarRole">Editor</span></div>
         <div class="profile-actions">
+          <button id="teamActivityBtn" class="profile-btn" type="button" title="Team activity">Team</button>
           <button id="settingsBtn" class="profile-btn" type="button" title="Profile settings">Settings</button>
           <button id="logoutBtn" class="logout-btn" type="button" title="Log out">Log out</button>
         </div>
@@ -381,6 +382,34 @@
     </form>
   </dialog>
 
+
+  <dialog id="teamActivityDialog">
+    <div class="dialog-card wide collaboration-dialog">
+      <div class="dialog-head">
+        <div><h2>Team Activity</h2><small>Live user presence, edit locks, and recent changes</small></div>
+        <button type="button" data-close="teamActivityDialog">×</button>
+      </div>
+      <div class="collab-grid">
+        <section class="settings-section">
+          <h3>Online / Recently Active</h3>
+          <div id="collabPresence" class="collab-list"><div class="muted">Loading…</div></div>
+        </section>
+        <section class="settings-section">
+          <h3>Records Being Edited</h3>
+          <div id="collabLocks" class="collab-list"><div class="muted">Loading…</div></div>
+        </section>
+      </div>
+      <section class="settings-section">
+        <div class="panel-head"><h3>Recent Activity</h3><button id="refreshTeamActivityBtn" class="secondary-btn" type="button">Refresh</button></div>
+        <div id="collabActivity" class="activity-feed"><div class="muted">Loading…</div></div>
+      </section>
+      <div class="dialog-actions">
+        <button type="button" class="secondary-btn" data-close="teamActivityDialog">Close</button>
+      </div>
+    </div>
+  </dialog>
+
   <script src="v14.7.js?v=147"></script>
+  <script src="v14.8.js?v=148"></script>
 </body>
 </html>
