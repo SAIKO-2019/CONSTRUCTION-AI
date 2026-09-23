@@ -470,3 +470,90 @@ html[data-theme="summer"] .kpi{box-shadow:0 14px 38px rgba(14,111,118,.08)}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 @media(max-width:980px){.theme-preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.settings-layout{grid-template-columns:1fr}.settings-layout .account-card,.settings-layout .appearance-card,.settings-layout .prefs-card{grid-column:auto}}
 @media(max-width:640px){.theme-preview-grid{grid-template-columns:1fr 1fr}.settings-dialog-card>.dialog-head,.settings-layout,.settings-dialog-card>.dialog-actions{padding-left:16px;padding-right:16px}.profile-actions{gap:5px}.profile-icon-btn{width:34px;height:34px}}
+
+
+/* v15.1 dialog hotfix - no drag bar + clickable actions */
+.team-activity-shell{width:min(1100px,96vw)!important;max-width:96vw;max-height:92vh;overflow:hidden;border-radius:24px!important;background:transparent!important;padding:0!important}
+.team-activity-shell::backdrop{background:rgba(6,12,24,.64);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.team-activity-shell .collaboration-dialog-card{width:100%!important;max-width:none!important;max-height:92vh;overflow-y:auto;overflow-x:hidden;padding:0;background:var(--surface);color:var(--text);border-radius:24px;box-shadow:0 40px 120px rgba(0,0,0,.28);position:relative;isolation:isolate}
+.team-activity-shell .collaboration-dialog-card>.dialog-head{position:sticky;top:0;z-index:5;padding:22px 26px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.team-activity-shell .collaboration-dialog-card>.dialog-head button{width:38px;height:38px;border-radius:12px;background:var(--surface-soft);color:var(--text);font-size:22px;display:grid;place-items:center;border:1px solid var(--line);position:relative;z-index:8;pointer-events:auto}
+.team-activity-shell .collab-grid{padding:22px 26px 8px;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+.team-activity-shell .settings-section{min-width:0;margin:0 26px 14px;border:1px solid var(--line);border-radius:20px;background:var(--surface);padding:18px;box-shadow:0 8px 28px rgba(15,23,42,.05)}
+.team-activity-shell .collab-grid .settings-section{margin:0}
+.team-activity-shell .panel-head{padding:0 0 12px;margin-bottom:12px;border-bottom:1px solid var(--line);background:transparent;border-radius:0}
+.team-activity-shell .dialog-actions{position:sticky;bottom:0;z-index:5;margin:0;padding:16px 26px 20px;border-top:1px solid var(--line);background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.team-activity-shell .dialog-actions button,.team-activity-shell #refreshTeamActivityBtn{position:relative;z-index:8;pointer-events:auto}
+.team-activity-shell .collaboration-dialog-card,.team-activity-shell .collab-grid,.team-activity-shell .settings-section,.team-activity-shell .panel-head,.team-activity-shell .activity-feed{min-width:0}
+.team-activity-shell .collaboration-dialog-card *{max-width:100%}
+.team-activity-shell .collaboration-dialog-card::-webkit-scrollbar{width:8px;height:0}
+.team-activity-shell .collaboration-dialog-card::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--muted) 35%,transparent);border-radius:999px}
+.team-activity-shell .collaboration-dialog-card{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--muted) 35%,transparent) transparent}
+@media(max-width:760px){.team-activity-shell .collab-grid{grid-template-columns:1fr;padding:18px 16px 8px}.team-activity-shell .settings-section{margin:0 16px 12px}.team-activity-shell .collaboration-dialog-card>.dialog-head,.team-activity-shell .dialog-actions{padding-left:16px;padding-right:16px}}
+
+/* =========================================================
+   v15.2 SETTINGS + LIVE TEAM SIDE PANEL
+   ========================================================= */
+.settings-dialog-shell{
+  width:min(1460px,97vw)!important;
+  max-width:97vw!important;
+  max-height:94vh!important;
+  overflow:hidden!important;
+}
+.settings-dialog-card{
+  width:100%!important;
+  max-width:none!important;
+  height:min(880px,92vh)!important;
+  max-height:92vh!important;
+  overflow:hidden!important;
+  display:grid!important;
+  grid-template-rows:auto minmax(0,1fr) auto!important;
+}
+.settings-workspace{min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:18px;padding:18px 22px 10px;overflow:hidden}
+.settings-main-grid{min-width:0;min-height:0;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.35fr);grid-template-rows:auto minmax(0,1fr);gap:16px;overflow:hidden}
+.settings-main-grid .account-card{grid-column:1;grid-row:1}
+.settings-main-grid .prefs-card{grid-column:1;grid-row:2}
+.settings-main-grid .appearance-card{grid-column:2;grid-row:1 / span 2}
+.settings-main-grid .settings-section{margin:0!important;min-width:0;overflow:hidden}
+.settings-section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.settings-section-head h3{margin:0 0 4px!important;font-size:22px!important}
+.settings-section-head .settings-subtitle{margin:0!important}
+.settings-badge{font-size:9px;font-weight:900;letter-spacing:.12em;padding:6px 8px;border-radius:999px;background:color-mix(in srgb,var(--blue) 10%,var(--surface-soft));color:var(--blue);border:1px solid color-mix(in srgb,var(--blue) 18%,var(--line))}
+.account-fields{grid-template-columns:1fr!important;gap:9px!important}
+.account-fields label{gap:4px}
+.account-fields input{padding:9px 11px}
+.compact-toggles{gap:8px!important}
+.compact-toggles .setting-toggle{padding:9px 10px;border:1px solid var(--line);border-radius:12px;background:var(--surface-soft)}
+.appearance-card .theme-preview-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:8px 0 12px}
+.appearance-card .theme-preview{padding:8px;border-radius:14px}
+.appearance-card .theme-swatch{height:44px}
+.appearance-card .appearance-controls{gap:10px}
+.settings-live-panel{min-width:0;min-height:0;overflow:hidden;border:1px solid color-mix(in srgb,var(--blue) 16%,var(--line));border-radius:22px;background:linear-gradient(180deg,color-mix(in srgb,var(--surface) 96%,var(--blue) 4%),var(--surface));box-shadow:0 18px 46px rgba(15,23,42,.07);padding:16px;display:grid;grid-template-rows:auto minmax(100px,1fr) auto auto auto minmax(86px,.8fr);gap:10px}
+.live-panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.live-kicker{display:block;font-size:9px;font-weight:900;letter-spacing:.14em;color:var(--blue);margin-bottom:3px}
+.live-panel-head h3{margin:0;font-size:23px;letter-spacing:-.03em}
+.live-refresh-btn{width:36px;height:36px;border-radius:11px;border:1px solid var(--line);background:var(--surface);color:var(--text);display:grid;place-items:center;font-size:18px;font-weight:900;box-shadow:0 8px 18px rgba(15,23,42,.06)}
+.live-refresh-btn:hover{transform:translateY(-1px)}
+.settings-online-list,.settings-editing-list,.settings-activity-mini{min-height:0;overflow-y:auto;overflow-x:hidden;display:grid;align-content:start;gap:8px;padding-right:2px}
+.settings-online-list::-webkit-scrollbar,.settings-editing-list::-webkit-scrollbar,.settings-activity-mini::-webkit-scrollbar{width:6px;height:0}
+.settings-online-list::-webkit-scrollbar-thumb,.settings-editing-list::-webkit-scrollbar-thumb,.settings-activity-mini::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--muted) 28%,transparent);border-radius:999px}
+.settings-online-card{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.settings-online-avatar{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:12px;font-weight:900;color:#fff;background:linear-gradient(135deg,var(--blue),color-mix(in srgb,var(--blue) 60%,#7c3aed 40%));flex:0 0 auto;position:relative}
+.settings-online-avatar::after{content:'';position:absolute;right:-2px;bottom:-2px;width:9px;height:9px;border-radius:50%;background:#22c55e;border:2px solid var(--surface)}
+.settings-online-avatar.idle::after{background:#f59e0b}
+.settings-online-main{min-width:0;flex:1}
+.settings-online-main strong{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.settings-online-main span{display:block;font-size:10px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.settings-you-pill{font-size:9px;font-weight:900;padding:4px 6px;border-radius:999px;background:color-mix(in srgb,var(--blue) 10%,var(--surface));color:var(--blue)}
+.live-panel-divider{height:1px;background:var(--line)}
+.live-panel-section-title{display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:900;letter-spacing:.03em;text-transform:uppercase;color:var(--muted)}
+.mini-count{min-width:22px;height:22px;border-radius:999px;display:grid;place-items:center;background:var(--surface-soft);color:var(--text);font-size:10px;border:1px solid var(--line)}
+.settings-edit-card,.settings-activity-row{padding:8px 9px;border:1px solid var(--line);border-radius:12px;background:var(--surface);min-width:0}
+.settings-edit-card strong,.settings-activity-row strong{font-size:11px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.settings-edit-card span,.settings-activity-row span{font-size:9px;color:var(--muted);display:block;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.settings-empty-state{padding:12px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);font-size:11px;text-align:center;background:var(--surface-soft)}
+.settings-dialog-shell,.settings-dialog-card,.settings-workspace,.settings-main-grid,.settings-live-panel,.settings-section,.theme-preview-grid{overflow-x:hidden!important;min-width:0!important}
+.settings-dialog-card *{min-width:0;box-sizing:border-box}
+.settings-dialog-shell::-webkit-scrollbar,.settings-dialog-card::-webkit-scrollbar{height:0!important;width:0!important}
+@media(max-width:1180px){.settings-workspace{grid-template-columns:minmax(0,1fr) 290px}.settings-main-grid{grid-template-columns:1fr}.settings-main-grid .account-card,.settings-main-grid .prefs-card,.settings-main-grid .appearance-card{grid-column:1;grid-row:auto}.settings-main-grid{overflow-y:auto;padding-right:4px}.appearance-card .theme-preview-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:860px){.settings-dialog-card{height:92vh!important;overflow-y:auto!important}.settings-workspace{grid-template-columns:1fr;overflow:visible}.settings-main-grid{overflow:visible}.settings-live-panel{min-height:420px}}

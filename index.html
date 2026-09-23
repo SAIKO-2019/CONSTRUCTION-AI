@@ -336,56 +336,71 @@
         <button type="button" data-close="settingsDialog">×</button>
       </div>
 
-      <div class="settings-layout">
-        <section class="settings-section feature-card account-card">
-          <h3>Account</h3>
-          <div class="form-grid">
-            <label>Display Name<input id="settingsDisplayName" type="text"></label>
-            <label>Email<input id="settingsEmail" type="email" readonly></label>
-            <label>Role<input id="settingsRole" type="text" readonly></label>
-          </div>
-        </section>
+      <div class="settings-workspace">
+        <div class="settings-main-grid">
+          <section class="settings-section feature-card account-card">
+            <div class="settings-section-head"><div><h3>Account</h3><p class="settings-subtitle">Your personal profile and access information.</p></div><span class="settings-badge">PROFILE</span></div>
+            <div class="form-grid account-fields">
+              <label>Display Name<input id="settingsDisplayName" type="text"></label>
+              <label>Email<input id="settingsEmail" type="email" readonly></label>
+              <label>Role<input id="settingsRole" type="text" readonly></label>
+            </div>
+          </section>
 
-        <section class="settings-section feature-card appearance-card">
-          <h3>Appearance</h3>
-          <p class="settings-subtitle">Choose a personal look per profile. Theme preference is saved separately for each account.</p>
-          <div id="themePreviewGrid" class="theme-preview-grid" aria-label="Theme presets">
-            <button type="button" class="theme-preview" data-theme-choice="light"><span class="theme-swatch sw-light"></span><strong>Light Clean</strong><small>Sharp & professional</small></button>
-            <button type="button" class="theme-preview" data-theme-choice="dark"><span class="theme-swatch sw-dark"></span><strong>Dark Pro</strong><small>Focused night mode</small></button>
-            <button type="button" class="theme-preview" data-theme-choice="midnight"><span class="theme-swatch sw-midnight"></span><strong>Midnight Steel</strong><small>Executive tech</small></button>
-            <button type="button" class="theme-preview" data-theme-choice="pastel"><span class="theme-swatch sw-pastel"></span><strong>Pastel Glow</strong><small>Soft & elegant</small></button>
-            <button type="button" class="theme-preview" data-theme-choice="cute"><span class="theme-swatch sw-cute"></span><strong>Cute Candy</strong><small>Playful & bright</small></button>
-            <button type="button" class="theme-preview" data-theme-choice="summer"><span class="theme-swatch sw-summer"></span><strong>Summer Cool</strong><small>Fresh tropical</small></button>
-          </div>
-          <div class="form-grid appearance-controls">
-            <label>Theme
-              <select id="settingsTheme">
-                <option value="system">System Default</option>
-                <option value="light">Light Clean</option>
-                <option value="dark">Dark Pro</option>
-                <option value="midnight">Midnight Steel</option>
-                <option value="pastel">Pastel Glow</option>
-                <option value="cute">Cute Candy</option>
-                <option value="summer">Summer Cool</option>
-              </select>
-            </label>
-            <label>Density
-              <select id="settingsDensity">
-                <option value="comfortable">Comfortable</option>
-                <option value="compact">Compact</option>
-              </select>
-            </label>
-          </div>
-        </section>
+          <section class="settings-section feature-card appearance-card">
+            <div class="settings-section-head"><div><h3>Appearance</h3><p class="settings-subtitle">Choose a look saved only to your profile.</p></div><span class="settings-badge">THEME</span></div>
+            <div id="themePreviewGrid" class="theme-preview-grid" aria-label="Theme presets">
+              <button type="button" class="theme-preview" data-theme-choice="light"><span class="theme-swatch sw-light"></span><strong>Light Clean</strong><small>Sharp & professional</small></button>
+              <button type="button" class="theme-preview" data-theme-choice="dark"><span class="theme-swatch sw-dark"></span><strong>Dark Pro</strong><small>Focused night mode</small></button>
+              <button type="button" class="theme-preview" data-theme-choice="midnight"><span class="theme-swatch sw-midnight"></span><strong>Midnight Steel</strong><small>Executive tech</small></button>
+              <button type="button" class="theme-preview" data-theme-choice="pastel"><span class="theme-swatch sw-pastel"></span><strong>Pastel Glow</strong><small>Soft & elegant</small></button>
+              <button type="button" class="theme-preview" data-theme-choice="cute"><span class="theme-swatch sw-cute"></span><strong>Cute Candy</strong><small>Playful & bright</small></button>
+              <button type="button" class="theme-preview" data-theme-choice="summer"><span class="theme-swatch sw-summer"></span><strong>Summer Cool</strong><small>Fresh tropical</small></button>
+            </div>
+            <div class="form-grid appearance-controls">
+              <label>Theme
+                <select id="settingsTheme">
+                  <option value="system">System Default</option>
+                  <option value="light">Light Clean</option>
+                  <option value="dark">Dark Pro</option>
+                  <option value="midnight">Midnight Steel</option>
+                  <option value="pastel">Pastel Glow</option>
+                  <option value="cute">Cute Candy</option>
+                  <option value="summer">Summer Cool</option>
+                </select>
+              </label>
+              <label>Density
+                <select id="settingsDensity">
+                  <option value="comfortable">Comfortable</option>
+                  <option value="compact">Compact</option>
+                </select>
+              </label>
+            </div>
+          </section>
 
-        <section class="settings-section feature-card prefs-card">
-          <h3>Preferences</h3>
-          <div class="settings-toggle-list">
-            <label class="setting-toggle"><input id="settingsRememberProject" type="checkbox"><span>Remember last selected project</span></label>
-            <label class="setting-toggle"><input id="settingsConfirmDelete" type="checkbox" checked><span>Ask for confirmation before delete</span></label>
-            <label class="setting-toggle"><input id="settingsDailyPending" type="checkbox" checked><span>Show daily pending-work reminders</span></label>
+          <section class="settings-section feature-card prefs-card">
+            <div class="settings-section-head"><div><h3>Preferences</h3><p class="settings-subtitle">Control how your workspace behaves.</p></div><span class="settings-badge">PERSONAL</span></div>
+            <div class="settings-toggle-list compact-toggles">
+              <label class="setting-toggle"><input id="settingsRememberProject" type="checkbox"><span>Remember last selected project</span></label>
+              <label class="setting-toggle"><input id="settingsConfirmDelete" type="checkbox" checked><span>Ask for confirmation before delete</span></label>
+              <label class="setting-toggle"><input id="settingsDailyPending" type="checkbox" checked><span>Show daily pending-work reminders</span></label>
+            </div>
+          </section>
+        </div>
+
+        <aside class="settings-live-panel" aria-label="Live team status">
+          <div class="live-panel-head">
+            <div><span class="live-kicker">LIVE WORKSPACE</span><h3>Who's Online</h3></div>
+            <button id="refreshSettingsTeamBtn" type="button" class="live-refresh-btn" title="Refresh team status">↻</button>
           </div>
-        </section>
+          <div id="settingsOnlineUsers" class="settings-online-list"><div class="muted">Loading team status…</div></div>
+          <div class="live-panel-divider"></div>
+          <div class="live-panel-section-title"><span>Editing now</span><span id="settingsEditingCount" class="mini-count">0</span></div>
+          <div id="settingsEditingNow" class="settings-editing-list"><div class="muted">No records are being edited.</div></div>
+          <div class="live-panel-divider"></div>
+          <div class="live-panel-section-title"><span>Recent activity</span></div>
+          <div id="settingsActivityMini" class="settings-activity-mini"><div class="muted">Loading activity…</div></div>
+        </aside>
       </div>
 
       <div class="dialog-actions">
@@ -396,8 +411,8 @@
   </dialog>
 
 
-  <dialog id="teamActivityDialog">
-    <div class="dialog-card wide collaboration-dialog">
+  <dialog id="teamActivityDialog" class="team-activity-shell">
+    <div class="dialog-card collaboration-dialog collaboration-dialog-card">
       <div class="dialog-head">
         <div><h2>Team Activity</h2><small>Live user presence, edit locks, and recent changes</small></div>
         <button type="button" data-close="teamActivityDialog">×</button>
@@ -425,5 +440,6 @@
   <script src="v14.7.js?v=147"></script>
   <script src="v14.8.js?v=148"></script>
   <script src="v15.js?v=150"></script>
+  <script src="v15.2.js?v=152"></script>
 </body>
 </html>
