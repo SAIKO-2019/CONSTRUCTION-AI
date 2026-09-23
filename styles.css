@@ -557,3 +557,117 @@ html[data-theme="summer"] .kpi{box-shadow:0 14px 38px rgba(14,111,118,.08)}
 .settings-dialog-shell::-webkit-scrollbar,.settings-dialog-card::-webkit-scrollbar{height:0!important;width:0!important}
 @media(max-width:1180px){.settings-workspace{grid-template-columns:minmax(0,1fr) 290px}.settings-main-grid{grid-template-columns:1fr}.settings-main-grid .account-card,.settings-main-grid .prefs-card,.settings-main-grid .appearance-card{grid-column:1;grid-row:auto}.settings-main-grid{overflow-y:auto;padding-right:4px}.appearance-card .theme-preview-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:860px){.settings-dialog-card{height:92vh!important;overflow-y:auto!important}.settings-workspace{grid-template-columns:1fr;overflow:visible}.settings-main-grid{overflow:visible}.settings-live-panel{min-height:420px}}
+
+
+/* =========================================================
+   v15.3 readable themes + visible online avatars + no drag bars
+   ========================================================= */
+html[data-theme="light"],html:not([data-theme]){
+  --text:#14263b;--muted:#60758d;--heading:#0d1f34;
+}
+html[data-theme="dark"]{
+  --text:#edf3fb;--muted:#a6b6ca;--heading:#ffffff;
+}
+html[data-theme="midnight"]{
+  --text:#edf4ff;--muted:#a7bbd4;--heading:#ffffff;
+}
+html[data-theme="pastel"]{
+  --text:#352c45;--muted:#6e6186;--heading:#2b213a;
+  --surface:#fff9fd;--surface-soft:#fff2f8;--topbar:#fff9fc;
+}
+html[data-theme="cute"]{
+  --text:#4e3142;--muted:#8e6c7d;--heading:#3d2433;
+  --surface:#fffdfb;--surface-soft:#fff3f0;--topbar:#fffaf7;
+}
+html[data-theme="summer"]{
+  --text:#143845;--muted:#567881;--heading:#0e2730;
+  --surface:#fcfffe;--surface-soft:#eefaf7;--topbar:#f8fffd;
+}
+html[data-theme] body,
+html[data-theme] .main,
+html[data-theme] .view,
+html[data-theme] .panel,
+html[data-theme] .kpi,
+html[data-theme] .dialog-card,
+html[data-theme] .settings-section.feature-card,
+html[data-theme] .folder-card,
+html[data-theme] .report-page,
+html[data-theme] .schedule-health-card,
+html[data-theme] .summary-cards>div{color:var(--text)!important}
+html[data-theme] h1,
+html[data-theme] h2,
+html[data-theme] h3,
+html[data-theme] h4,
+html[data-theme] .panel-head h2,
+html[data-theme] .dialog-head h2,
+html[data-theme] .report-title h1,
+html[data-theme] .settings-section-head h3,
+html[data-theme] .live-panel-head h3,
+html[data-theme] .live-panel-section-title,
+html[data-theme] strong{color:var(--heading)!important}
+html[data-theme] p,
+html[data-theme] .muted,
+html[data-theme] small,
+html[data-theme] .kpi span,
+html[data-theme] .settings-subtitle,
+html[data-theme] .collab-meta,
+html[data-theme] .selection-count,
+html[data-theme] .page-head p,
+html[data-theme] label,
+html[data-theme] th{color:var(--muted)!important}
+html[data-theme] td,
+html[data-theme] .list-item,
+html[data-theme] .settings-online-main strong,
+html[data-theme] .settings-edit-card strong,
+html[data-theme] .settings-activity-row strong{color:var(--text)!important}
+html[data-theme] input,html[data-theme] select,html[data-theme] textarea{color:var(--text)!important;background:var(--surface)!important}
+html[data-theme] .sidebar-user strong,html[data-theme] .sidebar-user span,html[data-theme] nav button,html[data-theme] .workspace-project{color:rgba(255,255,255,.9)}
+html[data-theme] nav button.active,html[data-theme] nav button:hover{color:#fff}
+html[data-theme] .theme-preview small{color:var(--muted)!important}
+html[data-theme] .theme-preview strong{color:var(--heading)!important}
+
+/* top online avatars visible at once */
+.top-presence-rail{display:flex;align-items:center;gap:8px;min-width:140px;max-width:300px}
+.top-presence-rail .presence-avatars{display:flex;align-items:center;gap:6px;min-width:0;flex-wrap:nowrap}
+.presence-avatar{width:31px;height:31px;border-radius:11px;display:grid;place-items:center;font-size:11px;font-weight:900;line-height:1;color:#fff;background:linear-gradient(135deg,var(--blue),color-mix(in srgb,var(--blue) 60%,#7c3aed 40%));box-shadow:0 8px 20px rgba(15,23,42,.15);position:relative;border:2px solid var(--topbar);cursor:pointer;flex:0 0 auto}
+.presence-avatar::after{content:'';position:absolute;right:-2px;bottom:-2px;width:10px;height:10px;border-radius:50%;background:#22c55e;border:2px solid var(--topbar)}
+.presence-avatar.idle::after{background:#f59e0b}
+.presence-avatar.more{background:var(--surface);color:var(--text);border:1px solid var(--line);box-shadow:none}
+.presence-empty{font-size:11px;color:var(--muted);white-space:nowrap}
+.presence-rail-label{font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-right:2px;white-space:nowrap}
+
+/* dialog sizing + no horizontal drag */
+#settingsDialog,#teamActivityDialog{width:min(1440px,98vw)!important;max-width:98vw!important;max-height:94vh!important;overflow:hidden!important;padding:0!important;border-radius:24px!important;background:transparent!important}
+#settingsDialog .settings-dialog-card,#teamActivityDialog .collaboration-dialog-card{width:100%!important;max-width:none!important;height:min(90vh,900px)!important;max-height:90vh!important;overflow-x:clip!important;overflow-y:auto!important;display:grid!important;grid-template-rows:auto minmax(0,1fr) auto!important;scrollbar-gutter:stable both-edges}
+#settingsDialog .settings-workspace{grid-template-columns:minmax(0,1fr) 320px!important;min-height:0!important;overflow:hidden!important}
+#settingsDialog .settings-main-grid{grid-template-columns:minmax(0,.95fr) minmax(0,1.2fr)!important;grid-template-rows:auto minmax(0,1fr)!important;min-height:0!important;overflow:auto!important;padding-right:4px}
+#settingsDialog .settings-live-panel{min-height:0!important;overflow:hidden!important}
+#settingsDialog .settings-online-list,#settingsDialog .settings-editing-list,#settingsDialog .settings-activity-mini{overflow-y:auto!important;overflow-x:hidden!important}
+#teamActivityDialog .collab-grid{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:18px!important;padding:22px 26px 8px!important;min-width:0!important;overflow:hidden!important}
+#teamActivityDialog .settings-section{margin:0 26px 14px!important;min-width:0!important;overflow:hidden!important}
+#teamActivityDialog .collab-grid .settings-section{margin:0!important}
+#teamActivityDialog .collab-list,#teamActivityDialog .activity-feed{display:grid!important;gap:9px!important;overflow-y:auto!important;overflow-x:hidden!important;min-height:0!important}
+#settingsDialog *,#teamActivityDialog *{box-sizing:border-box;min-width:0!important}
+#settingsDialog::-webkit-scrollbar:horizontal,#teamActivityDialog::-webkit-scrollbar:horizontal,
+#settingsDialog *::-webkit-scrollbar:horizontal,#teamActivityDialog *::-webkit-scrollbar:horizontal{height:0!important}
+#settingsDialog .settings-dialog-card::-webkit-scrollbar,#teamActivityDialog .collaboration-dialog-card::-webkit-scrollbar{width:8px;height:0!important}
+#settingsDialog .settings-dialog-card::-webkit-scrollbar-thumb,#teamActivityDialog .collaboration-dialog-card::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--muted) 35%,transparent);border-radius:999px}
+
+/* better cards inside live team dialog */
+#teamActivityDialog .collab-person,#teamActivityDialog .collab-lock,#teamActivityDialog .activity-item{border:1px solid var(--line)!important;border-radius:14px!important;background:var(--surface)!important;padding:12px 13px!important}
+#teamActivityDialog .collab-person strong,#teamActivityDialog .collab-lock strong,#teamActivityDialog .activity-item strong{color:var(--heading)!important}
+#teamActivityDialog .collab-meta{color:var(--muted)!important}
+#teamActivityDialog .dialog-head h2,#teamActivityDialog .settings-section h3{color:var(--heading)!important}
+#teamActivityDialog .dialog-head button,#settingsDialog .dialog-head button{border:1px solid var(--line)!important}
+
+@media(max-width:1120px){
+  #settingsDialog .settings-workspace{grid-template-columns:1fr!important}
+  #settingsDialog .settings-main-grid{grid-template-columns:1fr!important}
+  #settingsDialog .settings-main-grid .account-card,#settingsDialog .settings-main-grid .prefs-card,#settingsDialog .settings-main-grid .appearance-card{grid-column:1;grid-row:auto}
+  #settingsDialog .settings-live-panel{min-height:380px}
+}
+@media(max-width:900px){
+  .top-presence-rail{display:none}
+  #teamActivityDialog .collab-grid{grid-template-columns:1fr!important;padding:18px 16px 8px!important}
+  #teamActivityDialog .settings-section{margin:0 16px 12px!important}
+}

@@ -206,10 +206,10 @@ Theme choice is saved to the existing `user_preferences.theme` field, so no new 
 
 Hotfix v15.1: fixed Team Activity modal button clicks and removed the horizontal drag/scroll bar from the collaboration dialog.
 
-## v15.2 Settings + Live Team Sidebar
-- Settings opens as a wide desktop workspace so all profile controls are visible together.
-- Live team panel is always visible on the right side of Settings.
-- Shows recently active users, what module they are in, records currently being edited, and recent activity.
-- Team panel refreshes automatically every 30 seconds and has a manual refresh button.
-- Horizontal drag/scroll bar is removed from the Settings workspace.
-- No new SQL is required beyond the existing v14.8 collaboration migration.
+
+## v15.3 Readability + Presence Fix
+- removes horizontal drag/scroll in Settings and Team Activity dialogs
+- forces the dialogs to open wide and full workspace style
+- strengthens text contrast across all themes, especially pastel/cute/summer
+- adds always-visible online user icons in the top bar
+- clicking an online icon opens the Team Activity dialog
