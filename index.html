@@ -2,249 +2,128 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SAIKO Construction AI</title>
-  <meta name="description" content="Construction management and AI assistant prototype for SAIKO Builders Inc." />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-
-  <div id="loginGate" class="login-gate">
-    <div class="login-card">
-      <div class="login-brand">
-        <div class="brand-mark">S</div>
-        <div><div class="brand-name">SAIKO</div><div class="brand-sub">CONSTRUCTION AI</div></div>
-      </div>
-      <div class="auth-tabs">
-        <button id="showLoginBtn" class="auth-tab active" type="button">Sign in</button>
-        <button id="showSignupBtn" class="auth-tab" type="button">Sign up</button>
-      </div>
+  <div id="loginGate" class="auth-overlay">
+    <div class="auth-card">
+      <div class="brand-lockup"><div class="brand-mark">S</div><div><strong>SAIKO</strong><span>CONSTRUCTION AI</span></div></div>
+      <div class="auth-tabs"><button id="showLoginBtn" class="active">Sign in</button><button id="showSignupBtn">Sign up</button></div>
       <div id="loginPane">
-        <h1>Sign in</h1>
-        <p>Use your SAIKO Construction AI account.</p>
-        <form id="loginForm">
-          <label>Email<input id="loginEmail" type="email" autocomplete="username" required></label>
-          <label>Password<input id="loginPassword" type="password" autocomplete="current-password" required></label>
+        <h1>Welcome back</h1><p>Sign in to manage projects, billing, schedules, files, and AI guidance.</p>
+        <form id="loginForm" class="stack-form">
+          <label>Email<input id="loginEmail" type="email" required></label>
+          <label>Password<input id="loginPassword" type="password" required></label>
           <button class="primary-btn" type="submit">Sign in</button>
-          <button id="forgotPasswordBtn" class="text-btn" type="button">Forgot password?</button>
-          <div id="loginError" class="login-error"></div>
         </form>
+        <button id="forgotPasswordBtn" class="text-btn">Forgot password?</button>
+        <div id="loginError" class="form-msg"></div>
       </div>
-      <div id="signupPane" class="auth-pane-hidden">
-        <h1>Create account</h1>
-        <p>Register your company account. Access can be managed by an administrator.</p>
-        <form id="signupForm">
-          <label>Full name<input id="signupName" type="text" required></label>
-          <label>Email<input id="signupEmail" type="email" autocomplete="email" required></label>
-          <label>Department<select id="signupDepartment" required><option value="">Select department</option><option>Management</option><option>Quantity Surveying</option><option>Accounting</option><option>Engineering</option><option>Procurement</option><option>Operations</option><option>Other</option></select></label>
-          <label>Password<input id="signupPassword" type="password" minlength="8" autocomplete="new-password" required></label>
-          <label>Confirm password<input id="signupPassword2" type="password" minlength="8" autocomplete="new-password" required></label>
+      <div id="signupPane" class="hidden">
+        <h1>Create account</h1><p>New company accounts can edit operational data. Admins can deactivate access anytime.</p>
+        <form id="signupForm" class="stack-form">
+          <label>Full name<input id="signupName" required></label>
+          <label>Email<input id="signupEmail" type="email" required></label>
+          <label>Department<select id="signupDepartment"><option>Quantity Surveying</option><option>Engineering</option><option>Accounting</option><option>Procurement</option><option>Management</option><option>Other</option></select></label>
+          <label>Password<input id="signupPassword" type="password" minlength="6" required></label>
+          <label>Confirm password<input id="signupPassword2" type="password" minlength="6" required></label>
           <button class="primary-btn" type="submit">Create account</button>
-          <div id="signupError" class="login-error"></div>
         </form>
+        <div id="signupError" class="form-msg"></div>
       </div>
     </div>
   </div>
+
   <div class="app-shell">
     <aside class="sidebar">
-      <div class="brand">
-        <div class="brand-mark">S</div>
-        <div>
-          <div class="brand-name">SAIKO</div>
-          <div class="brand-sub">BUILDERS INC.</div>
-        </div>
-      </div>
-
-      <nav class="nav" id="nav">
-        <button class="nav-item active" data-view="dashboard"><span>▦</span>Dashboard</button>
-        <button class="nav-item" data-view="projects"><span>▣</span>Projects</button>
-        <button class="nav-item admin-only" data-view="users" style="display:none"><span>👥</span>User Management</button>
-        <button class="nav-item" data-view="assistant"><span>✦</span>AI Assistant</button>
-        <button class="nav-item" data-view="estimate"><span>▤</span>Estimate / BOQ</button>
-        <button class="nav-item" data-view="cost"><span>▥</span>Cost Database</button>
-        <button class="nav-item" data-view="contracts"><span>▧</span>Contracts & Documents</button>
-        <button class="nav-item" data-view="billing"><span>₱</span>Billing & Payments</button>
-        <button class="nav-item" data-view="vo"><span>↻</span>Variation Orders / EOT</button>
-        <button class="nav-item" data-view="procurement"><span>🛒</span>Procurement</button>
-        <button class="nav-item" data-view="monitoring"><span>▰</span>Project Monitoring</button>
+      <div class="brand"><div class="brand-mark">S</div><div><strong>SAIKO</strong><span>BUILDERS INC.</span></div></div>
+      <nav id="sideNav">
+        <button data-view="dashboard" class="active">▦ Dashboard</button>
+        <button data-view="projects">▣ Projects</button>
+        <button data-view="billing">₱ Billing & Payments</button>
+        <button data-view="schedule">◫ Schedule Tracker</button>
+        <button data-view="progress">◩ Actual Progress</button>
+        <button data-view="files">▤ Project Files</button>
+        <button data-view="templates">▧ Templates</button>
+        <button data-view="assistant">✦ Construction AI</button>
+        <button data-view="users" class="admin-only">⚙ User Management</button>
       </nav>
-
-      <div class="sidebar-user">
-        <div class="avatar" id="sidebarAvatar">A</div>
-        <div class="sidebar-user-copy">
-          <strong id="sidebarName">Signed in user</strong>
-          <span id="sidebarRole">User</span>
-        </div>
-        <button id="logoutBtn" class="logout-btn" title="Sign out">↪</button>
-      </div>
+      <div class="sidebar-user"><div id="sidebarAvatar" class="avatar">U</div><div><strong id="sidebarName">User</strong><span id="sidebarRole">Editor</span></div><button id="logoutBtn">↪</button></div>
     </aside>
 
     <main class="main">
-      <header class="topbar">
-        <div class="search-wrap">
-          <span class="search-icon">⌕</span>
-          <input id="globalSearch" placeholder="Search projects, documents, or ask Construction AI..." />
-        </div>
-        <div class="top-actions">
-          <button class="icon-btn" title="Notifications">🔔<span class="badge">3</span></button>
-          <div class="mini-avatar">JK</div>
-        </div>
-      </header>
+      <header class="topbar"><input id="globalSearch" placeholder="Search projects, billing, schedules, files..."/><div class="mini-avatar">U</div></header>
 
       <section id="dashboard" class="view active-view">
-        <div class="hero">
-          <div class="hero-overlay"></div>
-          <div class="hero-content">
-            <small>WELCOME BACK, JOHN KARL</small>
-            <h1>Your Construction<br/>Assistant, Always Ready.</h1>
-            <p>Estimate. Plan. Build. Document. All in one place.</p>
-          </div>
-          <div class="hero-quote">“Better planning.<br/>Smoother projects.<br/>Stronger results.”<span>— SAIKO BUILDERS INC.</span></div>
+        <div class="page-head"><div><small>CONSTRUCTION MANAGEMENT</small><h1>Dashboard</h1><p>Live overview of projects, billing, schedule, progress, and files.</p></div></div>
+        <div id="kpiGrid" class="kpi-grid"></div>
+        <div class="dashboard-grid">
+          <div class="panel"><div class="panel-head"><h2>Active Projects</h2><button class="text-btn" data-go="projects">Manage</button></div><div class="table-wrap"><table><thead><tr><th>Project</th><th>Status</th><th>Actual</th><th>Planned</th><th>Variance</th></tr></thead><tbody id="dashProjects"></tbody></table></div></div>
+          <div class="panel"><div class="panel-head"><h2>Today / Next Agenda</h2><button class="text-btn" data-go="schedule">Open Tracker</button></div><div id="agendaList" class="list-stack"></div></div>
         </div>
-
-        <div class="content-grid">
-          <div class="workspace">
-            <div class="feature-grid">
-              <button class="feature-card" data-open="estimate">
-                <div class="feature-icon blue">▤</div>
-                <div><h3>Estimate / BOQ</h3><p>Generate quantities, cost estimates, and quotations.</p></div>
-                <span class="arrow">→</span>
-              </button>
-              <button class="feature-card" data-open="contracts">
-                <div class="feature-icon green">▧</div>
-                <div><h3>Contracts & Documents</h3><p>Create contracts, VO, EOT, letters, and more.</p></div>
-                <span class="arrow">→</span>
-              </button>
-              <button class="feature-card" data-open="monitoring">
-                <div class="feature-icon orange">▰</div>
-                <div><h3>Project Monitoring</h3><p>Track progress, accomplishment, and costs.</p></div>
-                <span class="arrow">→</span>
-              </button>
-              <button class="feature-card" data-open="procurement">
-                <div class="feature-icon violet">🛒</div>
-                <div><h3>Procurement</h3><p>Compare prices, RFQs, and purchase tracking.</p></div>
-                <span class="arrow">→</span>
-              </button>
-            </div>
-
-            <div class="panel projects-panel">
-              <div class="panel-head"><h2>Active Projects</h2><button class="link-btn" data-open="projects">View All</button></div>
-              <div class="table-wrap">
-                <table>
-                  <thead><tr><th>Project Name</th><th>Location</th><th>Status</th><th>Progress</th><th>Target</th></tr></thead>
-                  <tbody id="projectRows"></tbody>
-                </table>
-              </div>
-            </div>
-
-            <div class="bottom-grid">
-              <div class="panel quick-panel">
-                <div class="panel-head"><h2>Quick Actions</h2></div>
-                <div class="quick-actions">
-                  <button id="newEstimateBtn">＋ New Estimate</button>
-                  <button data-open="estimate">▤ Generate BOQ</button>
-                  <button data-open="contracts">▧ Create Contract</button>
-                  <button data-open="billing">₱ Compute Billing</button>
-                  <button data-open="vo">↻ Prepare Variation Order</button>
-                  <button data-open="assistant">✦ Ask Construction AI</button>
-                </div>
-              </div>
-              <div class="panel resources-panel">
-                <div class="panel-head"><h2>Company Resources</h2></div>
-                <div class="resource-grid">
-                  <div><b>₱</b><span>Standard Rates</span><small>Labor, materials, equipment</small></div>
-                  <div><b>▧</b><span>Templates</span><small>Contracts, letters, reports</small></div>
-                  <div><b>▣</b><span>Standards</span><small>NBCP, NSCP, references</small></div>
-                  <div><b>⌁</b><span>Supplier Directory</span><small>Accredited suppliers</small></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <aside class="ai-panel">
-            <div class="ai-head"><div><span class="spark">✦</span><strong>Construction AI</strong></div><span class="online">● Online</span></div>
-            <div class="ai-messages" id="aiMessages">
-              <div class="bot-message">Hi John Karl! 👋<br/>I’m your Construction AI Assistant. How can I help you today?</div>
-              <div class="chips">
-                <button>Estimate a project</button><button>Create a BOQ</button><button>Draft a contract</button><button>Compute billing</button>
-              </div>
-            </div>
-            <form class="ai-input" id="aiForm">
-              <input id="aiInput" placeholder="Type your message here..." autocomplete="off" />
-              <button type="submit">➤</button>
-            </form>
-          </aside>
-        </div>
+        <div class="panel"><div class="panel-head"><h2>Billing Snapshot</h2><button class="text-btn" data-go="billing">Open Billing</button></div><div id="billingSnapshot" class="summary-cards"></div></div>
       </section>
 
-      <section id="projects" class="view module-view">
-        <div class="module-header"><div><small>PROJECT MANAGEMENT</small><h1>Projects</h1><p>Manage active, completed, and planned construction projects.</p></div><button class="primary-btn" id="addProjectBtn">＋ Add Project</button></div>
-        <div class="stats-grid" id="projectStats"></div>
-        <div class="panel"><div class="panel-head"><h2>Project Portfolio</h2><input class="table-search" id="projectSearch" placeholder="Search project..."/></div><div class="table-wrap"><table><thead><tr><th>Project</th><th>Location</th><th>Status</th><th>Progress</th><th>Target</th></tr></thead><tbody id="allProjectRows"></tbody></table></div></div>
+      <section id="projects" class="view">
+        <div class="page-head"><div><small>PROJECT MANAGEMENT</small><h1>Projects</h1><p>Encode projects once, then use them across billing, schedules, files, and AI.</p></div><button id="addProjectBtn" class="primary-btn">+ Add Project</button></div>
+        <div class="panel"><div class="table-wrap"><table><thead><tr><th>Project</th><th>Client</th><th>Location</th><th>Contract</th><th>Status</th><th>Actual %</th><th>Action</th></tr></thead><tbody id="projectRows"></tbody></table></div></div>
       </section>
 
-      <section id="estimate" class="view module-view">
-        <div class="module-header"><div><small>QUANTITY SURVEYING</small><h1>Estimate / BOQ</h1><p>Create preliminary estimates and detailed bill of quantities.</p></div><button class="primary-btn" id="createEstimateBtn">＋ Create Estimate</button></div>
-        <div class="estimate-layout">
-          <div class="panel estimate-form-panel">
-            <div class="panel-head"><h2>Quick Estimate</h2></div>
-            <form id="estimateForm" class="form-grid">
-              <label>Project Name<input id="estProject"  required /></label>
-              <label>Location<input id="estLocation"  required /></label>
-              <label>Floor Area (sqm)<input id="estArea" type="number" min="1"  required /></label>
-              <label>Construction Rate / sqm<input id="estRate" type="number" min="1"  required /></label>
-              <label>Contingency (%)<input id="estCont" type="number" min="0" value="5" /></label>
-              <label>Contractor Markup (%)<input id="estMarkup" type="number" min="0" value="10" /></label>
-              <button class="primary-btn full" type="submit">Generate Preliminary Estimate</button>
-            </form>
-          </div>
-          <div class="panel estimate-result">
-            <div class="panel-head"><h2>Estimate Summary</h2><span class="pill">PRELIMINARY</span></div>
-            <div id="estimateOutput" class="empty-state">Fill out the form and generate an estimate.</div>
-          </div>
-        </div>
+      <section id="billing" class="view">
+        <div class="page-head"><div><small>FINANCIAL CONTROL</small><h1>Billing & Payments</h1><p>Automatic billing totals, received payments, outstanding balance, retention, and recoupment.</p></div><button id="addBillingBtn" class="primary-btn">+ Add Billing</button></div>
+        <div id="billingKPIs" class="kpi-grid"></div>
+        <div class="panel"><div class="table-wrap"><table><thead><tr><th>Project</th><th>Billing</th><th>Gross</th><th>Retention</th><th>Recoupment</th><th>Net Due</th><th>Received</th><th>Outstanding</th><th>Status</th><th>Action</th></tr></thead><tbody id="billingRows"></tbody></table></div></div>
       </section>
 
-      <section id="users" class="view module-view">
-        <div class="module-header"><div><small>ACCESS CONTROL</small><h1>User Management</h1><p>Manage company access, roles, departments, and account status.</p></div></div>
-        <div class="panel">
-          <div class="panel-head"><h2>Company Users</h2><button id="refreshUsersBtn" class="secondary-btn">Refresh</button></div>
-          <div class="table-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Department</th><th>Role</th><th>Status</th><th>Action</th></tr></thead><tbody id="userRows"><tr><td colspan="6" class="empty-state">Loading users...</td></tr></tbody></table></div>
-        </div>
+      <section id="schedule" class="view">
+        <div class="page-head"><div><small>PLANNING</small><h1>Schedule Tracker</h1><p>Upload an Excel schedule. Planned accomplishment and agenda are computed day by day.</p></div></div>
+        <div class="toolbar panel"><label>Project<select id="scheduleProject"></select></label><label class="file-label">Upload Excel<input id="scheduleFile" type="file" accept=".xlsx,.xls,.csv"></label><button id="importScheduleBtn" class="primary-btn">Import Schedule</button></div>
+        <div id="scheduleSummary" class="kpi-grid"></div>
+        <div class="panel"><div class="panel-head"><h2>Schedule Activities</h2><span class="muted">Expected columns: Activity, Start Date, End Date, Weight (%)</span></div><div class="table-wrap"><table><thead><tr><th>Activity</th><th>Start</th><th>End</th><th>Weight %</th><th>Planned % Today</th><th>Actual %</th><th>Contribution</th></tr></thead><tbody id="scheduleRows"></tbody></table></div></div>
       </section>
 
-      <section id="assistant" class="view module-view">
-        <div class="module-header"><div><small>AI WORKSPACE</small><h1>Construction AI Assistant</h1><p>Ask about estimating, contracts, billing, construction methodology, and project documentation.</p></div></div>
-        <div class="full-chat panel">
-          <div class="full-chat-messages" id="fullAiMessages">
-            <div class="bot-message">Ready. Try: <b>“Create a preliminary BOQ for a 200 sqm two-storey residence.”</b></div>
-          </div>
-          <form class="full-chat-input" id="fullAiForm"><textarea id="fullAiInput" placeholder="Ask Construction AI..."></textarea><button class="primary-btn" type="submit">Send</button></form>
-        </div>
+      <section id="progress" class="view">
+        <div class="page-head"><div><small>SITE ACCOMPLISHMENT</small><h1>Actual Progress</h1><p>Manually enter activity accomplishment. Overall actual % is weighted automatically.</p></div></div>
+        <div class="toolbar panel"><label>Project<select id="progressProject"></select></label><button id="addProgressBtn" class="primary-btn">+ Add / Update Activity</button></div>
+        <div id="progressSummary" class="kpi-grid"></div>
+        <div class="panel"><div class="table-wrap"><table><thead><tr><th>Activity</th><th>Weight %</th><th>Actual %</th><th>Weighted Contribution</th><th>Updated</th><th>Action</th></tr></thead><tbody id="progressRows"></tbody></table></div></div>
       </section>
 
-      <section id="cost" class="view module-view generic-module"></section>
-      <section id="contracts" class="view module-view generic-module"></section>
-      <section id="billing" class="view module-view generic-module"></section>
-      <section id="vo" class="view module-view generic-module"></section>
-      <section id="procurement" class="view module-view generic-module"></section>
-      <section id="monitoring" class="view module-view generic-module"></section>
+      <section id="files" class="view">
+        <div class="page-head"><div><small>DOCUMENT CONTROL</small><h1>Project Files</h1><p>Store plans, contracts, billings, reports, schedules, photos, and quotations in the cloud.</p></div></div>
+        <div class="toolbar panel"><label>Project<select id="fileProject"></select></label><label>Category<select id="fileCategory"><option>Plans</option><option>Contracts</option><option>Billings</option><option>VO & EOT</option><option>Progress Reports</option><option>Schedules</option><option>Photos</option><option>Quotations</option><option>Other</option></select></label><label class="file-label">Choose file<input id="projectFile" type="file"></label><button id="uploadFileBtn" class="primary-btn">Upload</button></div>
+        <div class="panel"><div class="table-wrap"><table><thead><tr><th>Project</th><th>Category</th><th>File</th><th>Uploaded By</th><th>Date</th><th>Action</th></tr></thead><tbody id="fileRows"></tbody></table></div></div>
+      </section>
+
+      <section id="templates" class="view">
+        <div class="page-head"><div><small>TEMPLATE LIBRARY</small><h1>Document Templates</h1><p>Upload sample billing/document formats once and reuse them for generated files.</p></div></div>
+        <div class="toolbar panel"><label>Template Type<select id="templateType"><option>Billing Excel</option><option>Progress Report</option><option>Contract</option><option>VO / EOT</option><option>Quotation</option></select></label><label class="file-label">Choose template<input id="templateFile" type="file"></label><button id="uploadTemplateBtn" class="primary-btn">Upload Template</button></div>
+        <div class="panel"><div class="table-wrap"><table><thead><tr><th>Type</th><th>Name</th><th>Date</th><th>Action</th></tr></thead><tbody id="templateRows"></tbody></table></div></div>
+      </section>
+
+      <section id="assistant" class="view">
+        <div class="page-head"><div><small>AI WORKSPACE</small><h1>Construction AI</h1><p>Ask about current project data, delays, billing, recovery actions, documents, and construction questions.</p></div></div>
+        <div class="chat-shell panel"><div id="aiMessages" class="chat-messages"><div class="bot">Ready. Ask: “What is behind schedule?”, “How much is outstanding?”, or “What should we do next?”</div></div><form id="aiForm" class="chat-input"><textarea id="aiInput" placeholder="Ask Construction AI..."></textarea><button class="primary-btn" type="submit">Send</button></form></div>
+      </section>
+
+      <section id="users" class="view admin-only">
+        <div class="page-head"><div><small>ACCESS CONTROL</small><h1>User Management</h1><p>Change roles or deactivate company accounts.</p></div></div>
+        <div class="panel"><div class="table-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Department</th><th>Role</th><th>Status</th><th>Action</th></tr></thead><tbody id="userRows"></tbody></table></div></div>
+      </section>
     </main>
   </div>
 
-  <dialog id="projectDialog">
-    <form method="dialog" id="projectForm" class="dialog-card">
-      <div class="dialog-head"><h2>Add Project</h2><button type="button" id="closeProjectDialogBtn">✕</button></div>
-      <label>Project Name<input id="pName" required /></label>
-      <label>Location<input id="pLocation" required /></label>
-      <label>Status<select id="pStatus"><option>Planning</option><option>On-going</option><option>Design Phase</option><option>Architectural Phase</option></select></label>
-      <label>Progress (%)<input id="pProgress" type="number" min="0" max="100" value="0" /></label>
-      <div class="dialog-actions"><button type="button" id="cancelProjectBtn" class="secondary-btn">Cancel</button><button id="saveProjectBtn" value="default" class="primary-btn">Save Project</button></div>
-    </form>
-  </dialog>
+  <dialog id="projectDialog"><form id="projectForm" class="dialog-card"><div class="dialog-head"><h2>Project</h2><button type="button" data-close="projectDialog">×</button></div><label>Project Name<input id="pName" required></label><label>Client<input id="pClient"></label><label>Location<input id="pLocation"></label><label>Contract Amount<input id="pContract" type="number" min="0" step="0.01"></label><label>Start Date<input id="pStart" type="date"></label><label>Target Date<input id="pTarget" type="date"></label><label>Status<select id="pStatus"><option>Planning</option><option>For Mobilization</option><option>On-going</option><option>On Hold</option><option>Completed</option></select></label><label>Actual Progress %<input id="pProgress" type="number" min="0" max="100" step="0.01" value="0"></label><div class="dialog-actions"><button type="button" class="secondary-btn" data-close="projectDialog">Cancel</button><button class="primary-btn" type="submit">Save Project</button></div></form></dialog>
+
+  <dialog id="billingDialog"><form id="billingForm" class="dialog-card wide"><div class="dialog-head"><h2>Billing Record</h2><button type="button" data-close="billingDialog">×</button></div><div class="form-grid"><label>Project<select id="bProject" required></select></label><label>Billing No.<input id="bNo" required placeholder="Billing No. 3"></label><label>Gross Billing Amount<input id="bGross" type="number" min="0" step="0.01" required></label><label>Retention %<input id="bRetention" type="number" min="0" max="100" step="0.01" value="5"></label><label>Recoupment %<input id="bRecoup" type="number" min="0" max="100" step="0.01" value="30"></label><label>Date Submitted<input id="bSubmitted" type="date"></label><label>Received Payment<input id="bReceived" type="number" min="0" step="0.01" value="0"></label><label>Date Paid<input id="bPaidDate" type="date"></label></div><div id="billingCalc" class="calc-box"></div><div class="dialog-actions"><button type="button" class="secondary-btn" data-close="billingDialog">Cancel</button><button class="primary-btn" type="submit">Save Billing</button></div></form></dialog>
+
+  <dialog id="progressDialog"><form id="progressForm" class="dialog-card"><div class="dialog-head"><h2>Activity Progress</h2><button type="button" data-close="progressDialog">×</button></div><label>Activity<input id="aActivity" required></label><label>Weight %<input id="aWeight" type="number" min="0" max="100" step="0.01" required></label><label>Actual Accomplishment %<input id="aActual" type="number" min="0" max="100" step="0.01" required></label><div class="dialog-actions"><button type="button" class="secondary-btn" data-close="progressDialog">Cancel</button><button class="primary-btn" type="submit">Save Progress</button></div></form></dialog>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=6"></script>
+  <script src="app.js?v=10"></script>
 </body>
 </html>

@@ -1,283 +1,58 @@
 const cfg=window.SAIKO_CONFIG||{};
-const configReady=cfg.SUPABASE_URL && cfg.SUPABASE_PUBLISHABLE_KEY && !cfg.SUPABASE_URL.includes('PASTE_') && !cfg.SUPABASE_PUBLISHABLE_KEY.includes('PASTE_');
-const sb=(configReady && window.supabase && typeof window.supabase.createClient==='function')?window.supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_PUBLISHABLE_KEY):null;
+const sb=(window.supabase&&cfg.SUPABASE_URL&&cfg.SUPABASE_PUBLISHABLE_KEY)?window.supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_PUBLISHABLE_KEY):null;
 const PROFILE_TABLE='SAIKO BUILDERS';
-const loginGate=document.getElementById('loginGate');
-const loginForm=document.getElementById('loginForm');
-const signupForm=document.getElementById('signupForm');
-const loginError=document.getElementById('loginError');
-const signupError=document.getElementById('signupError');
-const logoutBtn=document.getElementById('logoutBtn');
-let currentProfile=null;
+let currentUser=null,currentProfile=null,cache={projects:[],billings:[],payments:[],schedule:[],progress:[],files:[],templates:[]};
+const $=id=>document.getElementById(id); const money=n=>new Intl.NumberFormat('en-PH',{style:'currency',currency:'PHP',maximumFractionDigits:2}).format(Number(n||0)); const pct=n=>`${Number(n||0).toFixed(2)}%`; const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+function toast(msg){const d=document.createElement('div');d.textContent=msg;Object.assign(d.style,{position:'fixed',right:'20px',bottom:'20px',background:'#10253a',color:'#fff',padding:'12px 16px',borderRadius:'10px',zIndex:2000,boxShadow:'0 8px 30px rgba(0,0,0,.22)'});document.body.appendChild(d);setTimeout(()=>d.remove(),3000)}
+function show(view){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active-view'));$(view).classList.add('active-view');document.querySelectorAll('#sideNav button').forEach(b=>b.classList.toggle('active',b.dataset.view===view)); if(view==='dashboard')renderDashboard();if(view==='projects')renderProjects();if(view==='billing')renderBilling();if(view==='schedule')renderSchedule();if(view==='progress')renderProgress();if(view==='files')renderFiles();if(view==='templates')renderTemplates();if(view==='users')renderUsers();}
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>show(b.dataset.view));document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>show(b.dataset.go));document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>$(b.dataset.close).close());
 
-function setAuthPane(mode){
-  const login=mode==='login';
-  document.getElementById('loginPane').classList.toggle('auth-pane-hidden',!login);
-  document.getElementById('signupPane').classList.toggle('auth-pane-hidden',login);
-  document.getElementById('showLoginBtn').classList.toggle('active',login);
-  document.getElementById('showSignupBtn').classList.toggle('active',!login);
-  loginError.textContent=''; signupError.textContent='';
-}
-document.getElementById('showLoginBtn').addEventListener('click',()=>setAuthPane('login'));
-document.getElementById('showSignupBtn').addEventListener('click',()=>setAuthPane('signup'));
+// AUTH
+function authTab(mode){$('loginPane').classList.toggle('hidden',mode!=='login');$('signupPane').classList.toggle('hidden',mode!=='signup');$('showLoginBtn').classList.toggle('active',mode==='login');$('showSignupBtn').classList.toggle('active',mode==='signup');}
+$('showLoginBtn').onclick=()=>authTab('login');$('showSignupBtn').onclick=()=>authTab('signup');
+async function profileFor(user){const {data,error}=await sb.from(PROFILE_TABLE).select('*').eq('user_id',user.id).maybeSingle();if(error)console.warn(error);return data}
+async function ensureProfile(user){let p=await profileFor(user);if(p)return p;const m=user.user_metadata||{};const row={user_id:user.id,full_name:m.full_name||user.email?.split('@')[0]||'User',email:user.email||'',role:m.role||'editor',department:m.department||'Other',status:'active'};const {data,error}=await sb.from(PROFILE_TABLE).insert(row).select().maybeSingle();if(error)console.warn(error);return data||row}
+async function enter(user){currentUser=user;currentProfile=await ensureProfile(user);if(currentProfile?.status==='inactive'){await sb.auth.signOut();$('loginError').textContent='Account is inactive. Contact the administrator.';return}const name=currentProfile?.full_name||user.email;const initial=(name||'U')[0].toUpperCase();$('sidebarName').textContent=name;$('sidebarRole').textContent=currentProfile?.role||'editor';$('sidebarAvatar').textContent=initial;document.querySelector('.mini-avatar').textContent=initial;document.querySelectorAll('.admin-only').forEach(e=>e.style.display=currentProfile?.role==='admin'?'':'none');$('loginGate').classList.add('hidden');await refreshAll();}
+$('loginForm').onsubmit=async e=>{e.preventDefault();$('loginError').textContent='Signing in...';const {data,error}=await sb.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value});if(error){$('loginError').textContent=error.message;return}$('loginError').textContent='';await enter(data.user)};
+$('signupForm').onsubmit=async e=>{e.preventDefault();const name=$('signupName').value.trim(),email=$('signupEmail').value.trim(),department=$('signupDepartment').value,p1=$('signupPassword').value,p2=$('signupPassword2').value;if(p1!==p2){$('signupError').textContent='Passwords do not match.';return}$('signupError').textContent='Creating account...';const {data,error}=await sb.auth.signUp({email,password:p1,options:{data:{full_name:name,department,role:'editor',status:'active'}}});if(error){$('signupError').textContent=error.message;return}let user=data?.session?.user;if(!user){const r=await sb.auth.signInWithPassword({email,password:p1});if(r.error){$('signupError').textContent='Account created, but Supabase email confirmation is enabled. Confirm the email or disable Confirm email in Authentication → Sign In / Providers → Email.';return}user=r.data.user}$('signupError').classList.add('success');$('signupError').textContent='Account created.';await enter(user)};
+$('forgotPasswordBtn').onclick=async()=>{const email=$('loginEmail').value.trim();if(!email){$('loginError').textContent='Enter your email first.';return}const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin});$('loginError').textContent=error?error.message:'Password reset email sent.'};
+$('logoutBtn').onclick=async()=>{await sb.auth.signOut();location.reload()};
+(async()=>{if(!sb){$('loginError').textContent='Supabase config missing.';return}const {data}=await sb.auth.getSession();if(data.session?.user)await enter(data.session.user)})();
 
-function profileRoleLabel(role){
-  const map={admin:'Administrator',qs:'Quantity Surveyor',accounting:'Accounting',engineer:'Engineer',procurement:'Procurement',viewer:'Viewer'};
-  return map[(role||'viewer').toLowerCase()]||role||'Viewer';
-}
-function setUserUI(user,profile){
-  const name=profile?.full_name||user?.user_metadata?.full_name||user?.email||'Signed in user';
-  const role=profileRoleLabel(profile?.role||user?.user_metadata?.role||'viewer');
-  const initial=(name[0]||'U').toUpperCase();
-  document.getElementById('sidebarAvatar').textContent=initial;
-  document.getElementById('sidebarName').textContent=name;
-  document.getElementById('sidebarRole').textContent=role;
-  document.querySelector('.mini-avatar').textContent=initial;
-  document.querySelectorAll('.admin-only').forEach(el=>el.style.display=(profile?.role==='admin'?'':'none'));
-}
-async function getProfile(user){
-  if(!sb||!user) return null;
-  const {data,error}=await sb.from(PROFILE_TABLE).select('*').eq('user_id',user.id).maybeSingle();
-  if(error){ console.warn('Profile lookup:',error.message); return null; }
-  return data;
-}
-async function ensureProfile(user){
-  if(!sb||!user) return null;
-  let profile=await getProfile(user);
-  if(profile) return profile;
-  const meta=user.user_metadata||{};
-  const record={user_id:user.id,full_name:meta.full_name||user.email?.split('@')[0]||'User',email:user.email||'',role:meta.role||'viewer',department:meta.department||'Other',status:'active'};
-  const {data,error}=await sb.from(PROFILE_TABLE).insert(record).select().maybeSingle();
-  if(error){ console.warn('Profile create:',error.message); return record; }
-  return data||record;
-}
-async function authorizeSession(user){
-  currentProfile=await ensureProfile(user);
-  if(currentProfile?.status && currentProfile.status!=='active'){
-    await sb.auth.signOut();
-    loginGate.classList.remove('hidden');
-    loginError.textContent='This account is currently inactive. Please contact your administrator.';
-    return false;
-  }
-  setUserUI(user,currentProfile);
-  loginGate.classList.add('hidden');
-  if(currentProfile?.role==='admin') loadUsers();
-  return true;
-}
-async function bootstrapAuth(){
-  if(!configReady){ loginError.textContent='Setup needed: Supabase configuration is missing in config.js.'; return; }
-  const {data}=await sb.auth.getSession();
-  const user=data?.session?.user;
-  if(user) await authorizeSession(user); else loginGate.classList.remove('hidden');
-}
-loginForm.addEventListener('submit',async e=>{
-  e.preventDefault(); loginError.textContent='Signing in...';
-  if(!sb){ loginError.textContent='Supabase is not configured yet.'; return; }
-  const email=document.getElementById('loginEmail').value.trim();
-  const password=document.getElementById('loginPassword').value;
-  const {data,error}=await sb.auth.signInWithPassword({email,password});
-  if(error){ loginError.textContent=error.message; return; }
-  loginError.textContent=''; await authorizeSession(data.user);
-});
-signupForm.addEventListener('submit',async e=>{
-  e.preventDefault();
-  signupError.classList.remove('success-msg');
-  signupError.textContent='Creating account...';
-  if(!sb){ signupError.textContent='Supabase is not configured yet.'; return; }
+async function q(table,op='select',payload=null){if(!sb)throw new Error('Supabase not configured');let r;if(op==='select')r=await sb.from(table).select(payload||'*');if(op==='insert')r=await sb.from(table).insert(payload).select();if(op==='update')r=await sb.from(table).update(payload.values).eq('id',payload.id).select();if(op==='delete')r=await sb.from(table).delete().eq('id',payload);if(r.error)throw r.error;return r.data||[]}
+async function refreshAll(){try{cache.projects=await q('projects');cache.billings=await q('billings');cache.payments=await q('payments');cache.schedule=await q('schedule_items');cache.progress=await q('actual_progress');cache.files=await q('project_files');cache.templates=await q('document_templates');}catch(e){console.warn(e);toast('Database tables are not ready. Run supabase-setup.sql.')}syncProjectSelects();renderDashboard();}
+function syncProjectSelects(){['scheduleProject','progressProject','fileProject','bProject'].forEach(id=>{const s=$(id);if(!s)return;const old=s.value;s.innerHTML='<option value="">Select project</option>'+cache.projects.map(p=>`<option value="${p.id}">${esc(p.project_name)}</option>`).join('');if(cache.projects.some(p=>String(p.id)===String(old)))s.value=old;});}
+function proj(id){return cache.projects.find(p=>String(p.id)===String(id))}
+function plannedForProject(pid,at=new Date()){const items=cache.schedule.filter(x=>String(x.project_id)===String(pid));return items.reduce((sum,x)=>{const w=Number(x.weight||0),s=new Date(x.start_date),e=new Date(x.end_date);let f=0;if(at>=e)f=1;else if(at<=s)f=0;else f=(at-s)/(e-s||1);return sum+w*Math.max(0,Math.min(1,f));},0)}
+function actualForProject(pid){const rows=cache.progress.filter(x=>String(x.project_id)===String(pid));if(rows.length)return rows.reduce((s,x)=>s+Number(x.weight||0)*Number(x.actual_percent||0)/100,0);return Number(proj(pid)?.progress||0)}
 
-  const full_name=document.getElementById('signupName').value.trim();
-  const email=document.getElementById('signupEmail').value.trim();
-  const department=document.getElementById('signupDepartment').value;
-  const password=document.getElementById('signupPassword').value;
-  const password2=document.getElementById('signupPassword2').value;
-  if(!full_name||!email||!department||!password){ signupError.textContent='Please complete all required fields.'; return; }
-  if(password.length<6){ signupError.textContent='Password must be at least 6 characters.'; return; }
-  if(password!==password2){ signupError.textContent='Passwords do not match.'; return; }
+function renderDashboard(){const active=cache.projects.filter(p=>!['Completed'].includes(p.status));const billed=cache.billings.reduce((s,b)=>s+Number(b.gross_amount||0),0),paid=cache.billings.reduce((s,b)=>s+Number(b.received_amount||0),0);$('kpiGrid').innerHTML=[['Total Projects',cache.projects.length],['Active Projects',active.length],['Total Billed',money(billed)],['Outstanding',money(cache.billings.reduce((s,b)=>s+Number(b.outstanding_amount||0),0))]].map(x=>`<div class="kpi"><span>${x[0]}</span><strong>${x[1]}</strong></div>`).join('');$('dashProjects').innerHTML=active.length?active.map(p=>{const pl=plannedForProject(p.id),ac=actualForProject(p.id),v=ac-pl;return `<tr><td><strong>${esc(p.project_name)}</strong></td><td>${esc(p.status)}</td><td>${pct(ac)}</td><td>${pct(pl)}</td><td class="${v<0?'negative':'positive'}">${pct(v)}</td></tr>`}).join(''):'<tr><td colspan="5" class="empty">No projects yet.</td></tr>';const now=new Date(),soon=new Date(Date.now()+7*864e5);const ag=cache.schedule.filter(x=>new Date(x.end_date)>=now&&new Date(x.start_date)<=soon).sort((a,b)=>new Date(a.start_date)-new Date(b.start_date));$('agendaList').innerHTML=ag.length?ag.slice(0,8).map(a=>`<div class="list-item"><strong>${esc(a.activity)}</strong><div class="muted">${esc(proj(a.project_id)?.project_name||'')} • ${a.start_date} to ${a.end_date}</div></div>`).join(''):'<div class="empty">No scheduled activities for the next 7 days.</div>';$('billingSnapshot').innerHTML=[['Gross Billed',money(billed)],['Received',money(paid)],['Outstanding',money(cache.billings.reduce((s,b)=>s+Number(b.outstanding_amount||0),0))],['Retention Held',money(cache.billings.reduce((s,b)=>s+Number(b.retention_amount||0),0))]].map(x=>`<div><span class="muted">${x[0]}</span><strong>${x[1]}</strong></div>`).join('')}
 
-  const submitBtn=signupForm.querySelector('button[type="submit"]');
-  if(submitBtn){ submitBtn.disabled=true; submitBtn.textContent='Creating account...'; }
+$('addProjectBtn').onclick=()=>{$('projectForm').reset();$('projectDialog').showModal()};$('projectForm').onsubmit=async e=>{e.preventDefault();const row={project_name:$('pName').value.trim(),client_name:$('pClient').value.trim(),location:$('pLocation').value.trim(),contract_amount:Number($('pContract').value||0),start_date:$('pStart').value||null,target_date:$('pTarget').value||null,status:$('pStatus').value,progress:Number($('pProgress').value||0),created_by:currentUser.id};try{await q('projects','insert',row);$('projectDialog').close();await refreshAll();renderProjects();toast('Project saved.')}catch(e){alert(e.message)}};
+function renderProjects(){$('projectRows').innerHTML=cache.projects.length?cache.projects.map(p=>`<tr><td><strong>${esc(p.project_name)}</strong></td><td>${esc(p.client_name||'—')}</td><td>${esc(p.location||'—')}</td><td>${money(p.contract_amount)}</td><td>${esc(p.status)}</td><td>${pct(actualForProject(p.id))}</td><td><button class="icon-action" onclick="deleteProject('${p.id}')">Delete</button></td></tr>`).join(''):'<tr><td colspan="7" class="empty">No projects yet.</td></tr>'}window.deleteProject=async id=>{if(!confirm('Delete this project?'))return;try{await q('projects','delete',id);await refreshAll();renderProjects()}catch(e){alert(e.message)}};
 
-  const withTimeout=(promise,ms=18000)=>Promise.race([
-    promise,
-    new Promise((_,reject)=>setTimeout(()=>reject(new Error('Request timed out. Please check your internet connection and try again.')),ms))
-  ]);
+function calcBilling(){const gross=Number($('bGross').value||0),ret=gross*Number($('bRetention').value||0)/100,rec=gross*Number($('bRecoup').value||0)/100,net=Math.max(0,gross-ret-rec),received=Number($('bReceived').value||0),out=Math.max(0,net-received);$('billingCalc').innerHTML=[['Retention',money(ret)],['Recoupment',money(rec)],['Net Due',money(net)],['Outstanding',money(out)]].map(x=>`<div>${x[0]}<strong>${x[1]}</strong></div>`).join('');return{gross,ret,rec,net,received,out}}['bGross','bRetention','bRecoup','bReceived'].forEach(id=>$(id).oninput=calcBilling);$('addBillingBtn').onclick=()=>{$('billingForm').reset();$('bRetention').value=5;$('bRecoup').value=30;syncProjectSelects();calcBilling();$('billingDialog').showModal()};$('billingForm').onsubmit=async e=>{e.preventDefault();const c=calcBilling(),row={project_id:$('bProject').value,billing_no:$('bNo').value.trim(),gross_amount:c.gross,retention_percent:Number($('bRetention').value||0),retention_amount:c.ret,recoupment_percent:Number($('bRecoup').value||0),recoupment_amount:c.rec,net_due:c.net,received_amount:c.received,outstanding_amount:c.out,date_submitted:$('bSubmitted').value||null,date_paid:$('bPaidDate').value||null,status:c.out<=.01?'Paid':c.received>0?'Partially Paid':'Pending',created_by:currentUser.id};try{const rows=await q('billings','insert',row);if(c.received>0)await q('payments','insert',{billing_id:rows[0].id,amount:c.received,payment_date:$('bPaidDate').value||new Date().toISOString().slice(0,10),created_by:currentUser.id});$('billingDialog').close();await refreshAll();renderBilling();toast('Billing saved.')}catch(e){alert(e.message)}};
+function renderBilling(){const total=cache.billings.reduce((s,b)=>s+Number(b.gross_amount||0),0),paid=cache.billings.reduce((s,b)=>s+Number(b.received_amount||0),0),out=cache.billings.reduce((s,b)=>s+Number(b.outstanding_amount||0),0);$('billingKPIs').innerHTML=[['Gross Billed',money(total)],['Received',money(paid)],['Outstanding',money(out)],['Collection %',total?`${(paid/total*100).toFixed(2)}%`:'0.00%']].map(x=>`<div class="kpi"><span>${x[0]}</span><strong>${x[1]}</strong></div>`).join('');$('billingRows').innerHTML=cache.billings.length?cache.billings.map(b=>`<tr><td>${esc(proj(b.project_id)?.project_name||'—')}</td><td><strong>${esc(b.billing_no)}</strong></td><td>${money(b.gross_amount)}</td><td>${money(b.retention_amount)}</td><td>${money(b.recoupment_amount)}</td><td>${money(b.net_due)}</td><td>${money(b.received_amount)}</td><td>${money(b.outstanding_amount)}</td><td>${esc(b.status)}</td><td><div class="row-actions"><button class="icon-action" onclick="addPayment('${b.id}')">Payment</button><button class="icon-action" onclick="generateBilling('${b.id}')">Download</button></div></td></tr>`).join(''):'<tr><td colspan="10" class="empty">No billing records yet.</td></tr>'}
+window.addPayment=async id=>{const b=cache.billings.find(x=>String(x.id)===String(id));const v=prompt(`Received payment amount for ${b.billing_no}:`);if(v===null)return;const amt=Number(v);if(!amt||amt<=0)return alert('Enter a valid amount.');const newReceived=Number(b.received_amount||0)+amt,newOut=Math.max(0,Number(b.net_due||0)-newReceived);try{await q('payments','insert',{billing_id:id,amount:amt,payment_date:new Date().toISOString().slice(0,10),created_by:currentUser.id});await q('billings','update',{id,values:{received_amount:newReceived,outstanding_amount:newOut,status:newOut<=.01?'Paid':'Partially Paid'}});await refreshAll();renderBilling()}catch(e){alert(e.message)}};
+window.generateBilling=async id=>{const b=cache.billings.find(x=>String(x.id)===String(id)),p=proj(b.project_id);let templateUrl=null;const t=cache.templates.find(x=>x.template_type==='Billing Excel');if(t){const {data}=await sb.storage.from('templates').createSignedUrl(t.storage_path,300);templateUrl=data?.signedUrl}const r=await fetch('/api/generate-billing',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({templateUrl,billing:{...b,project_name:p?.project_name,client_name:p?.client_name,location:p?.location,contract_amount:p?.contract_amount}})});if(!r.ok)return alert(await r.text());const blob=await r.blob(),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${p?.project_name||'Project'}_${b.billing_no||'Billing'}.xlsx`;a.click();URL.revokeObjectURL(a.href)};
 
-  try{
-    const {data,error}=await withTimeout(sb.auth.signUp({
-      email,
-      password,
-      options:{data:{full_name,department,role:'viewer',status:'active'}}
-    }));
-    if(error) throw error;
+$('scheduleProject').onchange=renderSchedule;$('progressProject').onchange=renderProgress;$('fileProject').onchange=renderFiles;
+$('importScheduleBtn').onclick=async()=>{const pid=$('scheduleProject').value,file=$('scheduleFile').files[0];if(!pid||!file)return alert('Select a project and Excel file.');const buf=await file.arrayBuffer(),wb=XLSX.read(buf,{type:'array',cellDates:true}),ws=wb.Sheets[wb.SheetNames[0]],rows=XLSX.utils.sheet_to_json(ws,{defval:''});const pick=(o,names)=>{for(const k of Object.keys(o)){if(names.includes(k.toLowerCase().trim()))return o[k]}return''};const parsed=rows.map(r=>({project_id:pid,activity:String(pick(r,['activity','task','description','scope of work','work item'])||'').trim(),start_date:excelDate(pick(r,['start','start date','planned start'])),end_date:excelDate(pick(r,['end','finish','end date','finish date','planned finish'])),weight:Number(pick(r,['weight','weight %','weightage','percentage','%'])||0),created_by:currentUser.id})).filter(r=>r.activity&&r.start_date&&r.end_date);if(!parsed.length)return alert('No rows found. Use columns like Activity, Start Date, End Date, Weight (%).');try{await sb.from('schedule_items').delete().eq('project_id',pid);const {error}=await sb.from('schedule_items').insert(parsed);if(error)throw error;await refreshAll();renderSchedule();toast(`${parsed.length} schedule activities imported.`)}catch(e){alert(e.message)}};
+function excelDate(v){if(v instanceof Date&&!isNaN(v))return v.toISOString().slice(0,10);if(typeof v==='number'){const d=XLSX.SSF.parse_date_code(v);if(d)return `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`}const d=new Date(v);return isNaN(d)?null:d.toISOString().slice(0,10)}
+function scheduleData(pid){return cache.schedule.filter(x=>String(x.project_id)===String(pid))}
+function renderSchedule(){const pid=$('scheduleProject').value||cache.projects[0]?.id;if(pid&&!$('scheduleProject').value)$('scheduleProject').value=pid;const rows=scheduleData(pid),planned=plannedForProject(pid),actual=actualForProject(pid),variance=actual-planned;$('scheduleSummary').innerHTML=[['Planned Today',pct(planned)],['Actual',pct(actual)],['Variance',pct(variance)],['Status',variance<-2?'Behind Schedule':variance>2?'Ahead':'On Track']].map(x=>`<div class="kpi"><span>${x[0]}</span><strong class="${x[0]==='Variance'?(variance<0?'negative':'positive'):''}">${x[1]}</strong></div>`).join('');$('scheduleRows').innerHTML=rows.length?rows.map(r=>{const today=new Date(),s=new Date(r.start_date),e=new Date(r.end_date);let f=today>=e?100:today<=s?0:Math.max(0,Math.min(100,(today-s)/(e-s||1)*100));const ap=cache.progress.find(x=>String(x.project_id)===String(pid)&&x.activity.toLowerCase()===r.activity.toLowerCase());return `<tr><td>${esc(r.activity)}</td><td>${r.start_date}</td><td>${r.end_date}</td><td>${pct(r.weight)}</td><td>${pct(f)}</td><td>${pct(ap?.actual_percent||0)}</td><td>${pct(Number(r.weight||0)*Number(ap?.actual_percent||0)/100)}</td></tr>`}).join(''):'<tr><td colspan="7" class="empty">Upload a schedule Excel file.</td></tr>'}
 
-    signupError.classList.add('success-msg');
-    signupError.textContent='Account created. Signing you in...';
+$('addProgressBtn').onclick=()=>{if(!$('progressProject').value)return alert('Select a project.');$('progressForm').reset();$('progressDialog').showModal()};$('progressForm').onsubmit=async e=>{e.preventDefault();const pid=$('progressProject').value,row={project_id:pid,activity:$('aActivity').value.trim(),weight:Number($('aWeight').value||0),actual_percent:Number($('aActual').value||0),updated_by:currentUser.id,updated_at:new Date().toISOString()};try{const old=cache.progress.find(x=>String(x.project_id)===String(pid)&&x.activity.toLowerCase()===row.activity.toLowerCase());if(old)await q('actual_progress','update',{id:old.id,values:row});else await q('actual_progress','insert',row);$('progressDialog').close();await refreshAll();renderProgress();renderSchedule()}catch(e){alert(e.message)}};
+function renderProgress(){const pid=$('progressProject').value||cache.projects[0]?.id;if(pid&&!$('progressProject').value)$('progressProject').value=pid;const rows=cache.progress.filter(x=>String(x.project_id)===String(pid)),actual=actualForProject(pid),planned=plannedForProject(pid),variance=actual-planned;$('progressSummary').innerHTML=[['Actual',pct(actual)],['Planned',pct(planned)],['Variance',pct(variance)],['Remaining',pct(Math.max(0,100-actual))]].map(x=>`<div class="kpi"><span>${x[0]}</span><strong class="${x[0]==='Variance'?(variance<0?'negative':'positive'):''}">${x[1]}</strong></div>`).join('');$('progressRows').innerHTML=rows.length?rows.map(r=>`<tr><td>${esc(r.activity)}</td><td>${pct(r.weight)}</td><td>${pct(r.actual_percent)}</td><td>${pct(Number(r.weight||0)*Number(r.actual_percent||0)/100)}</td><td>${new Date(r.updated_at).toLocaleString()}</td><td><button class="icon-action" onclick="deleteProgress('${r.id}')">Delete</button></td></tr>`).join(''):'<tr><td colspan="6" class="empty">No actual progress entries yet.</td></tr>'}window.deleteProgress=async id=>{await q('actual_progress','delete',id);await refreshAll();renderProgress()};
 
-    let user=data?.session?.user||null;
-    if(!user){
-      const {data:signInData,error:signInError}=await withTimeout(sb.auth.signInWithPassword({email,password}));
-      if(signInError){
-        const msg=(signInError.message||'').toLowerCase();
-        if(msg.includes('email not confirmed')){
-          signupError.classList.remove('success-msg');
-          signupError.textContent='Account created, but email confirmation is still enabled in Supabase. Turn off Confirm email under Authentication → Sign In / Providers → Email so new users can enter the app immediately.';
-          return;
-        }
-        throw signInError;
-      }
-      user=signInData?.user||signInData?.session?.user||null;
-    }
+$('uploadFileBtn').onclick=async()=>{const pid=$('fileProject').value,file=$('projectFile').files[0],cat=$('fileCategory').value;if(!pid||!file)return alert('Select project and file.');const path=`${pid}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;const {error}=await sb.storage.from('project-files').upload(path,file);if(error)return alert(error.message);await q('project_files','insert',{project_id:pid,category:cat,file_name:file.name,storage_path:path,uploaded_by:currentProfile.full_name||currentUser.email,created_by:currentUser.id});await refreshAll();renderFiles();toast('File uploaded.')};
+function renderFiles(){const pid=$('fileProject').value;const rows=pid?cache.files.filter(x=>String(x.project_id)===String(pid)):cache.files;$('fileRows').innerHTML=rows.length?rows.map(f=>`<tr><td>${esc(proj(f.project_id)?.project_name||'—')}</td><td>${esc(f.category)}</td><td>${esc(f.file_name)}</td><td>${esc(f.uploaded_by||'—')}</td><td>${new Date(f.created_at).toLocaleString()}</td><td><button class="icon-action" onclick="downloadFile('${f.storage_path}','${encodeURIComponent(f.file_name)}')">Download</button></td></tr>`).join(''):'<tr><td colspan="6" class="empty">No project files uploaded.</td></tr>'}window.downloadFile=async(path,name)=>{const {data,error}=await sb.storage.from('project-files').createSignedUrl(path,300);if(error)return alert(error.message);const a=document.createElement('a');a.href=data.signedUrl;a.download=decodeURIComponent(name);a.target='_blank';a.click()};
 
-    if(!user) throw new Error('Account was created but no login session was returned.');
-    await authorizeSession(user);
-    signupForm.reset();
-    showToast('Account created successfully. Welcome to SAIKO Construction AI.');
-    showView('dashboard');
-  }catch(err){
-    signupError.classList.remove('success-msg');
-    signupError.textContent=err?.message||'Unable to create account. Please try again.';
-  }finally{
-    if(submitBtn){ submitBtn.disabled=false; submitBtn.textContent='Create account'; }
-  }
-});
-document.getElementById('forgotPasswordBtn').addEventListener('click',async()=>{
-  if(!sb){ loginError.textContent='Supabase is not configured yet.'; return; }
-  const email=document.getElementById('loginEmail').value.trim();
-  if(!email){ loginError.textContent='Enter your email first, then click Forgot password.'; return; }
-  const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin});
-  loginError.textContent=error?error.message:'Password reset email sent.';
-});
-logoutBtn.addEventListener('click',async()=>{ if(sb) await sb.auth.signOut(); currentProfile=null; loginGate.classList.remove('hidden'); setAuthPane('login'); });
-if(sb) sb.auth.onAuthStateChange(async(event,session)=>{
-  if(event==='SIGNED_OUT'||!session?.user){ currentProfile=null; loginGate.classList.remove('hidden'); return; }
-  if(event==='SIGNED_IN' && session?.user) await authorizeSession(session.user);
-});
+$('uploadTemplateBtn').onclick=async()=>{const file=$('templateFile').files[0],type=$('templateType').value;if(!file)return alert('Choose a template file.');const path=`${type.replace(/\W+/g,'_')}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;const {error}=await sb.storage.from('templates').upload(path,file);if(error)return alert(error.message);await q('document_templates','insert',{template_type:type,template_name:file.name,storage_path:path,created_by:currentUser.id});await refreshAll();renderTemplates();toast('Template saved.')};
+function renderTemplates(){$('templateRows').innerHTML=cache.templates.length?cache.templates.map(t=>`<tr><td>${esc(t.template_type)}</td><td>${esc(t.template_name)}</td><td>${new Date(t.created_at).toLocaleString()}</td><td><button class="icon-action" onclick="downloadTemplate('${t.storage_path}','${encodeURIComponent(t.template_name)}')">Download</button></td></tr>`).join(''):'<tr><td colspan="4" class="empty">No templates uploaded yet. The package includes your Melendres billing as the default server template.</td></tr>'}window.downloadTemplate=async(path,name)=>{const {data,error}=await sb.storage.from('templates').createSignedUrl(path,300);if(error)return alert(error.message);window.open(data.signedUrl,'_blank')};
 
-async function loadUsers(){
-  const body=document.getElementById('userRows'); if(!body||!sb||currentProfile?.role!=='admin') return;
-  body.innerHTML='<tr><td colspan="6" class="empty-state">Loading users...</td></tr>';
-  const {data,error}=await sb.from(PROFILE_TABLE).select('*').order('created_at',{ascending:true});
-  if(error){ body.innerHTML=`<tr><td colspan="6" class="empty-state">${error.message}</td></tr>`; return; }
-  if(!data?.length){ body.innerHTML='<tr><td colspan="6" class="empty-state">No user profiles yet.</td></tr>'; return; }
-  body.innerHTML=data.map(u=>`<tr><td><strong>${u.full_name||'—'}</strong></td><td>${u.email||'—'}</td><td>${u.department||'—'}</td><td>${profileRoleLabel(u.role)}</td><td><span class="user-status ${u.status==='active'?'active':'inactive'}">${u.status||'active'}</span></td><td>${u.user_id===currentProfile.user_id?'<span class="muted-text">Current admin</span>':`<button class="user-action-btn" data-user-id="${u.user_id}" data-next-status="${u.status==='active'?'inactive':'active'}">${u.status==='active'?'Deactivate':'Reactivate'}</button>`}</td></tr>`).join('');
-  body.querySelectorAll('.user-action-btn').forEach(btn=>btn.addEventListener('click',async()=>{
-    const next=btn.dataset.nextStatus;
-    btn.disabled=true; btn.textContent='Saving...';
-    const {error}=await sb.from(PROFILE_TABLE).update({status:next}).eq('user_id',btn.dataset.userId);
-    if(error){ alert(error.message); btn.disabled=false; return; }
-    loadUsers();
-  }));
-}
-document.getElementById('refreshUsersBtn')?.addEventListener('click',loadUsers);
-bootstrapAuth();
+$('aiForm').onsubmit=async e=>{e.preventDefault();const msg=$('aiInput').value.trim();if(!msg)return;$('aiInput').value='';$('aiMessages').insertAdjacentHTML('beforeend',`<div class="user-msg">${esc(msg)}</div>`);const ctx={projects:cache.projects.map(p=>({name:p.project_name,status:p.status,actual:actualForProject(p.id),planned:plannedForProject(p.id)})),billings:cache.billings.map(b=>({project:proj(b.project_id)?.project_name,billing:b.billing_no,gross:b.gross_amount,received:b.received_amount,outstanding:b.outstanding_amount,status:b.status})),agenda:cache.schedule.filter(x=>new Date(x.end_date)>=new Date()).slice(0,20)};const loading=document.createElement('div');loading.className='bot';loading.textContent='Thinking...';$('aiMessages').appendChild(loading);$('aiMessages').scrollTop=$('aiMessages').scrollHeight;try{const r=await fetch('/api/ai',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({message:msg,context:ctx})});const j=await r.json();loading.textContent=j.answer||j.error||'AI is not configured yet.';}catch(err){loading.textContent='AI endpoint is unavailable. Add OPENAI_API_KEY in Vercel Environment Variables.'}$('aiMessages').scrollTop=$('aiMessages').scrollHeight};
 
-let projects = JSON.parse(localStorage.getItem('saiko_projects')||'[]');
-function saveProjects(){ localStorage.setItem('saiko_projects',JSON.stringify(projects)); }
+async function renderUsers(){if(currentProfile?.role!=='admin')return;const {data,error}=await sb.from(PROFILE_TABLE).select('*').order('created_at');if(error){$('userRows').innerHTML=`<tr><td colspan="6">${esc(error.message)}</td></tr>`;return}$('userRows').innerHTML=data.map(u=>`<tr><td>${esc(u.full_name)}</td><td>${esc(u.email)}</td><td>${esc(u.department)}</td><td><select onchange="changeRole('${u.id}',this.value)"><option ${u.role==='editor'?'selected':''}>editor</option><option ${u.role==='qs'?'selected':''}>qs</option><option ${u.role==='engineer'?'selected':''}>engineer</option><option ${u.role==='accounting'?'selected':''}>accounting</option><option ${u.role==='procurement'?'selected':''}>procurement</option><option ${u.role==='admin'?'selected':''}>admin</option></select></td><td class="status-${u.status}">${u.status}</td><td><button class="icon-action" onclick="toggleUser('${u.id}','${u.status==='active'?'inactive':'active'}')">${u.status==='active'?'Deactivate':'Reactivate'}</button></td></tr>`).join('')}window.changeRole=async(id,role)=>{const {error}=await sb.from(PROFILE_TABLE).update({role}).eq('id',id);if(error)alert(error.message)};window.toggleUser=async(id,status)=>{const {error}=await sb.from(PROFILE_TABLE).update({status}).eq('id',id);if(error)alert(error.message);else renderUsers()};
 
-const moduleCopy = {
-  cost:{eyebrow:'COST CONTROL',title:'Cost Database',desc:'Maintain labor, material, equipment, and subcontractor rates.',cards:[['Material Rates','Store and update construction material prices.'],['Labor Rates','Maintain skilled, helper, foreman, and crew rates.'],['Equipment Rates','Track owned and rented equipment rates.']]},
-  contracts:{eyebrow:'DOCUMENT CONTROL',title:'Contracts & Documents',desc:'Generate and organize project correspondence and agreements.',cards:[['Construction Contract','Prepare project-specific agreements and terms.'],['Formal Letters','Create demand, notice, transmittal, and follow-up letters.'],['Templates Library','Keep standard SAIKO formats in one place.']]},
-  billing:{eyebrow:'PROJECT FINANCE',title:'Billing & Payments',desc:'Prepare progress billings and monitor payment status.',cards:[['Progress Billing','Compute billing based on accomplishment.'],['Retention Tracking','Monitor retention receivable and release dates.'],['Payment Status','Track submitted, approved, and paid billings.']]},
-  vo:{eyebrow:'CONTRACT ADMINISTRATION',title:'Variation Orders / EOT',desc:'Document changes, additional costs, and time impacts.',cards:[['Variation Order','Prepare scope, cost, and approval documents.'],['Extension of Time','Document excusable delays and requested days.'],['Change Register','Track all submitted and approved changes.']]},
-  procurement:{eyebrow:'SUPPLY CHAIN',title:'Procurement',desc:'Compare supplier prices and monitor purchasing activities.',cards:[['RFQ Comparison','Compare quotations from multiple suppliers.'],['Purchase Tracking','Monitor requested, ordered, and delivered items.'],['Supplier Directory','Maintain supplier contacts and categories.']]},
-  monitoring:{eyebrow:'FIELD CONTROL',title:'Project Monitoring',desc:'Monitor schedule, accomplishment, manpower, and project cost.',cards:[['Progress Reports','Generate weekly and monthly project summaries.'],['Accomplishment','Track percentage by scope of work.'],['Cost vs Budget','Compare actual cost against approved budget.']]}
-};
-
-const peso = n => new Intl.NumberFormat('en-PH',{style:'currency',currency:'PHP',maximumFractionDigits:2}).format(n);
-
-function projectRow(p){
-  return `<tr><td><strong>${p.name}</strong></td><td>${p.location}</td><td><span class="status"><span class="status-dot" style="background:${p.color}"></span>${p.status}</span></td><td><div class="progress-wrap"><span>${p.progress.toFixed(2)}%</span><div class="progress"><span style="width:${p.progress}%"></span></div></div></td><td>${p.target}</td></tr>`;
-}
-function renderProjects(list=projects){
-  const emptyRow='<tr class="empty-project-row"><td colspan="5">No projects yet. Click + Add Project to create your first record.</td></tr>';
-  document.querySelector('#projectRows').innerHTML=list.length?list.slice(0,7).map(projectRow).join(''):emptyRow;
-  document.querySelector('#allProjectRows').innerHTML=list.length?list.map(projectRow).join(''):emptyRow;
-  const active=list.filter(p=>['On-going','Architectural Phase','Design Phase'].includes(p.status)).length;
-  const avg=list.length?list.reduce((a,b)=>a+b.progress,0)/list.length:0;
-  document.querySelector('#projectStats').innerHTML=[['Total Projects',list.length],['Active Projects',active],['Average Progress',avg.toFixed(1)+'%'],['Planning / On-hold',list.filter(p=>['Planning','On-hold'].includes(p.status)).length]].map(([a,b])=>`<div class="stat-card"><small>${a}</small><strong>${b}</strong></div>`).join('');
-}
-renderProjects();
-
-function showView(id){
-  const target=document.getElementById(id);
-  if(!target){ showToast('Module not found yet.'); return; }
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active-view'));
-  target.classList.add('active-view');
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.view===id));
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-document.addEventListener('click',e=>{
-  const viewBtn=e.target.closest('[data-view]');
-  if(viewBtn){ e.preventDefault(); showView(viewBtn.dataset.view); return; }
-  const openBtn=e.target.closest('[data-open]');
-  if(openBtn){ e.preventDefault(); showView(openBtn.dataset.open); return; }
-  const generic=e.target.closest('[data-generic-action]');
-  if(generic){ e.preventDefault(); showToast(generic.dataset.genericAction+' is ready for the next database step.'); }
-});
-
-Object.entries(moduleCopy).forEach(([id,m])=>{
-  const section=document.getElementById(id);
-  section.innerHTML=`<div class="module-header"><div><small>${m.eyebrow}</small><h1>${m.title}</h1><p>${m.desc}</p></div><button class="primary-btn" data-generic-action="${m.title} - New record">＋ New</button></div><div class="generic-grid">${m.cards.map(c=>`<div class="generic-card"><h3>${c[0]}</h3><p>${c[1]}</p><button data-generic-action="${c[0]}">Open Module →</button></div>`).join('')}</div>`;
-});
-
-function addMessage(container, text, who='bot'){
-  const div=document.createElement('div');div.className=who==='user'?'user-message':'bot-message';div.innerHTML=text;container.appendChild(div);container.scrollTop=container.scrollHeight;
-}
-function localAiReply(q){
-  const t=q.toLowerCase();
-  if(t.includes('boq')||t.includes('estimate')) return 'For a BOQ, I can organize the estimate into <b>Preliminaries, Structural, Architectural, Electrical, Plumbing, Mechanical, and General Requirements</b>. Open the Estimate / BOQ module to generate a preliminary cost from floor area and rate.';
-  if(t.includes('billing')) return 'For progress billing, use: <b>Current Accomplishment × Contract Amount</b>, then deduct previous billings, applicable retention, and other deductions. The Billing module can be connected to project accomplishment later.';
-  if(t.includes('variation')||t.includes('vo')) return 'A Variation Order should capture the <b>original scope, revised scope, reason for change, cost impact, time impact, and approval</b>. The VO / EOT module is ready as a prototype screen.';
-  if(t.includes('contract')) return 'I can structure construction contracts with scope, price, payment terms, duration, variation procedure, delay provisions, warranties, termination, and signatories. In a production version, templates can be generated to Word/PDF.';
-  if(t.includes('hello')||t.includes('hi')) return 'Hello! I’m ready to help with construction estimating, BOQ, billing, contracts, VO/EOT, procurement, and project monitoring.';
-  return 'Prototype response: I understood your request. In the production version, this chat will connect to an AI API plus your company cost database and project records, so it can generate real calculations and documents.';
-}
-const aiForm=document.querySelector('#aiForm'),aiInput=document.querySelector('#aiInput'),aiMessages=document.querySelector('#aiMessages');
-aiForm.addEventListener('submit',e=>{e.preventDefault();const q=aiInput.value.trim();if(!q)return;addMessage(aiMessages,q,'user');aiInput.value='';setTimeout(()=>addMessage(aiMessages,localAiReply(q),'bot'),250)});
-document.querySelectorAll('.chips button').forEach(b=>b.addEventListener('click',()=>{aiInput.value=b.textContent;aiForm.requestSubmit()}));
-const fullForm=document.querySelector('#fullAiForm'),fullInput=document.querySelector('#fullAiInput'),fullMessages=document.querySelector('#fullAiMessages');
-fullForm.addEventListener('submit',e=>{e.preventDefault();const q=fullInput.value.trim();if(!q)return;addMessage(fullMessages,q,'user');fullInput.value='';setTimeout(()=>addMessage(fullMessages,localAiReply(q),'bot'),250)});
-
-function runEstimate(){
-  const area=+document.querySelector('#estArea').value||0, rate=+document.querySelector('#estRate').value||0, cont=+document.querySelector('#estCont').value||0, markup=+document.querySelector('#estMarkup').value||0;
-  const base=area*rate, contingency=base*cont/100, subtotal=base+contingency, contractor=subtotal*markup/100, total=subtotal+contractor;
-  const shares={Structural:.32,Architectural:.30,Electrical:.08,Plumbing:.07,Mechanical:.05,'General Requirements':.08,'Site / External Works':.10};
-  document.querySelector('#estimateOutput').innerHTML=`<div class="estimate-summary"><small>PROJECT</small><h3>${document.querySelector('#estProject').value}</h3><div class="estimate-total">${peso(total)}</div><div class="estimate-breakdown">${Object.entries(shares).map(([k,v])=>`<div><b>${k}</b><span>${peso(base*v)}</span></div>`).join('')}<div><b>Contingency</b><span>${peso(contingency)}</span></div><div><b>Contractor Markup</b><span>${peso(contractor)}</span></div></div><p style="margin-top:16px;color:#748094;font-size:12px">Preliminary budget based on ${area.toLocaleString()} sqm × ${peso(rate)}/sqm. Detailed quantities and specifications are required for a final BOQ.</p></div>`;
-}
-document.querySelector('#estimateForm').addEventListener('submit',e=>{e.preventDefault();runEstimate()});
-function startNewEstimate(){
-  showView('estimate');
-  const form=document.getElementById('estimateForm');
-  form.reset();
-  document.getElementById('estProject').value='';
-  document.getElementById('estLocation').value='';
-  document.getElementById('estArea').value='';
-  document.getElementById('estRate').value='';
-  document.getElementById('estCont').value='5';
-  document.getElementById('estMarkup').value='10';
-  document.getElementById('estimateOutput').innerHTML='<div class="empty-state">Enter a new project estimate, then click Generate Preliminary Estimate.</div>';
-  setTimeout(()=>document.getElementById('estProject').focus(),150);
-}
-['newEstimateBtn','createEstimateBtn'].forEach(id=>document.getElementById(id)?.addEventListener('click',startNewEstimate));
-
-const projectDialog=document.getElementById('projectDialog');document.getElementById('addProjectBtn')?.addEventListener('click',()=>{ if(projectDialog?.showModal) projectDialog.showModal(); });
-document.getElementById('closeProjectDialogBtn')?.addEventListener('click',()=>projectDialog?.close());
-document.getElementById('cancelProjectBtn')?.addEventListener('click',()=>projectDialog?.close());
-document.getElementById('projectForm').addEventListener('submit',e=>{e.preventDefault();projects.unshift({name:document.getElementById('pName').value,location:document.getElementById('pLocation').value,status:document.getElementById('pStatus').value,progress:+document.getElementById('pProgress').value||0,target:'—',color:'#2f6fde'});saveProjects();renderProjects();projectDialog.close();e.target.reset();showToast('Project saved.');});
-document.getElementById('projectSearch').addEventListener('input',e=>{const q=e.target.value.toLowerCase();renderProjects(projects.filter(p=>(p.name+' '+p.location+' '+p.status).toLowerCase().includes(q)))});
-document.getElementById('globalSearch').addEventListener('keydown',e=>{if(e.key==='Enter'){const q=e.target.value.trim();if(!q)return;showView('assistant');fullInput.value=q;fullForm.requestSubmit();e.target.value=''}});
-
-
-function showToast(message){
-  let t=document.getElementById('appToast');
-  if(!t){ t=document.createElement('div'); t.id='appToast'; t.className='app-toast'; document.body.appendChild(t); }
-  t.textContent=message; t.classList.add('show'); clearTimeout(window.__saikoToast); window.__saikoToast=setTimeout(()=>t.classList.remove('show'),2200);
-}
-
-document.querySelectorAll('.icon-btn').forEach(btn=>btn.addEventListener('click',()=>showToast('No new notifications yet.')));
-
-if(!window.HTMLDialogElement || !HTMLDialogElement.prototype.showModal){
-  document.getElementById('addProjectBtn')?.addEventListener('click',()=>{
-    const name=prompt('Project name'); if(!name) return; const location=prompt('Location')||''; projects.unshift({name,location,status:'Planning',progress:0,target:'—',color:'#2f6fde'}); saveProjects(); renderProjects(); showToast('Project saved.');
-  });
-}
+$('globalSearch').oninput=e=>{const q=e.target.value.toLowerCase();if(!q)return;const p=cache.projects.find(x=>`${x.project_name} ${x.client_name} ${x.location}`.toLowerCase().includes(q));if(p){show('projects')}};

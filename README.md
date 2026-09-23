@@ -1,40 +1,25 @@
-# SAIKO Construction AI — Web Prototype
+# SAIKO Construction AI v10
 
-A responsive front-end prototype for a construction management and AI assistant system.
+This build adds a real Supabase-backed construction management workflow:
+- self-signup accounts default to editor access
+- admin role/status management
+- projects
+- automatic billing/payment calculations
+- Excel schedule import and planned-vs-actual tracking
+- manual weighted progress
+- project file cloud storage
+- reusable template library
+- billing Excel generation from the supplied Melendres sample template
+- Construction AI serverless endpoint (requires OPENAI_API_KEY in Vercel)
 
-## How to open
+## Deploy
+1. Upload all files/folders to the GitHub repo, including `api/`, `templates/`, and `package.json`.
+2. Run `supabase-setup.sql` once in Supabase SQL Editor.
+3. Redeploy/refresh Vercel.
+4. For AI, add `OPENAI_API_KEY` in Vercel Environment Variables and redeploy.
 
-Option 1: Double-click `index.html`.
+## Schedule Excel columns
+Use headers such as: Activity, Start Date, End Date, Weight (%).
 
-Option 2: Run a local web server:
-
-```bash
-python -m http.server 8000
-```
-
-Then open `http://localhost:8000`.
-
-## Included prototype modules
-
-- Dashboard
-- Projects
-- AI Assistant (local demo responses)
-- Estimate / BOQ preliminary calculator
-- Cost Database
-- Contracts & Documents
-- Billing & Payments
-- Variation Orders / EOT
-- Procurement
-- Project Monitoring
-
-## What is not connected yet
-
-This prototype does not yet use a live database or an AI API. For production, the next layer would be:
-
-- Next.js/React frontend
-- PostgreSQL database
-- Authentication and user roles
-- OpenAI API integration
-- File upload and document generation
-- Project-specific cost database
-- Excel/PDF/Word export
+## Billing template
+The supplied `Architectural Melendres Billing No. 3.xlsx` is included as the default billing workbook. Users can also upload a Billing Excel template in the Templates module; generated billing will use the latest uploaded Billing Excel template when available.
