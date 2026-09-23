@@ -213,3 +213,21 @@ Hotfix v15.1: fixed Team Activity modal button clicks and removed the horizontal
 - strengthens text contrast across all themes, especially pastel/cute/summer
 - adds always-visible online user icons in the top bar
 - clicking an online icon opens the Team Activity dialog
+
+
+## v15.4 Executive Live Panel
+- premium profile icons
+- live online user count badge in the sidebar
+- collapsible live team panel in Settings
+- adds Glass Ultra and Executive Dark themes
+- quick theme button now cycles through all 8 themes
+- preserves readable contrast rules from v15.3
+
+
+## v15.5 Button Fix + Active Status Privacy
+- Adds per-profile **Show active status** toggle.
+- When OFF, the user's presence row is removed and heartbeat publishing stops, so other users no longer see that account in Who's Online / online avatar rail.
+- Turning it back ON publishes presence again.
+- Presence is also removed before logout.
+- Adds stronger delegated click handling and pointer-event hardening for dialog close, refresh, theme, settings/team controls.
+- Run `v15.5-active-status.sql` once in Supabase SQL Editor.

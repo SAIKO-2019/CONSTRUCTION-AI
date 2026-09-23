@@ -17,8 +17,17 @@ function currentVisibleView(){
   const el=[...document.querySelectorAll('.view')].find(x=>!x.classList.contains('hidden') && getComputedStyle(x).display!=='none');
   return el?.id || 'dashboard';
 }
+async function hideMyPresence(){
+  if(!currentUser)return;
+  try{await sb.from('collaboration_presence').delete().eq('user_id',currentUser.id)}catch(e){console.warn('presence hide',e)}
+}
+window.hideMyPresence=hideMyPresence;
 async function heartbeatPresence(){
   if(!currentUser)return;
+  if(cache.userPreferences?.show_active_status===false){
+    await hideMyPresence();
+    return;
+  }
   const module=currentVisibleView();
   saikoCollab.currentModule=module;
   await sb.from('collaboration_presence').upsert({

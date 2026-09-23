@@ -59,9 +59,9 @@
         <div id="sidebarAvatar" class="avatar">U</div>
         <div class="sidebar-user-info"><strong id="sidebarName">User</strong><span id="sidebarRole">Editor</span></div>
         <div class="profile-actions">
-          <button id="teamActivityBtn" class="profile-icon-btn" type="button" title="Team activity" aria-label="Team activity">👥</button>
-          <button id="settingsBtn" class="profile-icon-btn accent" type="button" title="Profile settings" aria-label="Profile settings">⚙</button>
-          <button id="logoutBtn" class="profile-icon-btn danger" type="button" title="Log out" aria-label="Log out">⇦</button>
+          <button id="teamActivityBtn" class="profile-icon-btn ultra-team" type="button" title="Team activity" aria-label="Team activity"><span class="icon-glyph">◉</span><span id="sidebarOnlineCount" class="profile-count-badge">0</span></button>
+          <button id="settingsBtn" class="profile-icon-btn accent" type="button" title="Profile settings" aria-label="Profile settings"><span class="icon-glyph">⚙</span></button>
+          <button id="logoutBtn" class="profile-icon-btn danger" type="button" title="Log out" aria-label="Log out"><span class="icon-glyph">↗</span></button>
         </div>
       </div>
     </aside>
@@ -356,6 +356,8 @@
               <button type="button" class="theme-preview" data-theme-choice="pastel"><span class="theme-swatch sw-pastel"></span><strong>Pastel Glow</strong><small>Soft & elegant</small></button>
               <button type="button" class="theme-preview" data-theme-choice="cute"><span class="theme-swatch sw-cute"></span><strong>Cute Candy</strong><small>Playful & bright</small></button>
               <button type="button" class="theme-preview" data-theme-choice="summer"><span class="theme-swatch sw-summer"></span><strong>Summer Cool</strong><small>Fresh tropical</small></button>
+              <button type="button" class="theme-preview" data-theme-choice="glass"><span class="theme-swatch sw-glass"></span><strong>Glass Ultra</strong><small>Modern translucent UI</small></button>
+              <button type="button" class="theme-preview" data-theme-choice="executive"><span class="theme-swatch sw-executive"></span><strong>Executive Dark</strong><small>Premium corporate mode</small></button>
             </div>
             <div class="form-grid appearance-controls">
               <label>Theme
@@ -367,6 +369,8 @@
                   <option value="pastel">Pastel Glow</option>
                   <option value="cute">Cute Candy</option>
                   <option value="summer">Summer Cool</option>
+                  <option value="glass">Glass Ultra</option>
+                  <option value="executive">Executive Dark</option>
                 </select>
               </label>
               <label>Density
@@ -384,6 +388,7 @@
               <label class="setting-toggle"><input id="settingsRememberProject" type="checkbox"><span>Remember last selected project</span></label>
               <label class="setting-toggle"><input id="settingsConfirmDelete" type="checkbox" checked><span>Ask for confirmation before delete</span></label>
               <label class="setting-toggle"><input id="settingsDailyPending" type="checkbox" checked><span>Show daily pending-work reminders</span></label>
+              <label class="setting-toggle privacy-toggle"><input id="settingsShowActiveStatus" type="checkbox" checked><span><strong>Show active status</strong><small>When off, you will not appear in Who's Online or active-user icons.</small></span></label>
             </div>
           </section>
         </div>
@@ -391,7 +396,7 @@
         <aside class="settings-live-panel" aria-label="Live team status">
           <div class="live-panel-head">
             <div><span class="live-kicker">LIVE WORKSPACE</span><h3>Who's Online</h3></div>
-            <button id="refreshSettingsTeamBtn" type="button" class="live-refresh-btn" title="Refresh team status">↻</button>
+            <div class="live-panel-actions"><button id="refreshSettingsTeamBtn" type="button" class="live-refresh-btn" title="Refresh team status">↻</button><button id="collapseSettingsTeamBtn" type="button" class="live-refresh-btn" title="Collapse live team panel">⇥</button></div>
           </div>
           <div id="settingsOnlineUsers" class="settings-online-list"><div class="muted">Loading team status…</div></div>
           <div class="live-panel-divider"></div>
@@ -442,5 +447,7 @@
   <script src="v15.js?v=150"></script>
   <script src="v15.2.js?v=152"></script>
   <script src="v15.3.js?v=153"></script>
+  <script src="v15.4.js?v=154"></script>
+  <script src="v15.5.js?v=155"></script>
 </body>
 </html>

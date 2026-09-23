@@ -25,6 +25,7 @@ async function loadUserPreferences(){
       remember_project:true,
       confirm_delete:true,
       daily_pending_reminder:true,
+      show_active_status:true,
       last_project_id:null
     };
     applyTheme(cache.userPreferences.theme||'system');
@@ -54,6 +55,7 @@ function fillSettingsForm(){
   $('settingsRememberProject').checked=p.remember_project!==false;
   $('settingsConfirmDelete').checked=p.confirm_delete!==false;
   $('settingsDailyPending').checked=p.daily_pending_reminder!==false;
+  if($('settingsShowActiveStatus')) $('settingsShowActiveStatus').checked=p.show_active_status!==false;
 }
 if($('settingsBtn'))$('settingsBtn').onclick=()=>{
   fillSettingsForm();
@@ -70,12 +72,15 @@ if($('settingsForm'))$('settingsForm').onsubmit=async e=>{
     remember_project:$('settingsRememberProject').checked,
     confirm_delete:$('settingsConfirmDelete').checked,
     daily_pending_reminder:$('settingsDailyPending').checked,
+    show_active_status:$('settingsShowActiveStatus') ? $('settingsShowActiveStatus').checked : true,
     last_project_id:$('settingsRememberProject').checked?($('workspaceProject')?.value||null):null,
     updated_at:new Date().toISOString()
   };
   const {error}=await sb.from('user_preferences').upsert(row,{onConflict:'user_id'});
   if(error)return alert(error.message);
   cache.userPreferences=row;
+  if(row.show_active_status===false && typeof hideMyPresence==='function') await hideMyPresence();
+  if(row.show_active_status!==false && typeof heartbeatPresence==='function') await heartbeatPresence();
   applyTheme(row.theme);
   applyDensity(row.density);
   if($('sidebarName')&&row.display_name)$('sidebarName').textContent=row.display_name;

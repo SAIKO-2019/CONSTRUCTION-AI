@@ -671,3 +671,89 @@ html[data-theme] .theme-preview strong{color:var(--heading)!important}
   #teamActivityDialog .collab-grid{grid-template-columns:1fr!important;padding:18px 16px 8px!important}
   #teamActivityDialog .settings-section{margin:0 16px 12px!important}
 }
+
+
+/* =========================================================
+   v15.4 executive live panel + premium controls
+   ========================================================= */
+.profile-icon-btn{position:relative;overflow:visible!important}
+.profile-icon-btn .icon-glyph{font-size:16px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.2))}
+.profile-icon-btn.ultra-team{background:linear-gradient(180deg,#16a085,#0f766e)!important;color:#fff!important}
+.profile-count-badge{position:absolute;top:-6px;right:-6px;min-width:17px;height:17px;padding:0 4px;border-radius:999px;background:#22c55e;color:#06271b!important;border:2px solid var(--navy);display:grid;place-items:center;font-size:9px;font-weight:900;box-shadow:0 4px 10px rgba(34,197,94,.28)}
+.live-panel-actions{display:flex;gap:6px}
+.settings-live-panel{transition:width .25s ease,opacity .2s ease,transform .25s ease,padding .25s ease,border-color .25s ease}
+.settings-dialog-card.team-collapsed .settings-workspace{grid-template-columns:minmax(0,1fr) 58px!important}
+.settings-dialog-card.team-collapsed .settings-live-panel{padding:10px 8px;align-items:start}
+.settings-dialog-card.team-collapsed .settings-live-panel>:not(.live-panel-head){display:none!important}
+.settings-dialog-card.team-collapsed .live-panel-head{display:grid;justify-items:center;gap:8px}
+.settings-dialog-card.team-collapsed .live-panel-head>div{display:none}
+.settings-dialog-card.team-collapsed .live-panel-actions{display:grid;gap:6px}
+.settings-dialog-card.team-collapsed #collapseSettingsTeamBtn{transform:rotate(180deg)}
+.settings-dialog-card.team-collapsed #refreshSettingsTeamBtn{display:none}
+
+/* Glass Ultra */
+html[data-theme="glass"]{
+  --bg:#eaf3f8;--line:#c9dbe6;--text:#163044;--muted:#5f7687;--heading:#0c2435;
+  --surface:rgba(255,255,255,.68);--surface-soft:rgba(255,255,255,.45);--topbar:rgba(255,255,255,.64);
+  --navy:#103349;--navy2:#174f66;--blue:#2489b8;
+}
+html[data-theme="glass"] body{background:linear-gradient(135deg,#dfeef6 0%,#f7fbfd 45%,#dbeaf4 100%) fixed}
+html[data-theme="glass"] .panel,
+html[data-theme="glass"] .kpi,
+html[data-theme="glass"] .dialog-card,
+html[data-theme="glass"] .settings-section.feature-card,
+html[data-theme="glass"] .settings-live-panel,
+html[data-theme="glass"] .folder-card,
+html[data-theme="glass"] .schedule-health-card,
+html[data-theme="glass"] .summary-cards>div{
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  background:rgba(255,255,255,.62)!important;border-color:rgba(255,255,255,.66)!important;
+  box-shadow:0 18px 45px rgba(25,72,95,.10)!important;
+}
+html[data-theme="glass"] .topbar{backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 10px 30px rgba(25,72,95,.08)}
+html[data-theme="glass"] .sidebar{background:linear-gradient(180deg,rgba(16,51,73,.97),rgba(23,79,102,.95))}
+html[data-theme="glass"] .primary-btn{box-shadow:0 10px 22px rgba(36,137,184,.22)}
+
+/* Executive Dark */
+html[data-theme="executive"]{
+  --bg:#0a0d12;--line:#2a323d;--text:#edf1f7;--muted:#9ba7b6;--heading:#ffffff;
+  --surface:#11161d;--surface-soft:#161d26;--topbar:#10151c;--navy:#070a0e;--navy2:#111821;--blue:#b08a4b;
+}
+html[data-theme="executive"] body{background:radial-gradient(circle at 80% 0%,#19130b 0%,#0a0d12 28%,#0a0d12 100%) fixed}
+html[data-theme="executive"] .sidebar{background:linear-gradient(180deg,#06090d,#11161d)}
+html[data-theme="executive"] .brand-mark{background:linear-gradient(135deg,#d8b36a,#8d6a33);color:#0b0b0b}
+html[data-theme="executive"] nav button.active::before{background:#d8b36a;box-shadow:0 0 18px rgba(216,179,106,.42)}
+html[data-theme="executive"] .panel,
+html[data-theme="executive"] .kpi,
+html[data-theme="executive"] .dialog-card,
+html[data-theme="executive"] .settings-section.feature-card,
+html[data-theme="executive"] .settings-live-panel,
+html[data-theme="executive"] .folder-card,
+html[data-theme="executive"] .schedule-health-card,
+html[data-theme="executive"] .summary-cards>div{background:linear-gradient(180deg,#121820,#0f141b)!important;border-color:#2a323d!important;box-shadow:0 18px 48px rgba(0,0,0,.26)!important}
+html[data-theme="executive"] .primary-btn{background:linear-gradient(180deg,#c49a57,#9b733b)!important;color:#0d0d0d!important}
+html[data-theme="executive"] .profile-icon-btn.accent{background:linear-gradient(180deg,#c49a57,#8c6633)!important;color:#0c0c0c!important}
+
+.sw-glass{background:linear-gradient(135deg,#a9d5e6 0 33%,rgba(255,255,255,.7) 33% 66%,#cfe9f2 66%)}
+.sw-executive{background:linear-gradient(135deg,#070a0e 0 34%,#1a2029 34% 68%,#b08a4b 68%)}
+
+/* make 8 themes fit neatly */
+.appearance-card .theme-preview-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+@media(max-width:1180px){.appearance-card .theme-preview-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media(max-width:760px){.appearance-card .theme-preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+
+
+/* =========================================================
+   v15.5 button reliability + Active Status privacy
+   ========================================================= */
+button,[role="button"],.theme-preview{pointer-events:auto!important;touch-action:manipulation}
+.dialog-head,.dialog-actions,.settings-live-panel,.settings-section,.live-panel-actions{pointer-events:auto!important}
+.dialog-head button,.dialog-actions button,.live-panel-actions button,.profile-icon-btn,.quick-theme-btn{position:relative;z-index:30!important;pointer-events:auto!important}
+.settings-section.feature-card::after,.brand::after,.kpi::after{pointer-events:none!important}
+.privacy-toggle{align-items:flex-start!important}
+.privacy-toggle>span{display:grid;gap:2px;min-width:0}
+.privacy-toggle strong{font-size:12px!important;line-height:1.2}
+.privacy-toggle small{font-size:10px!important;line-height:1.35;color:var(--muted)!important;font-weight:500}
+#settingsShowActiveStatus{margin-top:2px}
+#topPresenceRail[data-private="1"]::before{content:'Active status hidden';font-size:10px;color:var(--muted);white-space:nowrap}
+#topPresenceRail[data-private="1"] .presence-avatars{display:none}
