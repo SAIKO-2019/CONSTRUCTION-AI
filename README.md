@@ -121,3 +121,14 @@ The generated PPTX filename follows the selected uploaded report template name w
 
 ### Template note
 Uploaded report templates are currently used for template selection, naming, and report-type matching. The generator produces a standardized SAIKO slide layout. Pixel-for-pixel editing of arbitrary uploaded PPTX/PDF/Word layouts would require a separate template parser/mapping layer.
+
+
+## v14.5 Login Security
+- Initial login screen now requires the user to click **Sign In** before the email/password form opens.
+- Adds **Remember me**.
+- Remember me stores only the email address; passwords are not stored in localStorage.
+- Adds Google reCAPTCHA v2 Checkbox verification.
+- Server-side reCAPTCHA validation runs through `/api/verify-recaptcha`.
+- Requires `RECAPTCHA_SECRET_KEY` in Vercel and `RECAPTCHA_SITE_KEY` in `config.js`.
+
+See `V14.5-LOGIN-SETUP.md`.

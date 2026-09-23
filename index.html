@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SAIKO Construction AI</title>
   <link rel="stylesheet" href="styles.css" />
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
   <div id="loginGate" class="auth-overlay">
@@ -13,11 +14,11 @@
       <div class="auth-tabs"><button id="showLoginBtn" class="active">Sign in</button><button id="showSignupBtn">Sign up</button></div>
       <div id="loginPane">
         <h1>Welcome back</h1><p>Sign in to manage projects, billing, schedules, files, and AI guidance.</p>
-        <form id="loginForm" class="stack-form">
+        <div id="authLanding" class="auth-landing"><small>CONSTRUCTION MANAGEMENT</small><h1>Welcome back</h1><p>Click Sign In to continue.</p><button id="openSignInBtn" class="primary-btn auth-main-btn" type="button">Sign In</button></div><form id="loginForm" class="hidden" class="stack-form">
           <label>Email<input id="loginEmail" type="email" required></label>
           <label>Password<input id="loginPassword" type="password" required></label>
           <button class="primary-btn" type="submit">Sign in</button>
-        </form>
+        <div class="auth-options"><label class="remember-row"><input id="rememberMe" type="checkbox"><span>Remember me</span></label></div><div class="captcha-wrap"><div id="recaptchaContainer" class="g-recaptcha" data-sitekey=""></div></div></form>
         <button id="forgotPasswordBtn" class="text-btn">Forgot password?</button>
         <div id="loginError" class="form-msg"></div>
       </div>
@@ -318,5 +319,6 @@
   <script src="v14.2.js?v=142"></script>
   <script src="v14.3.js?v=143"></script>
   <script src="v14.4.js?v=144"></script>
+  <script src="v14.5.js?v=145"></script>
 </body>
 </html>
