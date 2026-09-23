@@ -132,3 +132,28 @@ Uploaded report templates are currently used for template selection, naming, and
 - Requires `RECAPTCHA_SECRET_KEY` in Vercel and `RECAPTCHA_SITE_KEY` in `config.js`.
 
 See `V14.5-LOGIN-SETUP.md`.
+
+
+## v14.6 Logout
+- Replaces the small arrow-only logout control with a visible **Log out** button.
+- Adds logout confirmation.
+- Shows `Logging out...` while Supabase ends the session.
+- Returns the user to the login screen after logout.
+- Remembered email remains available when Remember Me was used; password is never stored.
+
+
+## v14.7 Per-Profile Settings
+Each authenticated account can sign out any time and sign back in again.
+
+Per-user settings now include:
+- Display Name
+- Theme: System / Light / Dark
+- Density: Comfortable / Compact
+- Remember last selected project
+- Delete confirmation preference
+- Daily pending-work reminder preference
+
+Preferences are stored in Supabase per authenticated user, so one employee's settings do not affect another employee's account.
+
+### Required once
+Run `v14.7-user-preferences.sql` in Supabase SQL Editor.

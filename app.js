@@ -17,7 +17,24 @@ async function enter(user){currentUser=user;currentProfile=await ensureProfile(u
 $('loginForm').onsubmit=async e=>{e.preventDefault();$('loginError').textContent='Signing in...';const {data,error}=await sb.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value});if(error){$('loginError').textContent=error.message;return}$('loginError').textContent='';await enter(data.user)};
 $('signupForm').onsubmit=async e=>{e.preventDefault();const name=$('signupName').value.trim(),email=$('signupEmail').value.trim(),department=$('signupDepartment').value,p1=$('signupPassword').value,p2=$('signupPassword2').value;if(p1!==p2){$('signupError').textContent='Passwords do not match.';return}$('signupError').textContent='Creating account...';const {data,error}=await sb.auth.signUp({email,password:p1,options:{data:{full_name:name,department,role:'editor',status:'active'}}});if(error){$('signupError').textContent=error.message;return}let user=data?.session?.user;if(!user){const r=await sb.auth.signInWithPassword({email,password:p1});if(r.error){$('signupError').textContent='Account created, but Supabase email confirmation is enabled. Confirm the email or disable Confirm email in Authentication → Sign In / Providers → Email.';return}user=r.data.user}$('signupError').classList.add('success');$('signupError').textContent='Account created.';await enter(user)};
 $('forgotPasswordBtn').onclick=async()=>{const email=$('loginEmail').value.trim();if(!email){$('loginError').textContent='Enter your email first.';return}const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin});$('loginError').textContent=error?error.message:'Password reset email sent.'};
-$('logoutBtn').onclick=async()=>{await sb.auth.signOut();location.reload()};
+$('logoutBtn').onclick=async()=>{
+  if(!confirm('Log out of SAIKO Construction AI?')) return;
+  const btn=$('logoutBtn');
+  const oldText=btn.textContent;
+  btn.disabled=true;
+  btn.textContent='Logging out...';
+  try{
+    const {error}=await sb.auth.signOut();
+    if(error) throw error;
+    currentUser=null;
+    currentProfile=null;
+    location.reload();
+  }catch(e){
+    alert('Logout failed: '+(e.message||e));
+    btn.disabled=false;
+    btn.textContent=oldText;
+  }
+};
 (async()=>{if(!sb){$('loginError').textContent='Supabase config missing.';return}const {data}=await sb.auth.getSession();if(data.session?.user)await enter(data.session.user)})();
 
 async function q(table,op='select',payload=null){if(!sb)throw new Error('Supabase not configured');let r;if(op==='select')r=await sb.from(table).select(payload||'*');if(op==='insert')r=await sb.from(table).insert(payload).select();if(op==='update')r=await sb.from(table).update(payload.values).eq('id',payload.id).select();if(op==='delete')r=await sb.from(table).delete().eq('id',payload);if(r.error)throw r.error;return r.data||[]}

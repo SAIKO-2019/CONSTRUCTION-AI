@@ -55,7 +55,14 @@
         <button data-view="assistant">✦ Construction AI</button>
         <button data-view="users" class="admin-only">⚙ User Management</button>
       </nav>
-      <div class="sidebar-user"><div id="sidebarAvatar" class="avatar">U</div><div><strong id="sidebarName">User</strong><span id="sidebarRole">Editor</span></div><button id="logoutBtn">↪</button></div>
+      <div class="sidebar-user">
+        <div id="sidebarAvatar" class="avatar">U</div>
+        <div class="sidebar-user-info"><strong id="sidebarName">User</strong><span id="sidebarRole">Editor</span></div>
+        <div class="profile-actions">
+          <button id="settingsBtn" class="profile-btn" type="button" title="Profile settings">Settings</button>
+          <button id="logoutBtn" class="logout-btn" type="button" title="Log out">Log out</button>
+        </div>
+      </div>
     </aside>
 
     <main class="main">
@@ -320,5 +327,60 @@
   <script src="v14.3.js?v=143"></script>
   <script src="v14.4.js?v=144"></script>
   <script src="v14.5.js?v=145"></script>
+
+  <dialog id="settingsDialog">
+    <form id="settingsForm" class="dialog-card wide">
+      <div class="dialog-head">
+        <h2>Profile Settings</h2>
+        <button type="button" data-close="settingsDialog">×</button>
+      </div>
+
+      <div class="settings-layout">
+        <section class="settings-section">
+          <h3>Account</h3>
+          <div class="form-grid">
+            <label>Display Name<input id="settingsDisplayName" type="text"></label>
+            <label>Email<input id="settingsEmail" type="email" readonly></label>
+            <label>Role<input id="settingsRole" type="text" readonly></label>
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <h3>Appearance</h3>
+          <div class="form-grid">
+            <label>Theme
+              <select id="settingsTheme">
+                <option value="system">System Default</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+            </label>
+            <label>Density
+              <select id="settingsDensity">
+                <option value="comfortable">Comfortable</option>
+                <option value="compact">Compact</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <h3>Preferences</h3>
+          <div class="settings-toggle-list">
+            <label class="setting-toggle"><input id="settingsRememberProject" type="checkbox"><span>Remember last selected project</span></label>
+            <label class="setting-toggle"><input id="settingsConfirmDelete" type="checkbox" checked><span>Ask for confirmation before delete</span></label>
+            <label class="setting-toggle"><input id="settingsDailyPending" type="checkbox" checked><span>Show daily pending-work reminders</span></label>
+          </div>
+        </section>
+      </div>
+
+      <div class="dialog-actions">
+        <button type="button" class="secondary-btn" data-close="settingsDialog">Cancel</button>
+        <button class="primary-btn" type="submit">Save Settings</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="v14.7.js?v=147"></script>
 </body>
 </html>
