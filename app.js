@@ -1,24 +1,74 @@
 const cfg=window.SAIKO_CONFIG||{};
 const configReady=cfg.SUPABASE_URL && cfg.SUPABASE_PUBLISHABLE_KEY && !cfg.SUPABASE_URL.includes('PASTE_') && !cfg.SUPABASE_PUBLISHABLE_KEY.includes('PASTE_');
 const sb=configReady?window.supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_PUBLISHABLE_KEY):null;
+const PROFILE_TABLE='SAIKO BUILDERS';
 const loginGate=document.getElementById('loginGate');
 const loginForm=document.getElementById('loginForm');
+const signupForm=document.getElementById('signupForm');
 const loginError=document.getElementById('loginError');
+const signupError=document.getElementById('signupError');
 const logoutBtn=document.getElementById('logoutBtn');
-function setUserUI(user){
-  const email=user?.email||'Signed in user';
-  const initial=(email[0]||'U').toUpperCase();
+let currentProfile=null;
+
+function setAuthPane(mode){
+  const login=mode==='login';
+  document.getElementById('loginPane').classList.toggle('auth-pane-hidden',!login);
+  document.getElementById('signupPane').classList.toggle('auth-pane-hidden',login);
+  document.getElementById('showLoginBtn').classList.toggle('active',login);
+  document.getElementById('showSignupBtn').classList.toggle('active',!login);
+  loginError.textContent=''; signupError.textContent='';
+}
+document.getElementById('showLoginBtn').addEventListener('click',()=>setAuthPane('login'));
+document.getElementById('showSignupBtn').addEventListener('click',()=>setAuthPane('signup'));
+
+function profileRoleLabel(role){
+  const map={admin:'Administrator',qs:'Quantity Surveyor',accounting:'Accounting',engineer:'Engineer',procurement:'Procurement',viewer:'Viewer'};
+  return map[(role||'viewer').toLowerCase()]||role||'Viewer';
+}
+function setUserUI(user,profile){
+  const name=profile?.full_name||user?.user_metadata?.full_name||user?.email||'Signed in user';
+  const role=profileRoleLabel(profile?.role||user?.user_metadata?.role||'viewer');
+  const initial=(name[0]||'U').toUpperCase();
   document.getElementById('sidebarAvatar').textContent=initial;
-  document.getElementById('sidebarName').textContent=email;
-  document.getElementById('sidebarRole').textContent='Authenticated user';
+  document.getElementById('sidebarName').textContent=name;
+  document.getElementById('sidebarRole').textContent=role;
   document.querySelector('.mini-avatar').textContent=initial;
+  document.querySelectorAll('.admin-only').forEach(el=>el.style.display=(profile?.role==='admin'?'':'none'));
+}
+async function getProfile(user){
+  if(!sb||!user) return null;
+  const {data,error}=await sb.from(PROFILE_TABLE).select('*').eq('user_id',user.id).maybeSingle();
+  if(error){ console.warn('Profile lookup:',error.message); return null; }
+  return data;
+}
+async function ensureProfile(user){
+  if(!sb||!user) return null;
+  let profile=await getProfile(user);
+  if(profile) return profile;
+  const meta=user.user_metadata||{};
+  const record={user_id:user.id,full_name:meta.full_name||user.email?.split('@')[0]||'User',email:user.email||'',role:meta.role||'viewer',department:meta.department||'Other',status:'active'};
+  const {data,error}=await sb.from(PROFILE_TABLE).insert(record).select().maybeSingle();
+  if(error){ console.warn('Profile create:',error.message); return record; }
+  return data||record;
+}
+async function authorizeSession(user){
+  currentProfile=await ensureProfile(user);
+  if(currentProfile?.status && currentProfile.status!=='active'){
+    await sb.auth.signOut();
+    loginGate.classList.remove('hidden');
+    loginError.textContent='This account is currently inactive. Please contact your administrator.';
+    return false;
+  }
+  setUserUI(user,currentProfile);
+  loginGate.classList.add('hidden');
+  if(currentProfile?.role==='admin') loadUsers();
+  return true;
 }
 async function bootstrapAuth(){
-  if(!configReady){ loginError.textContent='Setup needed: paste the Supabase URL and Publishable Key into config.js.'; return; }
+  if(!configReady){ loginError.textContent='Setup needed: Supabase configuration is missing in config.js.'; return; }
   const {data}=await sb.auth.getSession();
   const user=data?.session?.user;
-  if(user){ setUserUI(user); loginGate.classList.add('hidden'); }
-  else loginGate.classList.remove('hidden');
+  if(user) await authorizeSession(user); else loginGate.classList.remove('hidden');
 }
 loginForm.addEventListener('submit',async e=>{
   e.preventDefault(); loginError.textContent='Signing in...';
@@ -27,10 +77,57 @@ loginForm.addEventListener('submit',async e=>{
   const password=document.getElementById('loginPassword').value;
   const {data,error}=await sb.auth.signInWithPassword({email,password});
   if(error){ loginError.textContent=error.message; return; }
-  setUserUI(data.user); loginError.textContent=''; loginGate.classList.add('hidden');
+  loginError.textContent=''; await authorizeSession(data.user);
 });
-logoutBtn.addEventListener('click',async()=>{ if(sb) await sb.auth.signOut(); loginGate.classList.remove('hidden'); });
-if(sb) sb.auth.onAuthStateChange((_event,session)=>{ if(session?.user){setUserUI(session.user);loginGate.classList.add('hidden')}else loginGate.classList.remove('hidden') });
+signupForm.addEventListener('submit',async e=>{
+  e.preventDefault(); signupError.textContent='Creating account...';
+  if(!sb){ signupError.textContent='Supabase is not configured yet.'; return; }
+  const full_name=document.getElementById('signupName').value.trim();
+  const email=document.getElementById('signupEmail').value.trim();
+  const department=document.getElementById('signupDepartment').value;
+  const password=document.getElementById('signupPassword').value;
+  const password2=document.getElementById('signupPassword2').value;
+  if(password!==password2){ signupError.textContent='Passwords do not match.'; return; }
+  const {data,error}=await sb.auth.signUp({email,password,options:{data:{full_name,department,role:'viewer'}}});
+  if(error){ signupError.textContent=error.message; return; }
+  if(data?.session?.user){
+    await ensureProfile(data.session.user);
+    signupError.textContent='';
+    await authorizeSession(data.session.user);
+  }else{
+    signupError.classList.add('success-msg');
+    signupError.textContent='Account created. Check your email for the confirmation link, then sign in.';
+  }
+});
+document.getElementById('forgotPasswordBtn').addEventListener('click',async()=>{
+  if(!sb){ loginError.textContent='Supabase is not configured yet.'; return; }
+  const email=document.getElementById('loginEmail').value.trim();
+  if(!email){ loginError.textContent='Enter your email first, then click Forgot password.'; return; }
+  const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin});
+  loginError.textContent=error?error.message:'Password reset email sent.';
+});
+logoutBtn.addEventListener('click',async()=>{ if(sb) await sb.auth.signOut(); currentProfile=null; loginGate.classList.remove('hidden'); setAuthPane('login'); });
+if(sb) sb.auth.onAuthStateChange(async(event,session)=>{
+  if(event==='SIGNED_OUT'||!session?.user){ currentProfile=null; loginGate.classList.remove('hidden'); return; }
+  if(event==='SIGNED_IN' && session?.user) await authorizeSession(session.user);
+});
+
+async function loadUsers(){
+  const body=document.getElementById('userRows'); if(!body||!sb||currentProfile?.role!=='admin') return;
+  body.innerHTML='<tr><td colspan="6" class="empty-state">Loading users...</td></tr>';
+  const {data,error}=await sb.from(PROFILE_TABLE).select('*').order('created_at',{ascending:true});
+  if(error){ body.innerHTML=`<tr><td colspan="6" class="empty-state">${error.message}</td></tr>`; return; }
+  if(!data?.length){ body.innerHTML='<tr><td colspan="6" class="empty-state">No user profiles yet.</td></tr>'; return; }
+  body.innerHTML=data.map(u=>`<tr><td><strong>${u.full_name||'—'}</strong></td><td>${u.email||'—'}</td><td>${u.department||'—'}</td><td>${profileRoleLabel(u.role)}</td><td><span class="user-status ${u.status==='active'?'active':'inactive'}">${u.status||'active'}</span></td><td>${u.user_id===currentProfile.user_id?'<span class="muted-text">Current admin</span>':`<button class="user-action-btn" data-user-id="${u.user_id}" data-next-status="${u.status==='active'?'inactive':'active'}">${u.status==='active'?'Deactivate':'Reactivate'}</button>`}</td></tr>`).join('');
+  body.querySelectorAll('.user-action-btn').forEach(btn=>btn.addEventListener('click',async()=>{
+    const next=btn.dataset.nextStatus;
+    btn.disabled=true; btn.textContent='Saving...';
+    const {error}=await sb.from(PROFILE_TABLE).update({status:next}).eq('user_id',btn.dataset.userId);
+    if(error){ alert(error.message); btn.disabled=false; return; }
+    loadUsers();
+  }));
+}
+document.getElementById('refreshUsersBtn')?.addEventListener('click',loadUsers);
 bootstrapAuth();
 
 let projects = [];

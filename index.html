@@ -15,14 +15,34 @@
         <div class="brand-mark">S</div>
         <div><div class="brand-name">SAIKO</div><div class="brand-sub">CONSTRUCTION AI</div></div>
       </div>
-      <h1>Sign in</h1>
-      <p>Use your SAIKO Construction AI account.</p>
-      <form id="loginForm">
-        <label>Email<input id="loginEmail" type="email" autocomplete="username" required></label>
-        <label>Password<input id="loginPassword" type="password" autocomplete="current-password" required></label>
-        <button class="primary-btn" type="submit">Sign in</button>
-        <div id="loginError" class="login-error"></div>
-      </form>
+      <div class="auth-tabs">
+        <button id="showLoginBtn" class="auth-tab active" type="button">Sign in</button>
+        <button id="showSignupBtn" class="auth-tab" type="button">Sign up</button>
+      </div>
+      <div id="loginPane">
+        <h1>Sign in</h1>
+        <p>Use your SAIKO Construction AI account.</p>
+        <form id="loginForm">
+          <label>Email<input id="loginEmail" type="email" autocomplete="username" required></label>
+          <label>Password<input id="loginPassword" type="password" autocomplete="current-password" required></label>
+          <button class="primary-btn" type="submit">Sign in</button>
+          <button id="forgotPasswordBtn" class="text-btn" type="button">Forgot password?</button>
+          <div id="loginError" class="login-error"></div>
+        </form>
+      </div>
+      <div id="signupPane" class="auth-pane-hidden">
+        <h1>Create account</h1>
+        <p>Register your company account. Access can be managed by an administrator.</p>
+        <form id="signupForm">
+          <label>Full name<input id="signupName" type="text" required></label>
+          <label>Email<input id="signupEmail" type="email" autocomplete="email" required></label>
+          <label>Department<select id="signupDepartment" required><option value="">Select department</option><option>Management</option><option>Quantity Surveying</option><option>Accounting</option><option>Engineering</option><option>Procurement</option><option>Operations</option><option>Other</option></select></label>
+          <label>Password<input id="signupPassword" type="password" minlength="8" autocomplete="new-password" required></label>
+          <label>Confirm password<input id="signupPassword2" type="password" minlength="8" autocomplete="new-password" required></label>
+          <button class="primary-btn" type="submit">Create account</button>
+          <div id="signupError" class="login-error"></div>
+        </form>
+      </div>
     </div>
   </div>
   <div class="app-shell">
@@ -38,6 +58,7 @@
       <nav class="nav" id="nav">
         <button class="nav-item active" data-view="dashboard"><span>▦</span>Dashboard</button>
         <button class="nav-item" data-view="projects"><span>▣</span>Projects</button>
+        <button class="nav-item admin-only" data-view="users" style="display:none"><span>👥</span>User Management</button>
         <button class="nav-item" data-view="assistant"><span>✦</span>AI Assistant</button>
         <button class="nav-item" data-view="estimate"><span>▤</span>Estimate / BOQ</button>
         <button class="nav-item" data-view="cost"><span>▥</span>Cost Database</button>
@@ -181,6 +202,14 @@
             <div class="panel-head"><h2>Estimate Summary</h2><span class="pill">PRELIMINARY</span></div>
             <div id="estimateOutput" class="empty-state">Fill out the form and generate an estimate.</div>
           </div>
+        </div>
+      </section>
+
+      <section id="users" class="view module-view">
+        <div class="module-header"><div><small>ACCESS CONTROL</small><h1>User Management</h1><p>Manage company access, roles, departments, and account status.</p></div></div>
+        <div class="panel">
+          <div class="panel-head"><h2>Company Users</h2><button id="refreshUsersBtn" class="secondary-btn">Refresh</button></div>
+          <div class="table-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Department</th><th>Role</th><th>Status</th><th>Action</th></tr></thead><tbody id="userRows"><tr><td colspan="6" class="empty-state">Loading users...</td></tr></tbody></table></div>
         </div>
       </section>
 
