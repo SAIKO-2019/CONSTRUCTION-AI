@@ -1,12 +1,39 @@
-const projects = [
-  {name:'UY Residence', location:'Kawit, Cavite', status:'On-going', progress:47.25, target:'Dec 31, 2026', color:'#20a565'},
-  {name:'Melendrez Residence', location:'Kawit, Cavite', status:'Architectural Phase', progress:68.10, target:'Nov 30, 2026', color:'#2f6fde'},
-  {name:'SMDC Mint Residence CP02A', location:'Taguig City', status:'Demobilized', progress:62.00, target:'—', color:'#d64b62'},
-  {name:'Manna Resort (Lumora Tropica)', location:'Dipaculao, Aurora', status:'On-going', progress:34.83, target:'Mar 31, 2027', color:'#20a565'},
-  {name:'Coffee Shop', location:'Pampanga', status:'Design Phase', progress:0, target:'Oct 31, 2026', color:'#2f6fde'},
-  {name:'Subdivision Development', location:'Magalang, Pampanga', status:'Planning', progress:0, target:'—', color:'#f39b24'},
-  {name:'Alstom CIAC Canopy', location:'Clark, Pampanga', status:'On-hold', progress:60, target:'—', color:'#8a8f96'}
-];
+const cfg=window.SAIKO_CONFIG||{};
+const configReady=cfg.SUPABASE_URL && cfg.SUPABASE_PUBLISHABLE_KEY && !cfg.SUPABASE_URL.includes('PASTE_') && !cfg.SUPABASE_PUBLISHABLE_KEY.includes('PASTE_');
+const sb=configReady?window.supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_PUBLISHABLE_KEY):null;
+const loginGate=document.getElementById('loginGate');
+const loginForm=document.getElementById('loginForm');
+const loginError=document.getElementById('loginError');
+const logoutBtn=document.getElementById('logoutBtn');
+function setUserUI(user){
+  const email=user?.email||'Signed in user';
+  const initial=(email[0]||'U').toUpperCase();
+  document.getElementById('sidebarAvatar').textContent=initial;
+  document.getElementById('sidebarName').textContent=email;
+  document.getElementById('sidebarRole').textContent='Authenticated user';
+  document.querySelector('.mini-avatar').textContent=initial;
+}
+async function bootstrapAuth(){
+  if(!configReady){ loginError.textContent='Setup needed: paste the Supabase URL and Publishable Key into config.js.'; return; }
+  const {data}=await sb.auth.getSession();
+  const user=data?.session?.user;
+  if(user){ setUserUI(user); loginGate.classList.add('hidden'); }
+  else loginGate.classList.remove('hidden');
+}
+loginForm.addEventListener('submit',async e=>{
+  e.preventDefault(); loginError.textContent='Signing in...';
+  if(!sb){ loginError.textContent='Supabase is not configured yet.'; return; }
+  const email=document.getElementById('loginEmail').value.trim();
+  const password=document.getElementById('loginPassword').value;
+  const {data,error}=await sb.auth.signInWithPassword({email,password});
+  if(error){ loginError.textContent=error.message; return; }
+  setUserUI(data.user); loginError.textContent=''; loginGate.classList.add('hidden');
+});
+logoutBtn.addEventListener('click',async()=>{ if(sb) await sb.auth.signOut(); loginGate.classList.remove('hidden'); });
+if(sb) sb.auth.onAuthStateChange((_event,session)=>{ if(session?.user){setUserUI(session.user);loginGate.classList.add('hidden')}else loginGate.classList.remove('hidden') });
+bootstrapAuth();
+
+let projects = [];
 
 const moduleCopy = {
   cost:{eyebrow:'COST CONTROL',title:'Cost Database',desc:'Maintain labor, material, equipment, and subcontractor rates.',cards:[['Material Rates','Store and update construction material prices.'],['Labor Rates','Maintain skilled, helper, foreman, and crew rates.'],['Equipment Rates','Track owned and rented equipment rates.']]},
@@ -23,10 +50,11 @@ function projectRow(p){
   return `<tr><td><strong>${p.name}</strong></td><td>${p.location}</td><td><span class="status"><span class="status-dot" style="background:${p.color}"></span>${p.status}</span></td><td><div class="progress-wrap"><span>${p.progress.toFixed(2)}%</span><div class="progress"><span style="width:${p.progress}%"></span></div></div></td><td>${p.target}</td></tr>`;
 }
 function renderProjects(list=projects){
-  document.querySelector('#projectRows').innerHTML=list.slice(0,7).map(projectRow).join('');
-  document.querySelector('#allProjectRows').innerHTML=list.map(projectRow).join('');
+  const emptyRow='<tr class="empty-project-row"><td colspan="5">No projects yet. Click + Add Project to create your first record.</td></tr>';
+  document.querySelector('#projectRows').innerHTML=list.length?list.slice(0,7).map(projectRow).join(''):emptyRow;
+  document.querySelector('#allProjectRows').innerHTML=list.length?list.map(projectRow).join(''):emptyRow;
   const active=list.filter(p=>['On-going','Architectural Phase','Design Phase'].includes(p.status)).length;
-  const avg=list.reduce((a,b)=>a+b.progress,0)/list.length;
+  const avg=list.length?list.reduce((a,b)=>a+b.progress,0)/list.length:0;
   document.querySelector('#projectStats').innerHTML=[['Total Projects',list.length],['Active Projects',active],['Average Progress',avg.toFixed(1)+'%'],['Planning / On-hold',list.filter(p=>['Planning','On-hold'].includes(p.status)).length]].map(([a,b])=>`<div class="stat-card"><small>${a}</small><strong>${b}</strong></div>`).join('');
 }
 renderProjects();
@@ -69,8 +97,21 @@ function runEstimate(){
   const shares={Structural:.32,Architectural:.30,Electrical:.08,Plumbing:.07,Mechanical:.05,'General Requirements':.08,'Site / External Works':.10};
   document.querySelector('#estimateOutput').innerHTML=`<div class="estimate-summary"><small>PROJECT</small><h3>${document.querySelector('#estProject').value}</h3><div class="estimate-total">${peso(total)}</div><div class="estimate-breakdown">${Object.entries(shares).map(([k,v])=>`<div><b>${k}</b><span>${peso(base*v)}</span></div>`).join('')}<div><b>Contingency</b><span>${peso(contingency)}</span></div><div><b>Contractor Markup</b><span>${peso(contractor)}</span></div></div><p style="margin-top:16px;color:#748094;font-size:12px">Preliminary budget based on ${area.toLocaleString()} sqm × ${peso(rate)}/sqm. Detailed quantities and specifications are required for a final BOQ.</p></div>`;
 }
-document.querySelector('#estimateForm').addEventListener('submit',e=>{e.preventDefault();runEstimate()});runEstimate();
-['newEstimateBtn','createEstimateBtn'].forEach(id=>document.getElementById(id)?.addEventListener('click',()=>showView('estimate')));
+document.querySelector('#estimateForm').addEventListener('submit',e=>{e.preventDefault();runEstimate()});
+function startNewEstimate(){
+  showView('estimate');
+  const form=document.getElementById('estimateForm');
+  form.reset();
+  document.getElementById('estProject').value='';
+  document.getElementById('estLocation').value='';
+  document.getElementById('estArea').value='';
+  document.getElementById('estRate').value='';
+  document.getElementById('estCont').value='5';
+  document.getElementById('estMarkup').value='10';
+  document.getElementById('estimateOutput').innerHTML='<div class="empty-state">Enter a new project estimate, then click Generate Preliminary Estimate.</div>';
+  setTimeout(()=>document.getElementById('estProject').focus(),150);
+}
+['newEstimateBtn','createEstimateBtn'].forEach(id=>document.getElementById(id)?.addEventListener('click',startNewEstimate));
 
 const projectDialog=document.getElementById('projectDialog');document.getElementById('addProjectBtn').addEventListener('click',()=>projectDialog.showModal());
 document.getElementById('projectForm').addEventListener('submit',e=>{e.preventDefault();projects.unshift({name:document.getElementById('pName').value,location:document.getElementById('pLocation').value,status:document.getElementById('pStatus').value,progress:+document.getElementById('pProgress').value||0,target:'—',color:'#2f6fde'});renderProjects();projectDialog.close();e.target.reset()});

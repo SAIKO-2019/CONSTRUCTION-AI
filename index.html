@@ -8,6 +8,23 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+
+  <div id="loginGate" class="login-gate">
+    <div class="login-card">
+      <div class="login-brand">
+        <div class="brand-mark">S</div>
+        <div><div class="brand-name">SAIKO</div><div class="brand-sub">CONSTRUCTION AI</div></div>
+      </div>
+      <h1>Sign in</h1>
+      <p>Use your SAIKO Construction AI account.</p>
+      <form id="loginForm">
+        <label>Email<input id="loginEmail" type="email" autocomplete="username" required></label>
+        <label>Password<input id="loginPassword" type="password" autocomplete="current-password" required></label>
+        <button class="primary-btn" type="submit">Sign in</button>
+        <div id="loginError" class="login-error"></div>
+      </form>
+    </div>
+  </div>
   <div class="app-shell">
     <aside class="sidebar">
       <div class="brand">
@@ -32,11 +49,12 @@
       </nav>
 
       <div class="sidebar-user">
-        <div class="avatar">JK</div>
-        <div>
-          <strong>John Karl S. Quizon</strong>
-          <span>Quantity Surveyor</span>
+        <div class="avatar" id="sidebarAvatar">A</div>
+        <div class="sidebar-user-copy">
+          <strong id="sidebarName">Signed in user</strong>
+          <span id="sidebarRole">User</span>
         </div>
+        <button id="logoutBtn" class="logout-btn" title="Sign out">↪</button>
       </div>
     </aside>
 
@@ -150,10 +168,10 @@
           <div class="panel estimate-form-panel">
             <div class="panel-head"><h2>Quick Estimate</h2></div>
             <form id="estimateForm" class="form-grid">
-              <label>Project Name<input id="estProject" value="New Residential Project" required /></label>
-              <label>Location<input id="estLocation" value="Pampanga" required /></label>
-              <label>Floor Area (sqm)<input id="estArea" type="number" min="1" value="200" required /></label>
-              <label>Construction Rate / sqm<input id="estRate" type="number" min="1" value="35000" required /></label>
+              <label>Project Name<input id="estProject"  required /></label>
+              <label>Location<input id="estLocation"  required /></label>
+              <label>Floor Area (sqm)<input id="estArea" type="number" min="1"  required /></label>
+              <label>Construction Rate / sqm<input id="estRate" type="number" min="1"  required /></label>
               <label>Contingency (%)<input id="estCont" type="number" min="0" value="5" /></label>
               <label>Contractor Markup (%)<input id="estMarkup" type="number" min="0" value="10" /></label>
               <button class="primary-btn full" type="submit">Generate Preliminary Estimate</button>
@@ -196,6 +214,8 @@
     </form>
   </dialog>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
