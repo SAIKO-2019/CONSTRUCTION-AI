@@ -68,27 +68,27 @@
 
       <section id="projects" class="view">
         <div class="page-head"><div><small>PROJECT MANAGEMENT</small><h1>Projects</h1><p>Encode projects once, then use them across billing, schedules, files, and AI.</p></div><button id="addProjectBtn" class="primary-btn">+ Add Project</button></div>
-        <div class="panel"><div class="table-wrap"><table><thead><tr><th>Project</th><th>Client</th><th>Location</th><th>Contract</th><th>Status</th><th>Actual %</th><th>Action</th></tr></thead><tbody id="projectRows"></tbody></table></div></div>
+        <div class="panel"><div class="bulk-actions"><label class="select-all-wrap"><input id="projectSelectAll" type="checkbox"> Select all</label><span id="projectSelectedCount" class="selection-count">0 selected</span><button id="deleteSelectedProjectBtn" class="danger-btn" disabled>Delete Selected</button><button id="clearProjectSelectionBtn" class="secondary-btn">Clear Selection</button></div><div class="table-wrap"><table><thead><tr><th class="check-col"></th><th>Project</th><th>Client</th><th>Location</th><th>Contract</th><th>Status</th><th>Actual %</th><th>Action</th></tr></thead><tbody id="projectRows"></tbody></table></div></div>
       </section>
 
       <section id="billing" class="view">
         <div class="page-head"><div><small>FINANCIAL CONTROL</small><h1>Billing & Payments</h1><p>Automatic billing totals, received payments, outstanding balance, retention, and recoupment.</p></div><button id="addBillingBtn" class="primary-btn">+ Add Billing</button></div>
         <div id="billingKPIs" class="kpi-grid"></div>
-        <div class="panel"><div class="table-wrap"><table><thead><tr><th>Project</th><th>Billing</th><th>Gross</th><th>Retention</th><th>Recoupment</th><th>Net Due</th><th>Received</th><th>Outstanding</th><th>Status</th><th>Action</th></tr></thead><tbody id="billingRows"></tbody></table></div></div>
+        <div class="panel"><div class="bulk-actions"><label class="select-all-wrap"><input id="billingSelectAll" type="checkbox"> Select all</label><span id="billingSelectedCount" class="selection-count">0 selected</span><button id="deleteSelectedBillingBtn" class="danger-btn" disabled>Delete Selected</button><button id="clearBillingSelectionBtn" class="secondary-btn">Clear Selection</button></div><div class="table-wrap"><table><thead><tr><th class="check-col"></th><th>Project</th><th>Billing</th><th>Gross</th><th>Retention</th><th>Recoupment</th><th>Net Due</th><th>Received</th><th>Outstanding</th><th>Status</th><th>Action</th></tr></thead><tbody id="billingRows"></tbody></table></div></div>
       </section>
 
       <section id="schedule" class="view">
         <div class="page-head"><div><small>PLANNING</small><h1>Schedule Tracker</h1><p>Upload an Excel schedule. Planned accomplishment and agenda are computed day by day.</p></div></div>
         <div class="toolbar panel"><label>Project<select id="scheduleProject"></select></label><label class="file-label">Upload Excel<input id="scheduleFile" type="file" accept=".xlsx,.xls,.csv"></label><button id="importScheduleBtn" class="primary-btn">Import Schedule</button></div>
         <div id="scheduleSummary" class="kpi-grid"></div>
-        <div class="panel"><div class="panel-head"><h2>Schedule Activities</h2><span class="muted">Expected columns: Activity, Start Date, End Date, Weight (%)</span></div><div class="table-wrap"><table><thead><tr><th>Activity</th><th>Start</th><th>End</th><th>Weight %</th><th>Planned % Today</th><th>Actual %</th><th>Contribution</th></tr></thead><tbody id="scheduleRows"></tbody></table></div></div>
+        <div class="panel"><div class="panel-head"><h2>Schedule Activities</h2><span class="muted">Expected columns: Activity, Start Date, End Date, Weight (%)</span></div><div class="bulk-actions"><label class="select-all-wrap"><input id="scheduleSelectAll" type="checkbox"> Select all</label><span id="scheduleSelectedCount" class="selection-count">0 selected</span><button id="deleteSelectedScheduleBtn" class="danger-btn" disabled>Delete Selected</button><button id="clearScheduleSelectionBtn" class="secondary-btn">Clear Selection</button></div><div class="table-wrap"><table><thead><tr><th class="check-col"></th><th>Activity</th><th>Start</th><th>End</th><th>Weight %</th><th>Planned % Today</th><th>Actual %</th><th>Contribution</th><th>Action</th></tr></thead><tbody id="scheduleRows"></tbody></table></div></div>
       </section>
 
       <section id="progress" class="view">
         <div class="page-head"><div><small>SITE ACCOMPLISHMENT</small><h1>Actual Progress</h1><p>Manually enter activity accomplishment. Overall actual % is weighted automatically.</p></div></div>
         <div class="toolbar panel"><label>Project<select id="progressProject"></select></label><button id="addProgressBtn" class="primary-btn">+ Add / Update Activity</button></div>
         <div id="progressSummary" class="kpi-grid"></div>
-        <div class="panel"><div class="table-wrap"><table><thead><tr><th>Activity</th><th>Weight %</th><th>Actual %</th><th>Weighted Contribution</th><th>Updated</th><th>Action</th></tr></thead><tbody id="progressRows"></tbody></table></div></div>
+        <div class="panel"><div class="bulk-actions"><label class="select-all-wrap"><input id="progressSelectAll" type="checkbox"> Select all</label><span id="progressSelectedCount" class="selection-count">0 selected</span><button id="deleteSelectedProgressBtn" class="danger-btn" disabled>Delete Selected</button><button id="clearProgressSelectionBtn" class="secondary-btn">Clear Selection</button></div><div class="table-wrap"><table><thead><tr><th class="check-col"></th><th>Activity</th><th>Weight %</th><th>Actual %</th><th>Weighted Contribution</th><th>Updated</th><th>Action</th></tr></thead><tbody id="progressRows"></tbody></table></div></div>
       </section>
 
       <section id="files" class="view">
@@ -108,13 +108,24 @@
         </div>
 
         <div class="toolbar panel"><label>Project<select id="fileProject"></select></label><label>Category<select id="fileCategory"><option>Plans</option><option>Contracts</option><option>Billings</option><option>VO & EOT</option><option>Progress Reports</option><option>Schedules</option><option>Photos</option><option>Quotations</option><option>Other</option></select></label><label class="file-label">Choose file<input id="projectFile" type="file"></label><button id="uploadFileBtn" class="primary-btn">Upload Only</button></div>
-        <div class="panel"><div class="panel-head"><h2>Saved Project Files</h2></div><div class="table-wrap"><table><thead><tr><th>Project</th><th>Category</th><th>File</th><th>Uploaded By</th><th>Date</th><th>Action</th></tr></thead><tbody id="fileRows"></tbody></table></div></div>
+        <div class="panel"><div class="panel-head"><h2>Saved Project Files</h2></div><div class="bulk-actions"><label class="select-all-wrap"><input id="fileSelectAll" type="checkbox"> Select all</label><span id="fileSelectedCount" class="selection-count">0 selected</span><button id="deleteSelectedFileBtn" class="danger-btn" disabled>Delete Selected</button><button id="clearFileSelectionBtn" class="secondary-btn">Clear Selection</button></div><div class="table-wrap"><table><thead><tr><th class="check-col"></th><th>Project</th><th>Category</th><th>File</th><th>Uploaded By</th><th>Date</th><th>Action</th></tr></thead><tbody id="fileRows"></tbody></table></div></div>
       </section>
 
       <section id="templates" class="view">
         <div class="page-head"><div><small>TEMPLATE LIBRARY</small><h1>Document Templates</h1><p>Upload sample billing/document formats once and reuse them for generated files.</p></div></div>
         <div class="toolbar panel"><label>Template Type<select id="templateType"><option>Billing Excel</option><option>Progress Report</option><option>Contract</option><option>VO / EOT</option><option>Quotation</option></select></label><label class="file-label">Choose template<input id="templateFile" type="file"></label><button id="uploadTemplateBtn" class="primary-btn">Upload Template</button></div>
-        <div class="panel"><div class="table-wrap"><table><thead><tr><th>Type</th><th>Name</th><th>Date</th><th>Action</th></tr></thead><tbody id="templateRows"></tbody></table></div></div>
+        <div class="panel">
+          <div class="bulk-actions">
+            <label class="select-all-wrap"><input id="templateSelectAll" type="checkbox"> Select all</label>
+            <span id="templateSelectedCount" class="selection-count">0 selected</span>
+            <button id="deleteSelectedTemplatesBtn" class="danger-btn" disabled>Delete Selected</button>
+            <button id="clearTemplateSelectionBtn" class="secondary-btn">Clear Selection</button>
+          </div>
+          <div class="table-wrap"><table>
+            <thead><tr><th class="check-col"></th><th>Type</th><th>Name</th><th>Date</th><th>Action</th></tr></thead>
+            <tbody id="templateRows"></tbody>
+          </table></div>
+        </div>
       </section>
 
       <section id="assistant" class="view">
