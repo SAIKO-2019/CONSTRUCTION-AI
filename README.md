@@ -52,3 +52,21 @@ Adds:
 
 ### Required once
 Run `v13-project-cost-control.sql` in Supabase SQL Editor.
+
+
+## v14 Integrated Control
+Changes requested:
+- Project accomplishment is no longer manually entered; it is derived from Actual Progress / schedule data.
+- Billing types simplified to Client Billing and Subcontractor Billing.
+- Retention and recoupment are optional for both.
+- Subcontractor Billing tracks Issued/Contract Amount, Gross Billing, deductions, paid amount and remaining subcontract balance.
+- Inventory is spreadsheet-style with direct cell editing, Add Row and Add Column.
+- Inventory categories include Overhead, Materials, Labor, Equipment, Subcontractor and Other.
+- Pending Works module added with daily in-app reminders.
+- Pending works cannot become Completed until required evidence is uploaded, moved to For Verification, and then verified.
+- Dashboard now includes Budget and Pending Works snapshots.
+- Template-based download helper added so future generated downloads can be routed through the matching uploaded template.
+- Everything remains per-project through the Project Folder selector.
+
+### Required once
+Run `v14-integrated-control.sql` in Supabase SQL Editor.

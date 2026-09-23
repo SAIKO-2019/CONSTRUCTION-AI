@@ -47,6 +47,7 @@
         <button data-view="progress">◩ Actual Progress</button>
         <button data-view="inventory">▥ Inventory / Purchases</button>
         <button data-view="budget">◒ Budget Monitoring</button>
+        <button data-view="pending">☑ Pending Works</button>
         <button data-view="files">▤ Project Files</button>
         <button data-view="templates">▧ Templates</button>
         <button data-view="assistant">✦ Construction AI</button>
@@ -106,10 +107,10 @@
 
 
       <section id="inventory" class="view">
-        <div class="page-head"><div><small>ACCOUNTING / PROCUREMENT</small><h1>Inventory / Purchases</h1><p>Per-project request, purchase, supplier, category, BOQ scope, paid amount, balance, and encoder history.</p></div><button id="addInventoryBtn" class="primary-btn">+ Add Inventory Entry</button></div>
-        <div class="toolbar panel"><label>Project Folder<select id="inventoryProject"></select></label><label>Category Filter<select id="inventoryCategoryFilter"><option value="">All Categories</option><option>Materials</option><option>Labor</option><option>Equipment</option><option>Subcontractor</option><option>Other</option></select></label></div>
+        <div class="page-head"><div><small>ACCOUNTING / PROCUREMENT</small><h1>Inventory / Cost Ledger</h1><p>Spreadsheet-style project ledger for Overhead, Materials, Labor and other project costs.</p></div><div class="row-actions"><button id="addInventoryRowBtn" class="primary-btn">+ Add Row</button><button id="addInventoryColumnBtn" class="secondary-btn">+ Add Column</button></div></div>
+        <div class="toolbar panel"><label>Project Folder<select id="inventoryProject"></select></label><label>Category Filter<select id="inventoryCategoryFilter"><option value="">All Categories</option><option>Overhead</option><option>Materials</option><option>Labor</option><option>Equipment</option><option>Subcontractor</option><option>Other</option></select></label></div>
         <div id="inventoryKPIs" class="kpi-grid"></div>
-        <div class="panel"><div class="table-wrap"><table><thead><tr><th>Date Request</th><th>Date Purchase</th><th>Category</th><th>BOQ Scope</th><th>Description</th><th>Qty</th><th>Unit</th><th>Unit Cost</th><th>Total</th><th>Paid</th><th>Balance</th><th>Supplier</th><th>Input By</th><th>Action</th></tr></thead><tbody id="inventoryRows"></tbody></table></div></div>
+        <div class="panel"><div class="sheet-toolbar"><span class="smart-badge">Spreadsheet Mode</span><span class="muted">Edit cells directly. Add rows/columns as needed.</span></div><div class="table-wrap"><table id="inventorySheet"><thead id="inventoryHead"></thead><tbody id="inventoryRows"></tbody></table></div></div>
       </section>
 
       <section id="budget" class="view">
@@ -123,6 +124,14 @@
         <div class="panel"><div class="panel-head"><h2>Budget Summary</h2></div><div id="budgetSummaryTable" class="table-wrap"></div></div>
       </section>
 
+
+      <section id="pending" class="view">
+        <div class="page-head"><div><small>WORK COMPLETION CONTROL</small><h1>Pending Works</h1><p>Tasks remain pending until all required evidence is uploaded and completion requirements are satisfied.</p></div><button id="addPendingBtn" class="primary-btn">+ Add Pending Work</button></div>
+        <div class="toolbar panel"><label>Project Folder<select id="pendingProject"></select></label><label>Status<select id="pendingStatusFilter"><option value="">All</option><option>Pending</option><option>For Verification</option><option>Completed</option></select></label></div>
+        <div id="pendingKPIs" class="kpi-grid"></div>
+        <div id="pendingAlert" class="smart-note"></div>
+        <div class="panel"><div class="table-wrap"><table><thead><tr><th>Project</th><th>Work Item</th><th>Assigned To</th><th>Target Date</th><th>Required Evidence</th><th>Uploaded Evidence</th><th>Status</th><th>Last Update</th><th>Action</th></tr></thead><tbody id="pendingRows"></tbody></table></div></div>
+      </section>
       <section id="files" class="view">
         <div class="page-head"><div><small>DOCUMENT CONTROL</small><h1>Project Files</h1><p>Store plans, contracts, billings, reports, schedules, photos, and quotations in the cloud.</p></div></div>
 
@@ -172,16 +181,16 @@
     </main>
   </div>
 
-  <dialog id="projectDialog"><form id="projectForm" class="dialog-card wide"><div class="dialog-head"><h2>Project</h2><button type="button" data-close="projectDialog">×</button></div><div class="form-grid"><label>Project Name<input id="pName" required></label><label>Client<input id="pClient"></label><label>Location<input id="pLocation"></label><label>Original Contract Amount<input id="pOriginalContract" type="number" min="0" step="0.01"></label><label>Discount Amount<input id="pDiscount" type="number" min="0" step="0.01" value="0"></label><label>Net Contract Amount<input id="pContract" type="number" min="0" step="0.01" readonly></label><label>Start Date<input id="pStart" type="date"></label><label>Target Date<input id="pTarget" type="date"></label><label>Status<select id="pStatus"><option>Planning</option><option>For Mobilization</option><option>On-going</option><option>On Hold</option><option>Completed</option></select></label><label>Actual Progress %<input id="pProgress" type="number" min="0" max="100" step="0.01" value="0"></label></div><div class="dialog-actions"><button type="button" class="secondary-btn" data-close="projectDialog">Cancel</button><button class="primary-btn" type="submit">Save Project</button></div></form></dialog>
+  <dialog id="projectDialog"><form id="projectForm" class="dialog-card wide"><div class="dialog-head"><h2>Project</h2><button type="button" data-close="projectDialog">×</button></div><div class="form-grid"><label>Project Name<input id="pName" required></label><label>Client<input id="pClient"></label><label>Location<input id="pLocation"></label><label>Original Contract Amount<input id="pOriginalContract" type="number" min="0" step="0.01"></label><label>Discount Amount<input id="pDiscount" type="number" min="0" step="0.01" value="0"></label><label>Net Contract Amount<input id="pContract" type="number" min="0" step="0.01" readonly></label><label>Start Date<input id="pStart" type="date"></label><label>Target Date<input id="pTarget" type="date"></label><label>Status<select id="pStatus"><option>Planning</option><option>For Mobilization</option><option>On-going</option><option>On Hold</option><option>Completed</option></select></label></div><div class="dialog-actions"><button type="button" class="secondary-btn" data-close="projectDialog">Cancel</button><button class="primary-btn" type="submit">Save Project</button></div></form></dialog>
 
   <dialog id="billingDialog"><form id="billingForm" class="dialog-card wide"><div class="dialog-head"><h2>Billing / Payment Record</h2><button type="button" data-close="billingDialog">×</button></div>
   <div class="form-grid">
     <label>Project<select id="bProject" required></select></label>
-    <label>Type<select id="bType"><option>Client Billing</option><option>Labor</option><option>Equipment</option><option>Subcontractor</option><option>Other</option></select></label>
+    <label>Billing Type<select id="bType"><option>Client Billing</option><option>Subcontractor Billing</option></select></label>
     <label>Billing No.<input id="bNo" required placeholder="Billing No. 3"></label>
     <label>Variation No.<input id="bVariation" placeholder="VO-01 / optional"></label>
-    <label>Gross Amount<input id="bGross" type="number" min="0" step="0.01" required></label>
-    <label>Accomplishment %<input id="bAccomplishment" type="number" min="0" max="100" step="0.01" value="0"></label>
+    <label>Gross Billing Amount<input id="bGross" type="number" min="0" step="0.01" required></label>
+    <label>Accomplishment %<input id="bAccomplishment" type="number" min="0" max="100" step="0.01" value="0"></label><label>Issued / Contract Amount<input id="bIssuedAmount" type="number" min="0" step="0.01" placeholder="For subcontractor billing"></label>
     <label class="check-field"><input id="bUseRetention" type="checkbox"> Apply Retention</label>
     <label>Retention %<input id="bRetention" type="number" min="0" max="100" step="0.01" value="5"></label>
     <label class="check-field"><input id="bUseRecoupment" type="checkbox"> Apply Recoupment</label>
@@ -198,9 +207,27 @@
 
   <dialog id="progressDialog"><form id="progressForm" class="dialog-card"><div class="dialog-head"><h2>Activity Progress</h2><button type="button" data-close="progressDialog">×</button></div><label>Activity / BOQ Scope<input id="aActivity" list="boqActivityList" required><datalist id="boqActivityList"></datalist></label><label>Weight %<input id="aWeight" type="number" min="0" max="100" step="0.01" required></label><label>Actual Accomplishment %<input id="aActual" type="number" min="0" max="100" step="0.01" required></label><div id="progressCostHint" class="smart-note"></div><div class="dialog-actions"><button type="button" class="secondary-btn" data-close="progressDialog">Cancel</button><button class="primary-btn" type="submit">Save Progress</button></div></form></dialog>
 
+
+  <dialog id="pendingDialog"><form id="pendingForm" class="dialog-card wide"><div class="dialog-head"><h2>Pending Work</h2><button type="button" data-close="pendingDialog">×</button></div><div class="form-grid">
+    <label>Project<select id="pwProject" required></select></label>
+    <label>Work Item<input id="pwWorkItem" required></label>
+    <label>Assigned To<input id="pwAssignedTo"></label>
+    <label>Target Date<input id="pwTargetDate" type="date"></label>
+    <label>Required Evidence / Data<input id="pwRequiredEvidence" placeholder="e.g. completion photo, signed checklist, test result"></label>
+    <label>Notes<input id="pwNotes"></label>
+  </div><div class="dialog-actions"><button type="button" class="secondary-btn" data-close="pendingDialog">Cancel</button><button class="primary-btn" type="submit">Save Pending Work</button></div></form></dialog>
+
+  <dialog id="pendingEvidenceDialog"><form id="pendingEvidenceForm" class="dialog-card"><div class="dialog-head"><h2>Upload Completion Evidence</h2><button type="button" data-close="pendingEvidenceDialog">×</button></div>
+    <input id="pePendingId" type="hidden">
+    <label>Evidence File<input id="peFile" type="file" required></label>
+    <label>Evidence Note<input id="peNote" placeholder="Optional description"></label>
+    <div class="smart-note">The work will only become eligible for completion when the required evidence is uploaded. Completion still requires verification.</div>
+    <div class="dialog-actions"><button type="button" class="secondary-btn" data-close="pendingEvidenceDialog">Cancel</button><button class="primary-btn" type="submit">Upload Evidence</button></div>
+  </form></dialog>
+
   <dialog id="inventoryDialog"><form id="inventoryForm" class="dialog-card wide"><div class="dialog-head"><h2>Inventory / Purchase Entry</h2><button type="button" data-close="inventoryDialog">×</button></div><div class="form-grid">
     <label>Project<select id="iProject" required></select></label>
-    <label>Category<select id="iCategory"><option>Materials</option><option>Labor</option><option>Equipment</option><option>Subcontractor</option><option>Other</option></select></label>
+    <label>Category<select id="iCategory"><option>Overhead</option><option>Materials</option><option>Labor</option><option>Equipment</option><option>Subcontractor</option><option>Other</option></select></label>
     <label>BOQ Scope<select id="iBoqItem"><option value="">Unassigned</option></select></label>
     <label>Description<input id="iDescription" required></label>
     <label>Quantity<input id="iQty" type="number" min="0" step="0.0001" value="1"></label>
@@ -221,5 +248,6 @@
   <script src="config.js"></script>
   <script src="app.js?v=13"></script>
   <script src="v13.js?v=13"></script>
+  <script src="v14.js?v=14"></script>
 </body>
 </html>
