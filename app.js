@@ -84,6 +84,7 @@ signupForm.addEventListener('submit',async e=>{
   signupError.classList.remove('success-msg');
   signupError.textContent='Creating account...';
   if(!sb){ signupError.textContent='Supabase is not configured yet.'; return; }
+
   const full_name=document.getElementById('signupName').value.trim();
   const email=document.getElementById('signupEmail').value.trim();
   const department=document.getElementById('signupDepartment').value;
@@ -95,22 +96,45 @@ signupForm.addEventListener('submit',async e=>{
 
   const submitBtn=signupForm.querySelector('button[type="submit"]');
   if(submitBtn){ submitBtn.disabled=true; submitBtn.textContent='Creating account...'; }
+
+  const withTimeout=(promise,ms=18000)=>Promise.race([
+    promise,
+    new Promise((_,reject)=>setTimeout(()=>reject(new Error('Request timed out. Please check your internet connection and try again.')),ms))
+  ]);
+
   try{
-    const {data,error}=await sb.auth.signUp({
+    const {data,error}=await withTimeout(sb.auth.signUp({
       email,
       password,
       options:{data:{full_name,department,role:'viewer',status:'active'}}
-    });
-    if(error){ signupError.textContent=error.message; return; }
+    }));
+    if(error) throw error;
 
     signupError.classList.add('success-msg');
-    if(data?.session?.user){
-      signupError.textContent='Account created successfully. Signing you in...';
-      await authorizeSession(data.session.user);
-    }else{
-      signupError.textContent='Account created. Check your email for the confirmation link, then sign in.';
+    signupError.textContent='Account created. Signing you in...';
+
+    let user=data?.session?.user||null;
+    if(!user){
+      const {data:signInData,error:signInError}=await withTimeout(sb.auth.signInWithPassword({email,password}));
+      if(signInError){
+        const msg=(signInError.message||'').toLowerCase();
+        if(msg.includes('email not confirmed')){
+          signupError.classList.remove('success-msg');
+          signupError.textContent='Account created, but email confirmation is still enabled in Supabase. Turn off Confirm email under Authentication → Sign In / Providers → Email so new users can enter the app immediately.';
+          return;
+        }
+        throw signInError;
+      }
+      user=signInData?.user||signInData?.session?.user||null;
     }
+
+    if(!user) throw new Error('Account was created but no login session was returned.');
+    await authorizeSession(user);
+    signupForm.reset();
+    showToast('Account created successfully. Welcome to SAIKO Construction AI.');
+    showView('dashboard');
   }catch(err){
+    signupError.classList.remove('success-msg');
     signupError.textContent=err?.message||'Unable to create account. Please try again.';
   }finally{
     if(submitBtn){ submitBtn.disabled=false; submitBtn.textContent='Create account'; }
