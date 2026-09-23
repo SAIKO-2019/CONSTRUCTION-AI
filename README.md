@@ -179,3 +179,26 @@ Run `v14.8-collaboration.sql` in Supabase SQL Editor after the existing v14.7 mi
 
 ### Note
 The strongest row-level edit lock is currently applied to Inventory because it is the app's direct spreadsheet-style simultaneous editing surface. Other forms are logged in the activity feed; new records do not conflict with one another.
+
+## v15 Ultra UI
+Premium interface upgrade built on top of v14.9 and v14.8 collaboration safety.
+
+### Visual upgrades
+- Full-width advanced profile settings workspace without horizontal scrolling
+- Premium glass/blur dialog treatment
+- Icon-only Team, Settings, and Logout controls
+- Theme preview cards inside Settings
+- Quick theme switch button in the top bar
+- Refined dashboard cards, panels, navigation, search focus, shadows, spacing, and hover states
+- Responsive layout for desktop and mobile
+- Reduced-motion accessibility support
+
+### Per-profile themes
+- Light Clean
+- Dark Pro
+- Midnight Steel
+- Pastel Glow
+- Cute Candy
+- Summer Cool
+
+Theme choice is saved to the existing `user_preferences.theme` field, so no new SQL migration is required if v14.7 user preferences were already installed.

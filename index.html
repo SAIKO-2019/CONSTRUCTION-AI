@@ -39,7 +39,7 @@
 
   <div class="app-shell">
     <aside class="sidebar">
-      <div class="brand"><div class="brand-mark">S</div><div><strong>SAIKO</strong><span>BUILDERS INC.</span></div></div>
+      <div class="brand"><div class="brand-mark">S</div><div><strong>SAIKO</strong><span>BUILDERS INC. · ULTRA</span></div><span class="ultra-pulse" title="Ultra UI active"></span></div>
       <nav id="sideNav">
         <button data-view="dashboard" class="active">▦ Dashboard</button>
         <button data-view="projects">▣ Projects</button>
@@ -59,9 +59,9 @@
         <div id="sidebarAvatar" class="avatar">U</div>
         <div class="sidebar-user-info"><strong id="sidebarName">User</strong><span id="sidebarRole">Editor</span></div>
         <div class="profile-actions">
-          <button id="teamActivityBtn" class="profile-btn" type="button" title="Team activity">Team</button>
-          <button id="settingsBtn" class="profile-btn" type="button" title="Profile settings">Settings</button>
-          <button id="logoutBtn" class="logout-btn" type="button" title="Log out">Log out</button>
+          <button id="teamActivityBtn" class="profile-icon-btn" type="button" title="Team activity" aria-label="Team activity">👥</button>
+          <button id="settingsBtn" class="profile-icon-btn accent" type="button" title="Profile settings" aria-label="Profile settings">⚙</button>
+          <button id="logoutBtn" class="profile-icon-btn danger" type="button" title="Log out" aria-label="Log out">⇦</button>
         </div>
       </div>
     </aside>
@@ -72,7 +72,7 @@
       <label class="workspace-project">Project Folder
         <select id="workspaceProject"></select>
       </label>
-      <div class="mini-avatar">U</div>
+      <button id="quickThemeBtn" class="quick-theme-btn" type="button" title="Quick theme switch">◐</button><div class="mini-avatar">U</div>
     </header>
 
       <section id="dashboard" class="view active-view">
@@ -329,15 +329,15 @@
   <script src="v14.4.js?v=144"></script>
   <script src="v14.5.js?v=145"></script>
 
-  <dialog id="settingsDialog">
-    <form id="settingsForm" class="dialog-card wide">
+  <dialog id="settingsDialog" class="settings-dialog-shell">
+    <form id="settingsForm" class="dialog-card wide settings-dialog-card">
       <div class="dialog-head">
         <h2>Profile Settings</h2>
         <button type="button" data-close="settingsDialog">×</button>
       </div>
 
       <div class="settings-layout">
-        <section class="settings-section">
+        <section class="settings-section feature-card account-card">
           <h3>Account</h3>
           <div class="form-grid">
             <label>Display Name<input id="settingsDisplayName" type="text"></label>
@@ -346,14 +346,27 @@
           </div>
         </section>
 
-        <section class="settings-section">
+        <section class="settings-section feature-card appearance-card">
           <h3>Appearance</h3>
-          <div class="form-grid">
+          <p class="settings-subtitle">Choose a personal look per profile. Theme preference is saved separately for each account.</p>
+          <div id="themePreviewGrid" class="theme-preview-grid" aria-label="Theme presets">
+            <button type="button" class="theme-preview" data-theme-choice="light"><span class="theme-swatch sw-light"></span><strong>Light Clean</strong><small>Sharp & professional</small></button>
+            <button type="button" class="theme-preview" data-theme-choice="dark"><span class="theme-swatch sw-dark"></span><strong>Dark Pro</strong><small>Focused night mode</small></button>
+            <button type="button" class="theme-preview" data-theme-choice="midnight"><span class="theme-swatch sw-midnight"></span><strong>Midnight Steel</strong><small>Executive tech</small></button>
+            <button type="button" class="theme-preview" data-theme-choice="pastel"><span class="theme-swatch sw-pastel"></span><strong>Pastel Glow</strong><small>Soft & elegant</small></button>
+            <button type="button" class="theme-preview" data-theme-choice="cute"><span class="theme-swatch sw-cute"></span><strong>Cute Candy</strong><small>Playful & bright</small></button>
+            <button type="button" class="theme-preview" data-theme-choice="summer"><span class="theme-swatch sw-summer"></span><strong>Summer Cool</strong><small>Fresh tropical</small></button>
+          </div>
+          <div class="form-grid appearance-controls">
             <label>Theme
               <select id="settingsTheme">
                 <option value="system">System Default</option>
-                <option value="light">Light</option>
-                <option value="dark">Dark</option>
+                <option value="light">Light Clean</option>
+                <option value="dark">Dark Pro</option>
+                <option value="midnight">Midnight Steel</option>
+                <option value="pastel">Pastel Glow</option>
+                <option value="cute">Cute Candy</option>
+                <option value="summer">Summer Cool</option>
               </select>
             </label>
             <label>Density
@@ -365,7 +378,7 @@
           </div>
         </section>
 
-        <section class="settings-section">
+        <section class="settings-section feature-card prefs-card">
           <h3>Preferences</h3>
           <div class="settings-toggle-list">
             <label class="setting-toggle"><input id="settingsRememberProject" type="checkbox"><span>Remember last selected project</span></label>
@@ -411,5 +424,6 @@
 
   <script src="v14.7.js?v=147"></script>
   <script src="v14.8.js?v=148"></script>
+  <script src="v15.js?v=150"></script>
 </body>
 </html>
