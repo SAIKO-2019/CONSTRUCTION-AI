@@ -1,25 +1,17 @@
-# SAIKO Construction AI v10
+# SAIKO Construction AI v11 — Smart Upload (permission-fixed)
 
-This build adds a real Supabase-backed construction management workflow:
-- self-signup accounts default to editor access
-- admin role/status management
-- projects
-- automatic billing/payment calculations
-- Excel schedule import and planned-vs-actual tracking
-- manual weighted progress
-- project file cloud storage
-- reusable template library
-- billing Excel generation from the supplied Melendres sample template
-- Construction AI serverless endpoint (requires OPENAI_API_KEY in Vercel)
+This build keeps the existing Construction AI modules and adds Smart Upload.
 
-## Deploy
-1. Upload all files/folders to the GitHub repo, including `api/`, `templates/`, and `package.json`.
-2. Run `supabase-setup.sql` once in Supabase SQL Editor.
-3. Redeploy/refresh Vercel.
-4. For AI, add `OPENAI_API_KEY` in Vercel Environment Variables and redeploy.
+## Important setup
+Run `supabase-setup.sql` once in Supabase SQL Editor. It now includes:
+- operational tables
+- BOQ table
+- explicit `GRANT` permissions for authenticated users
+- RLS policies that let signed-in users add/edit/delete operational data
+- storage buckets and storage policies
+- conversion of existing `viewer` profiles to `editor`
+- default role for future profile rows set to `editor`
 
-## Schedule Excel columns
-Use headers such as: Activity, Start Date, End Date, Weight (%).
+You do **not** need to separately run `smart-upload-migration.sql` if you already ran the full `supabase-setup.sql`.
 
-## Billing template
-The supplied `Architectural Melendres Billing No. 3.xlsx` is included as the default billing workbook. Users can also upload a Billing Excel template in the Templates module; generated billing will use the latest uploaded Billing Excel template when available.
+Then upload the web files/folders to GitHub and let Vercel redeploy.

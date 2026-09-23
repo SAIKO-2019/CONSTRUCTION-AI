@@ -93,8 +93,22 @@
 
       <section id="files" class="view">
         <div class="page-head"><div><small>DOCUMENT CONTROL</small><h1>Project Files</h1><p>Store plans, contracts, billings, reports, schedules, photos, and quotations in the cloud.</p></div></div>
-        <div class="toolbar panel"><label>Project<select id="fileProject"></select></label><label>Category<select id="fileCategory"><option>Plans</option><option>Contracts</option><option>Billings</option><option>VO & EOT</option><option>Progress Reports</option><option>Schedules</option><option>Photos</option><option>Quotations</option><option>Other</option></select></label><label class="file-label">Choose file<input id="projectFile" type="file"></label><button id="uploadFileBtn" class="primary-btn">Upload</button></div>
-        <div class="panel"><div class="table-wrap"><table><thead><tr><th>Project</th><th>Category</th><th>File</th><th>Uploaded By</th><th>Date</th><th>Action</th></tr></thead><tbody id="fileRows"></tbody></table></div></div>
+
+        <div class="panel smart-upload-panel">
+          <div class="panel-head"><div><h2>Smart Upload Center</h2><p class="muted">Upload existing project files. Excel/CSV files can be detected as BOQ, Schedule, or Billing data; PDF, Word, DWG and photos are classified and saved to the selected project.</p></div><span class="smart-badge">ADD-ON</span></div>
+          <div class="toolbar smart-toolbar">
+            <label>Project<select id="smartProject"></select></label>
+            <label class="file-label grow">Choose files<input id="smartFiles" type="file" multiple accept=".xlsx,.xls,.csv,.pdf,.doc,.docx,.dwg,.dxf,.png,.jpg,.jpeg,.webp"></label>
+            <button id="scanFilesBtn" class="secondary-btn">Scan Files</button>
+            <button id="processFilesBtn" class="primary-btn" disabled>Upload & Import</button>
+          </div>
+          <div id="smartUploadStatus" class="form-msg"></div>
+          <div class="table-wrap"><table><thead><tr><th>File</th><th>Detected Type</th><th>Detected Data</th><th>Action</th></tr></thead><tbody id="smartFileRows"><tr><td colspan="4" class="empty">Choose one or more existing project files, then click Scan Files.</td></tr></tbody></table></div>
+          <div class="smart-note"><strong>Import behavior:</strong> BOQ items are imported to the project BOQ table; Schedule rows are imported to Schedule Tracker; recognizable Billing workbooks can create a billing record. Other files are stored in Project Files for future reference and AI review.</div>
+        </div>
+
+        <div class="toolbar panel"><label>Project<select id="fileProject"></select></label><label>Category<select id="fileCategory"><option>Plans</option><option>Contracts</option><option>Billings</option><option>VO & EOT</option><option>Progress Reports</option><option>Schedules</option><option>Photos</option><option>Quotations</option><option>Other</option></select></label><label class="file-label">Choose file<input id="projectFile" type="file"></label><button id="uploadFileBtn" class="primary-btn">Upload Only</button></div>
+        <div class="panel"><div class="panel-head"><h2>Saved Project Files</h2></div><div class="table-wrap"><table><thead><tr><th>Project</th><th>Category</th><th>File</th><th>Uploaded By</th><th>Date</th><th>Action</th></tr></thead><tbody id="fileRows"></tbody></table></div></div>
       </section>
 
       <section id="templates" class="view">
