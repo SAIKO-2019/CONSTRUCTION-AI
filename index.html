@@ -271,6 +271,17 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
             </div>
           </div>
 
+          <div class="panel quotation-summary-panel">
+            <div class="panel-head">
+              <div>
+                <h2>Google Sheet Summary Breakdown</h2>
+                <p class="muted">Reads the whole Summary sheet and groups major scopes such as General Requirements, Architectural, Structural, Electrical, Plumbing, Mechanical, and other detected scopes.</p>
+              </div>
+              <span id="quotationSummarySheetName" class="status-pill neutral">Summary</span>
+            </div>
+            <div id="quotationSummaryCategories" class="quotation-summary-categories"></div>
+          </div>
+
           <div class="quotation-dashboard-grid">
             <div class="panel quotation-completion-panel">
               <div class="panel-head">
@@ -589,5 +600,6 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
 
   <script src="v20.3.js?v=2031"></script>
   <script src="v20.5.js?v=2051"></script>
+  <script src="v20.6.js?v=2061"></script>
 </body>
 </html>

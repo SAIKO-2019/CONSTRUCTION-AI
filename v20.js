@@ -296,6 +296,8 @@
           running_amount:Number(data.indirectTotalCost||0),
           projected_profit:Number(data.presentProfit||0),
           scope_breakdown:Array.isArray(data.scopeBreakdown)?data.scopeBreakdown:[],
+          summary_breakdown:Array.isArray(data.summaryBreakdown)?data.summaryBreakdown:[],
+          summary_sheet_name:data.summarySheetName||null,
           created_by:currentUser.id,
           updated_at:new Date().toISOString()
         };
@@ -308,7 +310,8 @@
           deadline:deadline,
           indirect_total_cost:row.estimated_cost,
           present_profit:row.projected_profit,
-          scope_count:row.scope_breakdown.length
+          scope_count:row.scope_breakdown.length,
+          summary_category_count:row.summary_breakdown.length
         });
 
         selectedId=String(inserted.id);
@@ -342,6 +345,8 @@
         running_amount:Number(data.indirectTotalCost||0),
         projected_profit:Number(data.presentProfit||0),
         scope_breakdown:Array.isArray(data.scopeBreakdown)?data.scopeBreakdown:[],
+        summary_breakdown:Array.isArray(data.summaryBreakdown)?data.summaryBreakdown:[],
+        summary_sheet_name:data.summarySheetName||q.summary_sheet_name||null,
         updated_at:new Date().toISOString()
       };
       const {error}=await sb.from('quotation_projects').update(values).eq('id',q.id);
@@ -350,7 +355,8 @@
       await addHistory(q.id,'sheet_refresh','Google Sheet values refreshed',{
         indirect_total_cost:values.estimated_cost,
         present_profit:values.projected_profit,
-        scope_count:values.scope_breakdown.length
+        scope_count:values.scope_breakdown.length,
+        summary_category_count:values.summary_breakdown.length
       });
 
       await refreshAll();

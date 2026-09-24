@@ -402,3 +402,35 @@ No new SQL migration is required.
 - The selected quotation project gets its own Scope Breakdown pie chart and percentage legend.
 - Scope data is saved in `quotation_projects.scope_breakdown` so the last read breakdown remains available even when the Sheet is closed.
 - Run `v20.5-scope-breakdown.sql` once in Supabase SQL Editor.
+
+
+## v20.6 Full Google Sheet Summary Reader
+The quotation reader now focuses on the workbook's **Summary** sheet.
+
+It recognizes major scope headings including:
+- General Requirements
+- Architectural
+- Structural
+- Electrical
+- Plumbing
+- Mechanical
+- Fire Protection
+- Sanitary
+- Civil / Site Development
+- Auxiliary / Electronics
+- Landscaping
+- Specialties
+- Equipment
+- Other / Miscellaneous
+
+For each major scope, it also reads the amount-bearing line items underneath it until the next major scope heading.
+
+The quotation dashboard shows:
+- one pie-chart slice per major scope
+- percentage share of the Summary-sheet scope amount
+- major scope amount
+- expandable child line-items with their amount and percentage within that scope
+
+The parsed Summary data is saved in `quotation_projects.summary_breakdown`, so the latest read remains available even when the Google Sheet is closed.
+
+Run `v20.6-summary-reader.sql` once in Supabase SQL Editor.

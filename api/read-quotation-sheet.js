@@ -9,12 +9,12 @@ function extractSpreadsheetId(input=""){
 function safeText(cell){
   try{
     if(!cell) return "";
-    if(typeof cell.text === "string" && cell.text.trim()) return cell.text.trim();
+    if(typeof cell.text==="string" && cell.text.trim()) return cell.text.trim();
     const v=cell.value;
     if(v==null) return "";
-    if(typeof v === "string" || typeof v === "number" || typeof v === "boolean") return String(v).trim();
-    if(typeof v === "object"){
-      if(typeof v.text === "string") return v.text.trim();
+    if(typeof v==="string" || typeof v==="number" || typeof v==="boolean") return String(v).trim();
+    if(typeof v==="object"){
+      if(typeof v.text==="string") return v.text.trim();
       if(v.result!=null) return String(v.result).trim();
       if(Array.isArray(v.richText)) return v.richText.map(x=>x?.text||"").join("").trim();
       if(v.hyperlink && v.text) return String(v.text).trim();
@@ -48,7 +48,6 @@ function nearbyValue(ws,row,col,{numeric=false}={}){
   const positions=[];
   for(let dc=1;dc<=10;dc++) positions.push([row,col+dc]);
   for(let dr=1;dr<=5;dr++) for(let dc=0;dc<=5;dc++) positions.push([row+dr,col+dc]);
-
   for(const [r,c] of positions){
     const cell=ws.getCell(r,c);
     if(numeric){
@@ -83,13 +82,7 @@ function findMetric(workbook,kind,{numeric=true}={}){
         if(!text || !metricMatch(kind,text)) continue;
         const found=nearbyValue(ws,r,c,{numeric});
         if(found){
-          return {
-            value:found.value,
-            sheet:ws.name||"Sheet",
-            labelCell:cell.address,
-            valueCell:found.cell,
-            label:text
-          };
+          return {value:found.value,sheet:ws.name||"Sheet",labelCell:cell.address,valueCell:found.cell,label:text};
         }
       }
     }
@@ -97,140 +90,179 @@ function findMetric(workbook,kind,{numeric=true}={}){
   return null;
 }
 
+const MAJOR_SCOPE_ALIASES = [
+  ["General Requirements",["general requirements","general requirement","gen req","genreq","preliminaries","preliminary works"]],
+  ["Architectural",["architectural","architecture","architectural works","finishing works","finishes"]],
+  ["Structural",["structural","structural works","civil structural","concrete works","reinforced concrete"]],
+  ["Electrical",["electrical","electrical works"]],
+  ["Plumbing",["plumbing","plumbing works","sanitary plumbing"]],
+  ["Mechanical",["mechanical","mechanical works","hvac","air conditioning","ventilation"]],
+  ["Fire Protection",["fire protection","fire protection works","fdas","sprinkler"]],
+  ["Sanitary",["sanitary","sanitary works","sewerage","sewage"]],
+  ["Civil / Site Development",["civil works","site development","site development works","earthworks","roadworks"]],
+  ["Auxiliary / Electronics",["auxiliary","electronics","auxiliary works","structured cabling","cctv"]],
+  ["Landscaping",["landscaping","landscape","landscape works"]],
+  ["Specialties",["specialties","specialty works"]],
+  ["Equipment",["equipment","equipment works"]],
+  ["Other",["other","others","miscellaneous","misc works","miscellaneous works"]]
+];
 
-function isScopeHeader(text){
+function canonicalMajorScope(text){
   const n=normalize(text);
-  return n==="scope" || n==="scope of work" || n==="scope of works" || n==="work scope" ||
-         n==="description" || n==="work description" || n==="trade" || n==="division" || n==="category";
-}
-
-function isAmountHeader(text){
-  const n=normalize(text);
-  return n==="amount" || n==="total amount" || n==="cost" || n==="total cost" ||
-         n==="estimated cost" || n==="budget" || n==="subtotal";
-}
-
-function isPercentHeader(text){
-  const n=normalize(text);
-  return n.includes("percent") || n.includes("percentage") || n==="weight" || n==="weightage" || n==="%";
-}
-
-function cleanScopeName(text){
-  return String(text||"").replace(/^[-–—•\s]+/,"").replace(/\s+/g," ").trim();
-}
-
-function validScopeName(text){
-  const t=cleanScopeName(text);
-  const n=normalize(t);
-  if(!t || t.length<2 || t.length>120) return false;
-  if(/^\d+(\.\d+)?$/.test(t)) return false;
-  if(n.includes("grand total") || n==="total" || n.startsWith("total ") || n.includes("indirect total cost") || n.includes("present profit")) return false;
-  return true;
-}
-
-function numericFromCell(cell){
-  if(!cell) return null;
-  let n=asNumber(cell.value);
-  if(n!==null) return n;
-  const t=safeText(cell);
-  if(t) n=asNumber(t);
-  return n;
-}
-
-function percentFromCell(cell){
-  if(!cell) return null;
-  let v=cell.value;
-  if(v && typeof v==="object" && v.result!=null) v=v.result;
-  if(typeof v==="number" && Number.isFinite(v)){
-    if(v>=0 && v<=1) return v*100;
-    if(v>1 && v<=100) return v;
-  }
-  const t=safeText(cell);
-  if(t.includes("%")){
-    const n=asNumber(t);
-    if(n!==null) return n;
+  if(!n) return null;
+  for(const [canonical,aliases] of MAJOR_SCOPE_ALIASES){
+    for(const a of aliases){
+      if(n===a || n.startsWith(a+" ") || n.includes(" "+a+" ")) return canonical;
+    }
   }
   return null;
 }
 
-function detectScopeTable(workbook){
-  const candidates=[];
+function rowRightmostNumeric(ws,rowNum,labelCol){
+  const row=ws.getRow(rowNum);
+  const maxCols=Math.min(Math.max(row.cellCount||0,1),160);
+  let candidate=null;
+  for(let c=Math.max(1,labelCol+1);c<=maxCols;c++){
+    const cell=row.getCell(c);
+    let n=asNumber(cell?.value);
+    if(n===null) n=asNumber(safeText(cell));
+    if(n===null) continue;
+    // Ignore likely percentages as the amount if there are later larger values.
+    candidate={value:n,cell:cell.address,col:c};
+  }
+  return candidate;
+}
 
-  for(const ws of workbook.worksheets||[]){
-    const maxRows=Math.min(ws.rowCount||0,2500);
+function firstMeaningfulText(ws,rowNum){
+  const row=ws.getRow(rowNum);
+  const maxCols=Math.min(Math.max(row.cellCount||0,1),80);
+  for(let c=1;c<=maxCols;c++){
+    const t=safeText(row.getCell(c));
+    if(!t) continue;
+    const n=normalize(t);
+    if(n==="amount" || n==="total" || n==="percentage" || n==="percent" || n==="%") continue;
+    return {text:t,col:c,cell:row.getCell(c).address};
+  }
+  return null;
+}
+
+function summaryWorksheet(workbook){
+  const sheets=workbook.worksheets||[];
+  if(!sheets.length) return null;
+  const exact=sheets.find(ws=>normalize(ws.name)==="summary");
+  if(exact) return exact;
+  const contains=sheets.find(ws=>normalize(ws.name).includes("summary"));
+  return contains || sheets[0];
+}
+
+function parseSummarySheet(workbook){
+  const ws=summaryWorksheet(workbook);
+  if(!ws) return {sheetName:null,categories:[]};
+
+  const maxRows=Math.min(ws.rowCount||0,4000);
+  const categories=[];
+  let current=null;
+
+  function flush(){
+    if(!current) return;
+    if((!Number.isFinite(current.amount) || current.amount<=0) && current.items.length){
+      const sum=current.items.reduce((s,x)=>s+(Number.isFinite(x.amount)&&x.amount>0?x.amount:0),0);
+      if(sum>0) current.amount=sum;
+    }
+    categories.push(current);
+    current=null;
+  }
+
+  for(let r=1;r<=maxRows;r++){
+    const label=firstMeaningfulText(ws,r);
+    if(!label) continue;
+
+    const raw=String(label.text).replace(/\s+/g," ").trim();
+    const n=normalize(raw);
+    if(!raw || raw.length>160) continue;
+
+    const amountCell=rowRightmostNumeric(ws,r,label.col);
+    const major=canonicalMajorScope(raw);
+
+    if(major){
+      flush();
+      current={
+        name:major,
+        originalLabel:raw,
+        amount:amountCell?.value ?? null,
+        source:`${ws.name}!${label.cell}`,
+        amountCell:amountCell?.cell ?? null,
+        items:[]
+      };
+      continue;
+    }
+
+    if(!current) continue;
+
+    // Stop category details on clear total/profit/indirect summary rows.
+    if(n.includes("grand total") || n.includes("indirect total cost") || n.includes("present profit") || n==="total project cost"){
+      continue;
+    }
+
+    if(amountCell && Number.isFinite(amountCell.value)){
+      const looksHeader = n==="scope" || n==="description" || n==="particulars" || n==="works";
+      if(!looksHeader && raw.length>=2){
+        current.items.push({
+          name:raw,
+          amount:amountCell.value,
+          source:`${ws.name}!${label.cell}`,
+          amountCell:amountCell.cell
+        });
+      }
+    }
+  }
+  flush();
+
+  // If no canonical sections were found, fall back to amount-bearing rows in Summary.
+  if(!categories.length){
+    const fallback=[];
     for(let r=1;r<=maxRows;r++){
-      const row=ws.getRow(r);
-      const maxCols=Math.min(Math.max(row.cellCount||0,1),120);
-      let scopeCol=null, amountCol=null, percentCol=null;
-
-      for(let c=1;c<=maxCols;c++){
-        const txt=safeText(row.getCell(c));
-        if(!txt) continue;
-        if(scopeCol===null && isScopeHeader(txt)) scopeCol=c;
-        if(amountCol===null && isAmountHeader(txt)) amountCol=c;
-        if(percentCol===null && isPercentHeader(txt)) percentCol=c;
-      }
-
-      if(scopeCol===null || (amountCol===null && percentCol===null)) continue;
-
-      const items=[];
-      let blankRun=0;
-      for(let rr=r+1;rr<=Math.min(r+80,maxRows);rr++){
-        const name=cleanScopeName(safeText(ws.getCell(rr,scopeCol)));
-        if(!name){
-          blankRun++;
-          if(blankRun>=4 && items.length>=2) break;
-          continue;
-        }
-        blankRun=0;
-        if(!validScopeName(name)){
-          if(normalize(name).includes("total") && items.length>=2) break;
-          continue;
-        }
-
-        const pct=percentCol!==null ? percentFromCell(ws.getCell(rr,percentCol)) : null;
-        const amount=amountCol!==null ? numericFromCell(ws.getCell(rr,amountCol)) : null;
-        if(pct===null && amount===null) continue;
-        items.push({name,amount,percentage:pct,source:`${ws.name}!${ws.getCell(rr,scopeCol).address}`});
-      }
-
-      if(items.length>=2){
-        candidates.push({ws:ws.name,headerRow:r,items,hasPercent:percentCol!==null,hasAmount:amountCol!==null});
-      }
+      const label=firstMeaningfulText(ws,r);
+      if(!label) continue;
+      const amount=rowRightmostNumeric(ws,r,label.col);
+      if(!amount || !Number.isFinite(amount.value) || amount.value<=0) continue;
+      const raw=String(label.text).replace(/\s+/g," ").trim();
+      const n=normalize(raw);
+      if(!raw || raw.length>120) continue;
+      if(n.includes("grand total") || n.includes("indirect total cost") || n.includes("present profit")) continue;
+      fallback.push({name:raw,originalLabel:raw,amount:amount.value,source:`${ws.name}!${label.cell}`,amountCell:amount.cell,items:[]});
+      if(fallback.length>=24) break;
     }
+    return finalizeSummary(ws.name,fallback);
   }
 
-  if(!candidates.length) return [];
-  candidates.sort((a,b)=>{
-    const score=x=>(x.hasPercent?4:0)+(x.hasAmount?2:0)+Math.min(x.items.length,15)/10;
-    return score(b)-score(a);
-  });
+  return finalizeSummary(ws.name,categories);
+}
 
-  const picked=candidates[0].items.slice(0,24);
-  const pctValues=picked.map(x=>x.percentage).filter(x=>Number.isFinite(x) && x>=0);
-  const pctSum=pctValues.reduce((a,b)=>a+b,0);
+function finalizeSummary(sheetName,categories){
+  const cleaned=categories
+    .map(c=>({
+      ...c,
+      amount:Number.isFinite(c.amount)&&c.amount>0?c.amount:null,
+      items:(c.items||[]).filter(x=>Number.isFinite(x.amount)&&x.amount>=0).slice(0,80)
+    }))
+    .filter(c=>c.amount!==null || c.items.length);
 
-  if(pctValues.length===picked.length && pctSum>95 && pctSum<105){
-    return picked.map(x=>({...x,percentage:(x.percentage/pctSum)*100}));
-  }
+  const total=cleaned.reduce((s,c)=>s+(c.amount||0),0);
+  const final=cleaned.map(c=>({
+    name:c.name,
+    originalLabel:c.originalLabel,
+    amount:c.amount||0,
+    percentage:total>0 ? (c.amount||0)/total*100 : 0,
+    source:c.source,
+    amountCell:c.amountCell,
+    items:c.items.map(i=>({
+      ...i,
+      percentage:(c.amount||0)>0 ? i.amount/(c.amount||0)*100 : 0
+    }))
+  }));
 
-  const amountTotal=picked.reduce((s,x)=>s+(Number.isFinite(x.amount)&&x.amount>0?x.amount:0),0);
-  if(amountTotal>0){
-    return picked
-      .filter(x=>Number.isFinite(x.amount)&&x.amount>0)
-      .map(x=>({...x,percentage:(x.amount/amountTotal)*100}));
-  }
-
-  if(pctValues.length){
-    const usableTotal=pctValues.reduce((a,b)=>a+b,0);
-    if(usableTotal>0){
-      return picked
-        .filter(x=>Number.isFinite(x.percentage)&&x.percentage>0)
-        .map(x=>({...x,percentage:(x.percentage/usableTotal)*100}));
-    }
-  }
-
-  return [];
+  return {sheetName,categories:final};
 }
 
 export default async function handler(req,res){
@@ -240,7 +272,6 @@ export default async function handler(req,res){
     const id=extractSpreadsheetId(link);
     if(!id) return res.status(400).json({ok:false,error:"Paste a valid Google Sheets link."});
 
-    // Google Sheets only: export the workbook as XLSX using its spreadsheet ID.
     const exportUrl=`https://docs.google.com/spreadsheets/d/${id}/export?format=xlsx`;
     const response=await fetch(exportUrl,{
       redirect:"follow",
@@ -248,18 +279,12 @@ export default async function handler(req,res){
     });
 
     if(!response.ok){
-      return res.status(400).json({
-        ok:false,
-        error:"Google Sheet could not be read. Set Share access to Anyone with the link → Viewer, then try again."
-      });
+      return res.status(400).json({ok:false,error:"Google Sheet could not be read. Set Share access to Anyone with the link → Viewer, then try again."});
     }
 
     const contentType=response.headers.get("content-type")||"";
     if(contentType.includes("text/html")){
-      return res.status(400).json({
-        ok:false,
-        error:"Google returned a sign-in page. Set the Google Sheet to Anyone with the link → Viewer."
-      });
+      return res.status(400).json({ok:false,error:"Google returned a sign-in page. Set the Google Sheet to Anyone with the link → Viewer."});
     }
 
     const buf=Buffer.from(await response.arrayBuffer());
@@ -272,18 +297,15 @@ export default async function handler(req,res){
     const profit=findMetric(workbook,"profit",{numeric:true});
     const project=findMetric(workbook,"project",{numeric:false});
     const client=findMetric(workbook,"client",{numeric:false});
-    const scopeBreakdown=detectScopeTable(workbook);
+    const summary=parseSummarySheet(workbook);
 
     const firstSheet=(workbook.worksheets?.[0]?.name || `Quotation ${id.slice(0,6)}`).trim();
     const projectName=(project?.value && String(project.value).trim().length<180)
       ? String(project.value).trim()
       : firstSheet;
 
-    if(!indirect && !profit){
-      return res.status(422).json({
-        ok:false,
-        error:'The Sheet opened, but “Indirect Total Cost” and “Present Profit” were not found. Check the exact labels in the Google Sheet.'
-      });
+    if(!indirect && !profit && !summary.categories.length){
+      return res.status(422).json({ok:false,error:"The Google Sheet opened, but the quotation summary values could not be detected."});
     }
 
     return res.status(200).json({
@@ -293,27 +315,43 @@ export default async function handler(req,res){
       clientName:client?.value ? String(client.value).trim() : "",
       indirectTotalCost:indirect?.value ?? null,
       presentProfit:profit?.value ?? null,
-      scopeBreakdown:scopeBreakdown.map(x=>({
-        name:x.name,
-        amount:Number.isFinite(x.amount)?x.amount:null,
-        percentage:Math.round((x.percentage||0)*100)/100,
-        source:x.source
+      summarySheetName:summary.sheetName,
+      summaryBreakdown:summary.categories.map(c=>({
+        name:c.name,
+        originalLabel:c.originalLabel,
+        amount:Math.round((c.amount||0)*100)/100,
+        percentage:Math.round((c.percentage||0)*100)/100,
+        source:c.source,
+        amountCell:c.amountCell,
+        items:(c.items||[]).map(i=>({
+          name:i.name,
+          amount:Math.round((i.amount||0)*100)/100,
+          percentage:Math.round((i.percentage||0)*100)/100,
+          source:i.source,
+          amountCell:i.amountCell
+        }))
+      })),
+      // Backward compatibility: the scope pie uses the same top-level summary categories.
+      scopeBreakdown:summary.categories.map(c=>({
+        name:c.name,
+        amount:Math.round((c.amount||0)*100)/100,
+        percentage:Math.round((c.percentage||0)*100)/100,
+        source:c.source
       })),
       sources:{
         project:project ? `${project.sheet}!${project.labelCell} → ${project.valueCell}` : `Worksheet: ${firstSheet}`,
         indirect:indirect ? `${indirect.sheet}!${indirect.labelCell} → ${indirect.valueCell}` : null,
-        profit:profit ? `${profit.sheet}!${profit.labelCell} → ${profit.valueCell}` : null
+        profit:profit ? `${profit.sheet}!${profit.labelCell} → ${profit.valueCell}` : null,
+        summarySheet:summary.sheetName
       },
       warnings:[
         !indirect ? '“Indirect Total Cost” was not found.' : null,
-        !profit ? '“Present Profit” was not found.' : null
+        !profit ? '“Present Profit” was not found.' : null,
+        !summary.categories.length ? 'No major scope breakdown was detected on the Summary sheet.' : null
       ].filter(Boolean)
     });
   }catch(err){
     console.error("quotation sheet read",err);
-    return res.status(500).json({
-      ok:false,
-      error:"Could not read this Google Sheet. Make sure the link is valid and shared as Anyone with the link → Viewer."
-    });
+    return res.status(500).json({ok:false,error:"Could not read this Google Sheet. Make sure the link is valid and shared as Anyone with the link → Viewer."});
   }
 }
