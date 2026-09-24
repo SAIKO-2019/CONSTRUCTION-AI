@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SAIKO Construction AI</title>
   <link rel="stylesheet" href="styles.css" />
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
 </head>
 <body>
   <div id="loginGate" class="auth-overlay">
@@ -14,11 +14,11 @@
       <div class="auth-tabs"><button id="showLoginBtn" class="active">Sign in</button><button id="showSignupBtn">Sign up</button></div>
       <div id="loginPane">
         <h1>Welcome back</h1><p>Sign in to manage projects, billing, schedules, files, and AI guidance.</p>
-        <div id="authLanding" class="auth-landing"><small>CONSTRUCTION MANAGEMENT</small><h1>Welcome back</h1><p>Click Sign In to continue.</p><button id="openSignInBtn" class="primary-btn auth-main-btn" type="button">Sign In</button></div><form id="loginForm" class="hidden" class="stack-form">
+        <div id="authLanding" class="auth-landing"><small>CONSTRUCTION MANAGEMENT</small><h1>Welcome back</h1><p>Click Sign In to continue.</p><button id="openSignInBtn" class="primary-btn auth-main-btn" type="button">Sign In</button></div><form id="loginForm" class="hidden stack-form">
           <label>Email<input id="loginEmail" type="email" required></label>
-          <label>Password<input id="loginPassword" type="password" required></label>
+          <label>Password<div class="password-field"><input id="loginPassword" type="password" required><button id="togglePasswordBtn" type="button" class="password-toggle" aria-label="Show password" title="Show password">👁</button></div></label>
           <button class="primary-btn" type="submit">Sign in</button>
-        <div class="auth-options"><label class="remember-row"><input id="rememberMe" type="checkbox"><span>Remember me</span></label></div><div class="captcha-wrap"><div id="recaptchaContainer" class="g-recaptcha" data-sitekey=""></div></div></form>
+        <div class="auth-options"><label class="remember-row"><input id="rememberMe" type="checkbox"><span>Remember me</span></label></div><div class="captcha-wrap"><div id="recaptchaContainer"></div></div></form>
         <button id="forgotPasswordBtn" class="text-btn">Forgot password?</button>
         <div id="loginError" class="form-msg"></div>
       </div>
@@ -72,7 +72,7 @@
       <label class="workspace-project">Project Folder
         <select id="workspaceProject"></select>
       </label>
-      <div id="topPresenceRail" class="top-presence-rail" aria-label="Who's online"><div class="presence-avatars"><span class="presence-empty">No one online yet</span></div></div><button id="quickThemeBtn" class="quick-theme-btn" type="button" title="Quick theme switch">◐</button><div class="mini-avatar">U</div>
+      <div id="topPresenceRail" class="top-presence-rail" aria-label="Who's online"><div class="presence-avatars"><span class="presence-empty">No one online yet</span></div></div><button id="editModeBtn" class="edit-mode-btn" type="button" title="Toggle inline edit mode">✎ Edit Mode</button><button id="quickThemeBtn" class="quick-theme-btn" type="button" title="Quick theme switch">◐</button><div class="mini-avatar">U</div>
     </header>
 
       <section id="dashboard" class="view active-view">
@@ -449,5 +449,8 @@
   <script src="v15.3.js?v=153"></script>
   <script src="v15.4.js?v=154"></script>
   <script src="v15.5.js?v=155"></script>
+  <script src="v15.6.js?v=156"></script>
+  <script src="v15.7.js?v=157"></script>
+  <script src="v15.8.js?v=158"></script>
 </body>
 </html>

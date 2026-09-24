@@ -231,3 +231,31 @@ Hotfix v15.1: fixed Team Activity modal button clicks and removed the horizontal
 - Presence is also removed before logout.
 - Adds stronger delegated click handling and pointer-event hardening for dialog close, refresh, theme, settings/team controls.
 - Run `v15.5-active-status.sql` once in Supabase SQL Editor.
+
+
+## v15.6 Login / reCAPTCHA Fix
+- Public reCAPTCHA Site Key is now included in `config.js`.
+- reCAPTCHA uses explicit rendering instead of auto-render, avoiding the blank widget/timing problem.
+- Login shows clearer reCAPTCHA errors and `Signing in...` state.
+- No new SQL migration is required.
+- Keep `RECAPTCHA_SECRET_KEY` only in Vercel Environment Variables.
+
+
+## v15.7 Auth + Button Stability
+- Rebuilt login into one clean flow to avoid duplicate handlers.
+- Explicit reCAPTCHA with timeout/error feedback.
+- Smooth logout with presence cleanup.
+- Delegated Close/Cancel/navigation handlers so modal buttons stay clickable.
+- Escape and backdrop close dialogs.
+- Password visibility toggle.
+- No new SQL required beyond v15.5.
+
+
+## v15.8 Inline Edit Mode for Testing
+- Adds an **Edit Mode** button in the top bar.
+- When enabled, selected fields in Projects, Billing, Schedule, Actual Progress, and Inventory can be edited directly from the webpage.
+- Double-click or press Enter on a highlighted editable cell.
+- Enter saves; Escape cancels.
+- Collaboration lock is respected when available.
+- Intended for controlled testing and quick corrections. Complex calculated/link fields remain protected.
+- No new SQL migration is required.

@@ -757,3 +757,71 @@ button,[role="button"],.theme-preview{pointer-events:auto!important;touch-action
 #settingsShowActiveStatus{margin-top:2px}
 #topPresenceRail[data-private="1"]::before{content:'Active status hidden';font-size:10px;color:var(--muted);white-space:nowrap}
 #topPresenceRail[data-private="1"] .presence-avatars{display:none}
+
+
+/* v15.6 login/reCAPTCHA fix */
+.captcha-wrap{margin:10px 0 2px;min-height:78px;display:flex;align-items:center}
+#recaptchaContainer{min-height:78px;max-width:100%;overflow:hidden}
+#loginError{margin-top:8px;min-height:22px;font-weight:700}
+#loginForm button[type="submit"]:disabled{opacity:.65;cursor:wait}
+
+
+/* v15.7 smooth authentication + button stability */
+.auth-card{overflow:hidden}
+#loginForm{gap:12px}
+.password-field{display:grid;grid-template-columns:minmax(0,1fr) 42px;gap:8px;align-items:center}
+.password-field input{width:100%;min-width:0}
+.password-toggle{height:42px;border:1px solid var(--line);border-radius:10px;background:#fff;display:grid;place-items:center;padding:0;font-size:15px}
+.auth-busy{opacity:.82;pointer-events:none}.auth-busy button[type="submit"]{pointer-events:auto}
+#loginError{line-height:1.35}#loginError.success{color:#16835b!important}
+.captcha-wrap,#recaptchaContainer{overflow:visible!important}
+#recaptchaContainer{transform-origin:left top}
+button,a,input,select,textarea,[role="button"],[data-close],[data-go],[data-jump]{pointer-events:auto!important}
+.dialog-head,.dialog-actions,.panel-head,.profile-actions,.live-panel-actions{pointer-events:auto!important;isolation:isolate}
+.dialog-head button,.dialog-actions button,.panel-head button,.profile-actions button,.live-panel-actions button{position:relative;z-index:50!important;pointer-events:auto!important}
+.settings-section.feature-card::after,.brand::after,.kpi::after{pointer-events:none!important}
+dialog[open]{pointer-events:auto!important}
+@media(max-width:520px){#recaptchaContainer{transform:scale(.88);height:69px}}
+
+
+/* =========================================================
+   v15.8 Inline Edit Mode
+   ========================================================= */
+.edit-mode-btn{
+  border:1px solid var(--line);
+  background:var(--surface,#fff);
+  color:var(--text,#102238);
+  border-radius:12px;
+  padding:9px 12px;
+  font-size:12px;
+  font-weight:800;
+  white-space:nowrap;
+  box-shadow:0 8px 22px rgba(15,23,42,.06);
+}
+.edit-mode-btn.active{
+  background:var(--blue,#2f6fe4);
+  color:#fff;
+  border-color:var(--blue,#2f6fe4);
+}
+html[data-edit-mode="on"] .inline-editable{
+  cursor:text!important;
+  position:relative;
+  background:color-mix(in srgb,var(--blue,#2f6fe4) 5%,var(--surface,#fff))!important;
+  outline:1px dashed color-mix(in srgb,var(--blue,#2f6fe4) 32%,transparent);
+}
+html[data-edit-mode="on"] .inline-editable:hover{
+  outline:2px solid color-mix(in srgb,var(--blue,#2f6fe4) 55%,transparent);
+  z-index:2;
+}
+.inline-editor{
+  width:100%!important;
+  min-width:90px!important;
+  border:2px solid var(--blue,#2f6fe4)!important;
+  border-radius:8px!important;
+  padding:7px 8px!important;
+  background:var(--surface,#fff)!important;
+  color:var(--text,#102238)!important;
+  outline:none!important;
+}
+.inline-saving{opacity:.65;cursor:wait!important}
+@media(max-width:900px){.edit-mode-btn{display:none}}
