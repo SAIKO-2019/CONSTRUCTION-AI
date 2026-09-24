@@ -900,3 +900,13 @@ No MutationObserver or page-wide repeated scan is used.
 - Match summary shows matched, schedule-only, and actual-only scopes.
 - No MutationObserver; one active-view-only timer.
 - Run `v24.8-schedule-actual-sheet-links.sql` once in Supabase.
+
+
+## v24.9 — Schedule / Actual Live Sync Fix
+- Fixes `Cannot access selectedScheduleIds before initialization`.
+- Fixes `actual_progress_project_id_activity_key` duplicate-key errors by collapsing duplicate/trivially different activity rows and using conflict-safe upsert.
+- Skips Total/Sub-total rows from tracker imports.
+- If Schedule weights exceed 100%, they are normalized to one 100% project basis to prevent planned progress above 100%.
+- Schedule and Actual fuzzy scope matching remains active.
+- Old Excel-upload empty text is replaced with Google Sheet link instructions.
+- Run `v24.9-tracker-sync-fix.sql` once in Supabase.

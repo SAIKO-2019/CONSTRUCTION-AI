@@ -1,5 +1,5 @@
 {
-  "version": "24.8",
-  "label": "SAIKO Construction AI v24.8",
-  "message": "Schedule and Actual Progress now use per-project live Google Sheet links with automatic column detection and fuzzy scope matching."
+  "version": "24.9",
+  "label": "SAIKO Construction AI v24.9",
+  "message": "Schedule/Actual live-sync fixes: selection state initialization, duplicate activity handling, and normalized project weights."
 }

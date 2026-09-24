@@ -96,21 +96,58 @@
     if(!h)throw new Error(kind==='schedule'
       ? 'Could not auto-detect Schedule columns. Need Activity/Description, Start Date and End Date. Weight is optional.'
       : 'Could not auto-detect Actual Progress columns. Need Activity/Description and Actual/Accomplishment %. Weight is optional.');
-    const out=[];
+
+    const raw=[];
     for(let i=h.rowIndex+1;i<rows.length;i++){
       const r=rows[i];
       const activity=clean(r[h.cols.activity]);
       if(!activity)continue;
+      // Do not import total/subtotal summary rows as activities.
+      if(/\b(grand\s*total|sub[-\s]?total|total)\b/i.test(activity))continue;
+
       if(kind==='schedule'){
         const start=parseDate(r[h.cols.start]),end=parseDate(r[h.cols.end]);
         if(!start||!end)continue;
-        out.push({activity,start_date:start,end_date:end,weight:h.cols.weight!=null?n(r[h.cols.weight]):0});
+        raw.push({activity,start_date:start,end_date:end,weight:h.cols.weight!=null?n(r[h.cols.weight]):0});
       }else{
         const actual=Math.max(0,Math.min(100,n(r[h.cols.actual])));
-        out.push({activity,weight:h.cols.weight!=null?n(r[h.cols.weight]):0,actual_percent:actual});
+        raw.push({activity,weight:h.cols.weight!=null?n(r[h.cols.weight]):0,actual_percent:actual});
       }
     }
-    if(!out.length)throw new Error(`No usable ${kind==='schedule'?'schedule':'actual progress'} rows found.`);
+    if(!raw.length)throw new Error(`No usable ${kind==='schedule'?'schedule':'actual progress'} rows found.`);
+
+    // Collapse duplicate/trivially-different activity names before writing to Supabase.
+    // This prevents the actual_progress(project_id, activity) unique-key error.
+    const byKey=new Map();
+    for(const item of raw){
+      const key=norm(item.activity)||item.activity.toLowerCase();
+      if(!byKey.has(key)){
+        byKey.set(key,item);
+      }else{
+        const prev=byKey.get(key);
+        if(kind==='actual'){
+          // Keep the most advanced value and best available weight.
+          prev.actual_percent=Math.max(n(prev.actual_percent),n(item.actual_percent));
+          prev.weight=Math.max(n(prev.weight),n(item.weight));
+        }else{
+          // Merge duplicate schedule rows into one span.
+          prev.start_date=prev.start_date<item.start_date?prev.start_date:item.start_date;
+          prev.end_date=prev.end_date>item.end_date?prev.end_date:item.end_date;
+          prev.weight=Math.max(n(prev.weight),n(item.weight));
+        }
+      }
+    }
+    const out=[...byKey.values()];
+
+    // Schedule weights should represent one 100% project basis. If the source
+    // contains category totals/overlapping percentages and exceeds 100%,
+    // normalize the imported activities to 100% instead of showing 149%+ planned.
+    if(kind==='schedule'){
+      const total=out.reduce((sum,x)=>sum+Math.max(0,n(x.weight)),0);
+      if(total>100.5){
+        out.forEach(x=>{x.weight=Math.max(0,n(x.weight))/total*100});
+      }
+    }
     return out;
   }
 
@@ -149,7 +186,9 @@
     const parsed=parseTrackerRows(raw,'actual').map(x=>({...x,project_id:p.id,updated_by:currentUser.id,updated_at:new Date().toISOString()}));
     const del=await sb.from('actual_progress').delete().eq('project_id',p.id);
     if(del.error)throw del.error;
-    const ins=await sb.from('actual_progress').insert(parsed).select();
+    // Upsert is intentionally used even after cleanup as a second guard against
+    // duplicate activity keys from unusual Google Sheet layouts.
+    const ins=await sb.from('actual_progress').upsert(parsed,{onConflict:'project_id,activity'}).select();
     if(ins.error)throw ins.error;
     cache.progress=(cache.progress||[]).filter(x=>String(x.project_id)!==String(p.id)).concat(ins.data||parsed);
     await sb.from('projects').update({tracker_last_sync_at:new Date().toISOString()}).eq('id',p.id);
