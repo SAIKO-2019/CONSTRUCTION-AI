@@ -755,3 +755,20 @@ No MutationObserver or page-wide repeated scan is used.
 - Those commercial settings live in **Billing & Payments**, under the selected Project Folder.
 - Issued amount/date/payee remain in Subcontractor Billing records from v23.2.
 - Run `v23.3-subcon-commercial-settings.sql` once in Supabase.
+
+
+## v23.4 — Automatic Billing / Payment Dates
+- Opening **Add Billing** automatically fills Date Request with today.
+- Typing a Billing No./VO No. or billing amount also fills Date Request if blank.
+- Entering a Receive/Paid amount automatically fills Date Paid with today.
+- Entering subcontractor/payee or Issued Amount automatically fills Date Issued with today.
+- Receive Payment / Add Payment now also updates the billing record's Date Paid so the date appears immediately in the billing table.
+- Auto-filled dates remain editable before saving for historical entries.
+- No new SQL required.
+
+
+## v23.5 — Billing Save / Missing Column Fix
+- Fixes Client Billing saves so they no longer send subcontract-only fields.
+- Includes one consolidated SQL migration: `v23.5-required-database-fix.sql`.
+- The migration creates any missing subcontract/billing columns from v23.0-v23.3 and reloads the Supabase schema cache.
+- After running SQL, wait 10-20 seconds and refresh the app.

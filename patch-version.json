@@ -1,5 +1,5 @@
 {
-  "version": "23.3",
-  "label": "SAIKO Construction AI v23.3",
-  "message": "A new system patch is required. Subcontract markup/deductions are now maintained in Billing, while Dashboard shows summary totals only."
+  "version": "23.5",
+  "label": "SAIKO Construction AI v23.5",
+  "message": "Billing save schema fix. Run the included consolidated SQL once, then log in again."
 }

@@ -222,10 +222,6 @@
       billing_type:type,
       transaction_side:type==='Client Billing'?'receivable':'payable',
       accomplishment_percent:Number($('bAccomplishment').value||0),
-      subcontractor_name:type==='Subcontractor Billing'?($('bSubcontractorName')?.value.trim()||null):null,
-      issued_amount:type==='Subcontractor Billing'?c.issued:0,
-      issued_date:type==='Subcontractor Billing'?($('bIssuedDate')?.value||null):null,
-      subcontract_balance:type==='Subcontractor Billing'?c.subcontractBalance:0,
       gross_amount:c.gross,
       retention_applicable:$('bUseRetention').checked,
       retention_percent:c.retPct,
@@ -241,6 +237,16 @@
         ? (c.net-Number(existing.received_amount||0)<=.01?'Paid':Number(existing.received_amount||0)>0?'Partially Paid':'Pending')
         : (c.out<=.01?'Paid':c.received>0?'Partially Paid':'Pending')
     };
+
+    // Subcontract-only columns are written only for Subcontractor Billing.
+    // This prevents Client Billing from failing if a browser reaches the UI
+    // before the latest database migration has been applied.
+    if(type==='Subcontractor Billing'){
+      values.subcontractor_name=$('bSubcontractorName')?.value.trim()||null;
+      values.issued_amount=c.issued;
+      values.issued_date=$('bIssuedDate')?.value||null;
+      values.subcontract_balance=c.subcontractBalance;
+    }
 
     try{
       if(editingBillingId){
