@@ -6,7 +6,7 @@
 
   function rows(){ return cache.quotationProjects||[]; }
   function selected(){ return rows().find(x=>String(x.id)===String(selectedId))||null; }
-  function isComplete(q){ return q?.status==='Complete' || !!q?.boq_file_name; }
+  function isComplete(q){ return ['Complete','Awarded','Not Awarded'].includes(q?.status) || !!q?.boq_file_name; }
   function deadlineState(q){
     if(!q?.target_submission) return {label:'No deadline',className:'neutral',days:null};
     const today=new Date(); today.setHours(0,0,0,0);
@@ -380,7 +380,9 @@
       const q=selected();
       if(!q)return alert('Select a quotation project first.');
       const file=$('quotationBoqFile')?.files?.[0];
-      if(!file)return alert('Choose the completed quotation file first.');
+      if(!file)return alert('Choose the completed quotation PDF first.');
+      const validation=window.validateQuotationFinalPdf?.(file,q);
+      if(validation && !validation.ok)return alert(validation.message);
 
       const btn=$('saveQuotationDataBtn');
       const old=btn.textContent;

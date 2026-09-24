@@ -225,6 +225,11 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
               </div>
             </div>
             <div class="quotation-header-actions">
+              <div id="quotationResultActions" class="quotation-result-actions hidden">
+                <button id="markQuotationAwardedBtn" type="button" class="award-btn">✓ Mark Awarded</button>
+                <button id="markQuotationNotAwardedBtn" type="button" class="decline-btn">✕ Mark Not Awarded</button>
+                <button id="removeQuotationResultBtn" type="button" class="secondary-btn hidden">Remove from Folder</button>
+              </div>
               <button id="refreshQuotationLinkBtn" class="secondary-btn" type="button">↻ Refresh from Sheet</button>
               <span id="quotationCompletionBadge" class="status-pill pending">For Quotation</span>
             </div>
@@ -277,7 +282,12 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
                 <h2>Summary Sheet Data</h2>
                 <p class="muted">Complete visible data copied from the linked Google Sheet SUMMARY tab, including scope, descriptions, amounts, price per sqm, weighted percentage, and any other populated columns.</p>
               </div>
-              <span id="quotationSummaryMirrorBadge" class="status-pill neutral">SUMMARY</span>
+              <div class="summary-mirror-actions">
+                <span id="quotationSummaryMirrorBadge" class="status-pill neutral">SUMMARY</span>
+                <button id="editSummaryDataBtn" type="button" class="secondary-btn compact-btn">✎ Edit Data</button>
+                <button id="saveSummaryDataBtn" type="button" class="primary-btn compact-btn hidden">Save</button>
+                <button id="cancelSummaryDataBtn" type="button" class="secondary-btn compact-btn hidden">Cancel</button>
+              </div>
             </div>
             <div class="summary-mirror-scroll">
               <table id="quotationSummaryMirrorTable" class="summary-mirror-table"></table>
@@ -305,9 +315,14 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
               </div>
               <div class="quotation-completion-row">
                 <label>Upload Final File
-                  <input id="quotationBoqFile" type="file" accept=".xlsx,.xls,.csv,.pdf,.doc,.docx">
+                  <input id="quotationBoqFile" type="file" accept="application/pdf,.pdf">
                 </label>
                 <button id="saveQuotationDataBtn" class="primary-btn" type="button">Upload & Mark Complete</button>
+              </div>
+              <div id="quotationFinalFileRule" class="quotation-file-rule">
+                <strong>Required filename:</strong>
+                <code id="quotationRequiredFilename">Project Name_Location_YYYY-MM-DD.pdf</code>
+                <span>PDF only. Invalid files are rejected; choose the corrected file again to re-upload.</span>
               </div>
               <div id="quotationCompletionFile" class="smart-note">No final file uploaded yet.</div>
             </div>
@@ -614,7 +629,7 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
 
   <script src="v20.3.js?v=2031"></script>
   <script src="v20.5.js?v=2051"></script>
-  <script src="v20.6.js?v=2061"></script>
+  <script src="v20.6.js?v=2131"></script>
 
   <dialog id="editQuotationDialog">
     <form id="editQuotationForm" class="dialog-card quotation-edit-dialog">
@@ -638,7 +653,10 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
   </dialog>
 
   <script src="v20.7.js?v=2071"></script>
-  <script src="v21.js?v=2102"></script>
-  <script src="patch-watch.js?v=2111"></script>
+  <script src="v21.js?v=2131"></script>
+  <script src="patch-watch.js?v=2151"></script>
+  <script src="v21.3.js?v=2131"></script>
+  <script src="v21.4.js?v=2141"></script>
+  <script src="v21.5.js?v=2151"></script>
 </body>
 </html>

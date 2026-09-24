@@ -497,3 +497,45 @@ Example: when releasing v21.2, change both values from `21.1` to `21.2`. Existin
 The first deployment of v21.1 cannot notify browsers that are still running older builds which did not yet contain the patch watcher. Starting with v21.1, future patches are automatically detected.
 
 No SQL migration required for v21.1.
+
+
+## v21.3 — Weighted % Fix + Editable Summary Data
+- Weighted Percentage from the Google Sheet Summary is authoritative; the pie chart no longer redistributes valid source percentages.
+- Amount-based percentage is only a fallback when source weighted percentage is missing.
+- Adds Edit Data / Save / Cancel for full Summary Sheet Data.
+- Visible Summary cells can be edited: descriptions, amounts, price per sqm, weighted percentage, and other populated columns.
+- Saving updates Supabase and linked scope subtotal amount/percentage updates the pie chart.
+- Manual edits are logged. Refresh from Sheet may overwrite manual edits with source values.
+- No MutationObserver and no new recurring timer added.
+- No new SQL required beyond the existing v21 full-summary columns.
+
+
+## v21.4 — Awarded / Not Awarded Quotation Folders
+- Completed quotations can be classified as **Awarded** or **Not Awarded**.
+- Adds three lightweight folders/tabs:
+  - For Quotation
+  - Awarded
+  - Not Awarded
+- Classification becomes available after the final quotation file is uploaded.
+- An Awarded project can later be moved to Not Awarded using **Decline → Move to Not Awarded**.
+- A Not Awarded project can later be moved to Awarded using **Accept → Move to Awarded**.
+- Projects can also be removed from either result folder and returned to **Complete / unclassified**.
+- All result changes are recorded in `activity_log`.
+- Uses the existing `status` text field; no new SQL migration is required.
+- No MutationObserver and no new recurring timer added.
+- Patch version bumped to 21.4.
+
+
+## v21.5 — Final PDF Filename Validation
+- Final quotation file accepts PDF only.
+- Required filename format: `Project Name_Location_YYYY-MM-DD.pdf`.
+- Project Name must match the selected quotation project.
+- Location must be present.
+- Date completed must be a valid `YYYY-MM-DD`.
+- Invalid files are immediately rejected and the chooser is cleared so the corrected file can be selected again.
+- Nothing uploads until validation passes.
+- The required filename example updates per selected project.
+- Existing buttons and v21.4 Awarded / Not Awarded workflow remain intact.
+- No MutationObserver and no new timer added.
+- No new SQL required.
+- Patch version bumped to 21.5.

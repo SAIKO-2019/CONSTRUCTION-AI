@@ -37,13 +37,13 @@
           <span class="quotation-summary-swatch" style="background:${palette[i%palette.length]}"></span>
           <strong>${esc(c.name)}</strong>
           <span>${money(Number(c.amount||0))}</span>
-          <b>${Number(c.percentage||0).toFixed(1)}%</b>
+          <b title="Weighted percentage from Summary">${Number(c.percentage||0).toFixed(2)}%</b>
         </summary>
         <div class="quotation-summary-items">
           ${items.length?items.map(item=>`<div class="quotation-summary-item">
             <span>${esc(item.name)}</span>
             <strong>${money(Number(item.amount||0))}</strong>
-            <b>${Number(item.percentage||0).toFixed(1)}%</b>
+            <b title="Weighted percentage / percentage from Summary">${Number(item.percentage||0).toFixed(2)}%</b>
           </div>`).join(''):'<div class="muted">No child line-items detected under this category.</div>'}
         </div>
       </details>`;
@@ -52,37 +52,28 @@
 
   function renderPieFromSummary(){
     const q=selectedQuotation();
-    const categories=parsedSummary(q).filter(x=>Number(x.amount)>0);
+    const all=parsedSummary(q).filter(x=>Number(x.amount)>0 || Number(x.percentage)>0);
     const pie=$('quotationScopePie'), legend=$('quotationScopeLegend'), count=$('quotationScopeCount'), total=$('quotationScopeTotalPct');
     if(!pie||!legend||!count||!total)return;
-
-    count.textContent=`${categories.length} major scope${categories.length===1?'':'s'}`;
-    if(!categories.length){
-      pie.style.background='conic-gradient(#e5e7eb 0 100%)';
-      total.textContent='0%';
-      legend.innerHTML='<div class="settings-empty-state">No Summary-sheet scopes detected yet.</div>';
-      return;
+    count.textContent=`${all.length} major scope${all.length===1?'':'s'}`;
+    if(!all.length){
+      pie.style.background='conic-gradient(#e5e7eb 0 100%)'; total.textContent='0%';
+      legend.innerHTML='<div class="settings-empty-state">No Summary-sheet scopes detected yet.</div>'; return;
     }
-
-    const sum=categories.reduce((s,x)=>s+Number(x.amount||0),0)||1;
-    let cursor=0;
-    const stops=[];
-    const normalized=categories.map((x,i)=>({...x,pct:Number(x.amount||0)/sum*100,color:palette[i%palette.length]}));
-    normalized.forEach(x=>{
-      const start=cursor; cursor+=x.pct;
-      stops.push(`${x.color} ${start.toFixed(2)}% ${cursor.toFixed(2)}%`);
-    });
-    pie.style.background=`conic-gradient(${stops.join(',')})`;
-    total.textContent='100%';
-
-    legend.innerHTML=normalized.map(x=>`<div class="quotation-scope-item">
-      <span class="quotation-scope-swatch" style="background:${x.color}"></span>
-      <div class="quotation-scope-main">
-        <strong>${esc(x.name)}</strong>
-        <small>${money(Number(x.amount||0))}</small>
-      </div>
-      <b>${x.pct.toFixed(1)}%</b>
-    </div>`).join('');
+    const amountTotal=all.reduce((s,x)=>s+(Number(x.amount)||0),0);
+    const rows=all.map((x,i)=>{
+      let pct=Number(x.percentage), source='Weighted % from Summary';
+      if(!Number.isFinite(pct)||pct<0){pct=amountTotal>0?(Number(x.amount||0)/amountTotal*100):0;source='Calculated from amount'}
+      return {...x,pct,color:palette[i%palette.length],pctSource:source};
+    }).filter(x=>x.pct>0);
+    const sourceTotal=rows.reduce((s,x)=>s+x.pct,0);
+    let cursor=0; const stops=[];
+    rows.forEach(x=>{const a=Math.max(0,Math.min(100,cursor));cursor+=x.pct;const b=Math.max(a,Math.min(100,cursor));if(b>a)stops.push(`${x.color} ${a.toFixed(2)}% ${b.toFixed(2)}%`)});
+    if(cursor<99.995)stops.push(`#e5e7eb ${Math.max(0,cursor).toFixed(2)}% 100%`);
+    if(!stops.length)stops.push('#e5e7eb 0 100%');
+    pie.style.background=`conic-gradient(${stops.join(',')})`; total.textContent=`${sourceTotal.toFixed(1)}%`;
+    legend.innerHTML=rows.map(x=>`<div class="quotation-scope-item"><span class="quotation-scope-swatch" style="background:${x.color}"></span><div class="quotation-scope-main"><strong>${esc(x.name)}</strong><small>${money(Number(x.amount||0))} · ${x.pctSource}</small></div><b>${x.pct.toFixed(2)}%</b></div>`).join('')
+      +(sourceTotal<99.995?`<div class="quotation-scope-item quotation-scope-unallocated"><span class="quotation-scope-swatch" style="background:#e5e7eb"></span><div class="quotation-scope-main"><strong>Unallocated / Not encoded</strong><small>Remaining percentage from Summary</small></div><b>${(100-sourceTotal).toFixed(2)}%</b></div>`:'');
   }
 
   function renderAll(){

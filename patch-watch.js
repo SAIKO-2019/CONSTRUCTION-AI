@@ -1,6 +1,6 @@
 // SAIKO Construction AI v21.1 — lightweight patch/version watcher
 (function(){
-  const CURRENT_PATCH='21.1';
+  const CURRENT_PATCH='21.5';
   const CHECK_EVERY_MS=5*60*1000; // one tiny request every 5 minutes
   let checking=false;
   let patchRequired=false;
