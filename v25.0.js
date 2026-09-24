@@ -58,6 +58,18 @@
     bulkUI('progress',selectedProgressIds,rows);
   };
 
+
+  // v25.3: Actual Tracker remains independent from projected/schedule data.
+  // Each Actual scope contributes exactly its visible STATUS summary value because
+  // weight × actual_percent / 100 reconstructs that summary contribution.
+  actualForProject=function(pid){
+    const rows=(cache.progress||[]).filter(r=>String(r.project_id)===String(pid));
+    if(rows.length){
+      return rows.reduce((sum,r)=>sum+(n(r.weight)*n(r.actual_percent)/100),0);
+    }
+    return n(proj(pid)?.progress);
+  };
+
   // Dashboard owns the comparison.
   const baseDash=renderDashboard;
   renderDashboard=function(){

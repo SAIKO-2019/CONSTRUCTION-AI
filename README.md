@@ -943,3 +943,35 @@ No MutationObserver or page-wide repeated scan is used.
 - No MutationObserver and no additional recurring timers were added.
 - `Sync Now` remains available for immediate refresh.
 - No SQL required.
+
+
+## v25.3 — Per-Scope Summary Reader
+- **Actual Progress** now imports one value per visible scope/section only.
+- For each scope, it reads the **OVERALL ACCOMPLISHMENT STATUS** row and the visible **STATUS** value.
+- Floor/detail rows such as Ground Floor / Second Floor / Third Floor are not imported as separate Actual records.
+- **Projected/Schedule** uses the same principle: one visible OVERALL projected/planned/status summary value per scope.
+- Hidden Google Sheet rows and columns remain excluded by the visible-only XLSX reader.
+- Schedule and Actual remain separate sources; Dashboard compares the resulting Projected total vs Actual total.
+- 10-second live sync remains active while the relevant page/dashboard is open.
+- `Sync Now` remains available.
+- No new SQL required.
+
+
+## v25.4 — Matched Scope Dashboard S-Curve
+- Projected timeline parser now supports **Work Item Description / Start Date / End Date / Total Amount** layouts.
+- Projected activity weights are derived automatically from each visible work item's **Total Amount ÷ visible total amount**.
+- Daily matrix cells are ignored.
+- Actual Progress still reads only the visible per-scope **OVERALL STATUS** summary.
+- Dashboard automatically normalizes similar construction descriptions into common scopes, e.g.:
+  - Ceiling Finish → Ceiling Works
+  - Cabinets → Cabinetry Works
+  - Wall Paint / Wall Cladding → Wall Finishing Works
+  - Tiling → Flooring Works
+  - Lighting & Outlets → Electrical Works
+  - Plumbing Fixtures → Plumbing Works
+  - Windows / Glazing → Glass Works
+- A **Matched Scope S-Curve** is generated on the Dashboard using the same common scope order for Projected and Actual.
+- A matching table shows original Projected description, original Actual description, Projected Today, Actual, and Variance.
+- 10-second live sync remains active.
+- Hidden Google Sheet rows/columns remain excluded.
+- No new SQL required.

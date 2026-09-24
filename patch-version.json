@@ -1,5 +1,5 @@
 {
-  "version": "25.2",
-  "label": "SAIKO Construction AI v25.2",
-  "message": "Schedule and Actual Progress live sync now checks every 10 seconds."
+  "version": "25.4",
+  "label": "SAIKO Construction AI v25.4",
+  "message": "Dashboard now auto-matches Projected and Actual scope descriptions and generates a common matched S-Curve."
 }

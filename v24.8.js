@@ -90,7 +90,197 @@
     return null;
   }
 
+
+  // v25.3 — Reads one visible summary value per scope/section.
+  //
+  // Supported block layout example:
+  // CEILING WORKS
+  // DESCRIPTION | TOTAL | TOTAL DISTRIBUTION PERCENTAGE | STATUS
+  // GROUND FLOOR ...
+  // SECOND FLOOR ...
+  // THIRD FLOOR ...
+  // OVERALL ACCOMPLISHMENT STATUS | 10.24% | 100.00% | 10.24%
+  //
+  // Actual Tracker:
+  //   scope weight = TOTAL on OVERALL row
+  //   actual contribution = STATUS on OVERALL row
+  //
+  // Projected/Schedule Tracker:
+  //   projected contribution = PROJECTED / PLANNED / STATUS value on OVERALL row
+  //
+  // Floor/detail rows are intentionally NOT imported. Hidden rows/columns are already
+  // removed server-side by the XLSX visible-only reader.
+
+  // v25.4 — Projected Timeline reader for layouts like:
+  // WORK ITEM DESCRIPTION | DURATION IN DAYS | START DATE | END DATE | AMOUNT PER DAY | TOTAL AMOUNT
+  // It ignores the daily matrix itself and derives activity weight from TOTAL AMOUNT.
+  function parseProjectedTimelineRows(rows){
+    const hh=x=>clean(x).toLowerCase()
+      .replace(/[^a-z0-9%]+/g,' ')
+      .replace(/\s+/g,' ')
+      .trim();
+
+    let best=null;
+    for(let ri=0;ri<Math.min(rows.length,120);ri++){
+      const h=(rows[ri]||[]).map(hh);
+      const activity=h.findIndex(x=>
+        x.includes('work item description') ||
+        x==='activity' ||
+        x.includes('activity') ||
+        x==='description'
+      );
+      const start=h.findIndex(x=>x==='start date'||x.includes('start date')||x==='start');
+      const end=h.findIndex(x=>x==='end date'||x.includes('end date')||x.includes('finish date')||x==='end'||x==='finish');
+      const amount=h.findIndex(x=>
+        x==='total amount' ||
+        x.includes('total amount') ||
+        x==='amount' ||
+        x.includes('contract amount')
+      );
+      if(activity>=0 && start>=0 && end>=0 && amount>=0){
+        best={rowIndex:ri,activity,start,end,amount};
+        break;
+      }
+    }
+    if(!best)return [];
+
+    const raw=[];
+    for(let r=best.rowIndex+1;r<rows.length;r++){
+      const row=rows[r]||[];
+      const activity=clean(row[best.activity]);
+      if(!activity)continue;
+
+      // Skip floor/section labels and total/summary rows.
+      if(/^\d+(st|nd|rd|th)\s*floor$/i.test(activity))continue;
+      if(/\b(total projected cost|projected accomplishment|projected accumulative|grand total|subtotal|total)\b/i.test(activity))continue;
+
+      const start=parseDate(row[best.start]);
+      const end=parseDate(row[best.end]);
+      const amount=Math.max(0,n(row[best.amount]));
+      if(!start||!end||amount<=0)continue;
+
+      raw.push({activity,start_date:start,end_date:end,total_amount:amount});
+    }
+    if(!raw.length)return [];
+
+    const total=raw.reduce((sum,x)=>sum+x.total_amount,0);
+    if(total<=0)return [];
+
+    return raw.map(x=>({
+      activity:x.activity,
+      start_date:x.start_date,
+      end_date:x.end_date,
+      weight:x.total_amount/total*100,
+      total_amount:x.total_amount,
+      summary_only:false,
+      timeline_source:true
+    }));
+  }
+
+  function parseScopeSummaryBlocks(rows,kind){
+    const hh=x=>clean(x).toLowerCase()
+      .replace(/[^a-z0-9%]+/g,' ')
+      .replace(/\s+/g,' ')
+      .trim();
+
+    const out=[];
+
+    for(let i=0;i<rows.length;i++){
+      const hdr=(rows[i]||[]).map(hh);
+      const descCol=hdr.findIndex(h=>h==='description'||h.includes('description'));
+      const totalCol=hdr.findIndex(h=>h==='total');
+      if(descCol<0 || totalCol<0) continue;
+
+      let valueCol=-1;
+      if(kind==='actual'){
+        valueCol=hdr.findIndex(h=>h==='status' || h.includes('status') || h.includes('actual') || h.includes('accomplishment'));
+      }else{
+        valueCol=hdr.findIndex(h=>
+          h.includes('projected') ||
+          h.includes('planned') ||
+          h==='status' ||
+          h.includes('status')
+        );
+      }
+      if(valueCol<0) continue;
+
+      // Find the scope heading immediately above the table header.
+      let scope='';
+      for(let r=i-1;r>=Math.max(0,i-6);r--){
+        const vals=(rows[r]||[]).map(clean).filter(Boolean);
+        if(!vals.length) continue;
+        const cand=vals.find(x=>
+          /[A-Za-z]/.test(x) &&
+          !/%/.test(x) &&
+          !/description|total|distribution|status|projected|planned|actual|accomplishment/i.test(x)
+        );
+        if(cand){
+          scope=cand;
+          break;
+        }
+      }
+      if(!scope) continue;
+
+      // Read the OVERALL summary row only.
+      let overall=null;
+      for(let r=i+1;r<Math.min(rows.length,i+30);r++){
+        const row=rows[r]||[];
+        const d=hh(row[descCol]);
+
+        if(r>i+1 && (d==='description' || d.includes('description'))) break;
+
+        if(
+          /overall.*(accomplishment|status|percentage|progress)/i.test(clean(row[descCol])) ||
+          /total.*(accomplishment|status|progress)/i.test(clean(row[descCol]))
+        ){
+          overall=row;
+          break;
+        }
+      }
+      if(!overall) continue;
+
+      const total=Math.max(0,n(overall[totalCol]));
+      const value=Math.max(0,n(overall[valueCol]));
+      if(total<=0 && value<=0) continue;
+
+      if(kind==='actual'){
+        const scopePercent=total>0 ? Math.max(0,Math.min(100,value/total*100)) : 0;
+        out.push({
+          activity:scope,
+          weight:total,
+          actual_percent:scopePercent,
+          source_summary_value:value,
+          summary_only:true
+        });
+      }else{
+        out.push({
+          activity:scope,
+          weight:value,
+          source_summary_value:value,
+          summary_only:true
+        });
+      }
+    }
+
+    const seen=new Set();
+    return out.filter(item=>{
+      const key=norm(item.activity)||item.activity.toLowerCase();
+      if(seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
   function parseTrackerRows(rows,kind){
+    if(kind==='schedule'){
+      const timeline=parseProjectedTimelineRows(rows);
+      if(timeline.length)return timeline;
+    }
+
+    // Prefer the user's section/block summary layout.
+    const scopeBlocks=parseScopeSummaryBlocks(rows,kind);
+    if(scopeBlocks.length) return scopeBlocks;
+
     const h=detectHeader(rows,kind);
     if(!h)throw new Error(kind==='schedule'
       ? 'Could not auto-detect Schedule columns. Need Activity/Description, Start Date and End Date. Weight is optional.'
@@ -168,7 +358,18 @@
   async function syncSchedule(p,silent=false){
     if(!p?.schedule_sheet_link)return false;
     const raw=await readSheet(p.schedule_sheet_link);
-    const parsed=parseTrackerRows(raw,'schedule').map(x=>({...x,project_id:p.id,created_by:currentUser.id}));
+    const sourceRows=parseTrackerRows(raw,'schedule');
+    const today=new Date().toISOString().slice(0,10);
+    const parsed=sourceRows.map(x=>({
+      activity:x.activity,
+      // Summary-only projected rows are stored as completed-today items.
+      // Their weight is already the visible projected contribution from the Sheet.
+      start_date:x.summary_only?today:x.start_date,
+      end_date:x.summary_only?today:x.end_date,
+      weight:Math.max(0,n(x.weight)),
+      project_id:p.id,
+      created_by:currentUser.id
+    }));
     const del=await sb.from('schedule_items').delete().eq('project_id',p.id);
     if(del.error)throw del.error;
     const ins=await sb.from('schedule_items').insert(parsed).select();
@@ -182,7 +383,14 @@
   async function syncActual(p,silent=false){
     if(!p?.actual_progress_sheet_link)return false;
     const raw=await readSheet(p.actual_progress_sheet_link);
-    const parsed=parseTrackerRows(raw,'actual').map(x=>({...x,project_id:p.id,updated_by:currentUser.id,updated_at:new Date().toISOString()}));
+    const parsed=parseTrackerRows(raw,'actual').map(x=>({
+      activity:x.activity,
+      weight:Math.max(0,n(x.weight)),
+      actual_percent:Math.max(0,Math.min(100,n(x.actual_percent))),
+      project_id:p.id,
+      updated_by:currentUser.id,
+      updated_at:new Date().toISOString()
+    }));
     const del=await sb.from('actual_progress').delete().eq('project_id',p.id);
     if(del.error)throw del.error;
     // Upsert is intentionally used even after cleanup as a second guard against
