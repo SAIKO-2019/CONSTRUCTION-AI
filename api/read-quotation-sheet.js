@@ -288,12 +288,68 @@ export default async function handler(req,res){
   try{
     const id=extractSpreadsheetId(req.body?.link);
     if(!id)return res.status(400).json({ok:false,error:"Paste a valid Google Sheets link."});
-    const response=await fetch(`https://docs.google.com/spreadsheets/d/${id}/export?format=xlsx`,{redirect:"follow",headers:{"user-agent":"SAIKO-Construction-AI/1.0"}});
-    if(!response.ok)return res.status(400).json({ok:false,error:"Google Sheet could not be read. Set Share access to Anyone with the link → Viewer, then try again."});
-    const ct=response.headers.get("content-type")||"";
-    if(ct.includes("text/html"))return res.status(400).json({ok:false,error:"Google returned a sign-in page. Set the Google Sheet to Anyone with the link → Viewer."});
-    const buf=Buffer.from(await response.arrayBuffer()); if(!buf.length)return res.status(400).json({ok:false,error:"Google Sheet export was empty."});
-    const workbook=new ExcelJS.Workbook(); await workbook.xlsx.load(buf);
+    const workbook=new ExcelJS.Workbook();
+    let loaded=false;
+    let accessMode="xlsx";
+
+    // Primary: full XLSX export. This works for link-shared Google Sheets.
+    try{
+      const response=await fetch(`https://docs.google.com/spreadsheets/d/${id}/export?format=xlsx`,{
+        redirect:"follow",
+        headers:{"user-agent":"SAIKO-Construction-AI/1.0","cache-control":"no-cache"}
+      });
+      const ct=response.headers.get("content-type")||"";
+      if(response.ok && !ct.includes("text/html")){
+        const buf=Buffer.from(await response.arrayBuffer());
+        if(buf.length){
+          await workbook.xlsx.load(buf);
+          loaded=true;
+        }
+      }
+    }catch(_){}
+
+    // Fallback: Google Visualization CSV endpoint for the SUMMARY tab.
+    // This is often more tolerant for Sheets shared by link, including edit-style share URLs.
+    if(!loaded){
+      try{
+        const csvUrl=`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent("SUMMARY")}`;
+        const response=await fetch(csvUrl,{
+          redirect:"follow",
+          headers:{"user-agent":"SAIKO-Construction-AI/1.0","cache-control":"no-cache"}
+        });
+        const ct=response.headers.get("content-type")||"";
+        const csv=await response.text();
+        if(response.ok && csv && !ct.includes("text/html") && !/accounts\.google\.com|sign in/i.test(csv)){
+          const ws=workbook.addWorksheet("SUMMARY");
+          const rows=[];
+          let row=[],field="",quoted=false;
+          for(let i=0;i<csv.length;i++){
+            const ch=csv[i],next=csv[i+1];
+            if(ch==='"'){
+              if(quoted && next==='"'){field+='"';i++;}
+              else quoted=!quoted;
+            }else if(ch===',' && !quoted){
+              row.push(field);field="";
+            }else if((ch==='\n'||ch==='\r') && !quoted){
+              if(ch==='\r'&&next==='\n')i++;
+              row.push(field);field="";
+              rows.push(row);row=[];
+            }else field+=ch;
+          }
+          if(field.length||row.length){row.push(field);rows.push(row);}
+          rows.forEach((vals,r)=>vals.forEach((v,c)=>{ws.getCell(r+1,c+1).value=v;}));
+          loaded=rows.length>0;
+          accessMode="summary_csv";
+        }
+      }catch(_){}
+    }
+
+    if(!loaded){
+      return res.status(400).json({
+        ok:false,
+        error:"Google Sheet could not be read by the server. If it is shared only to specific Google accounts, link access is not enough for server-side reading. Set General access to “Anyone with the link” (Viewer or Editor), then try again."
+      });
+    }
     const indirect=findMetric(workbook,"indirect",{numeric:true});
     const profit=findMetric(workbook,"profit",{numeric:true});
     const project=findMetric(workbook,"project",{numeric:false});
@@ -329,7 +385,7 @@ export default async function handler(req,res){
       }))
     }));
     return res.status(200).json({
-      ok:true,spreadsheetId:id,projectName,clientName:client?.value?String(client.value).trim():"",
+      ok:true,spreadsheetId:id,accessMode,projectName,clientName:client?.value?String(client.value).trim():"",
       indirectTotalCost:indirect?.value??null,presentProfit:profit?.value??null,
       summarySheetName:summary.sheetName,summaryTotalArea:summary.totalArea,summaryBreakdown,
       summaryHeaders:fullSummary.headers,

@@ -566,3 +566,41 @@ No SQL migration required for v21.1.
 - Reminder popup label changed to simply `REMINDER`.
 - No new MutationObserver or recurring timer added.
 - No new SQL migration required.
+
+
+## v21.8 — Pre-boot Patch Gate
+- Fixes the case where a browser loads the new deployment while still carrying the old Supabase auth session.
+- `patch-gate.js` runs before the app initializes.
+- If an existing login session is present and the acknowledged patch version differs from the current patch, the session keys are cleared immediately.
+- The page redirects back to the normal Login screen and the user must log in manually and complete reCAPTCHA again.
+- The existing 5-minute patch watcher still handles users who keep an older tab open while a new deployment goes live.
+- No MutationObserver and no new recurring timer were added. The pre-boot gate is a one-time localStorage check only.
+- No new SQL migration required.
+
+
+## v21.9 — Google Sheets Access Fallback
+- Primary reader still uses Google XLSX export.
+- If XLSX export cannot be loaded, the server automatically falls back to Google Visualization CSV for the `SUMMARY` tab.
+- This improves compatibility with link-shared Google Sheets, including links opened in edit mode.
+- General access may be **Viewer or Editor**, but it must be **Anyone with the link** for unauthenticated server-side reading.
+- Sheets shared only to named/specific Google accounts still require Google OAuth and cannot be read by this public-link reader.
+- Adds clearer access guidance in the Add Quotation dialog.
+- No new SQL required.
+- Patch version bumped to 21.9.
+
+
+## v22.0 — Wider Dialogs / No Cramped Modals
+- Major dialogs are now wide and centered instead of appearing compressed/minimized.
+- Quotation Add/Edit and Notifications dialogs use a wider responsive layout.
+- Horizontal scrolling inside standard dialogs is removed.
+- Form fields shrink correctly inside the modal and buttons wrap instead of being cut off.
+- Mobile screens automatically switch to a single-column form layout.
+- No new MutationObserver, interval, or heavy event handler was added.
+- No SQL migration required.
+- Patch version bumped to 22.0.
+
+
+## v22.1 — Reminder Label Cleanup
+- Renamed `Test Cute Reminder` to simply `Reminder`.
+- Keeps the same reminder behavior and sound; only the label/copy was simplified.
+- No new SQL required.

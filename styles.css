@@ -1554,3 +1554,129 @@ html[data-theme="executive"] .quotation-delete-btn{
   .quotation-summary-item>strong:nth-child(3),
   .quotation-summary-subtotal>strong:nth-child(3){display:none}
 }
+
+
+/* v21.9 Google Sheet access note */
+.gsheet-access-note{
+  grid-column:1/-1;
+  margin:2px 0 4px;
+  padding:8px 10px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--surface-soft);
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.45;
+}
+.gsheet-access-note strong{color:var(--text)}
+
+
+/* =========================================================
+   v22.0 wide / full-size dialogs
+   ========================================================= */
+/* General modal sizing */
+dialog:not(.patch-required-dialog){
+  width:min(980px,calc(100vw - 48px));
+  max-width:min(980px,calc(100vw - 48px));
+  max-height:calc(100vh - 48px);
+  padding:0;
+  border:0;
+  background:transparent;
+}
+
+dialog:not(.patch-required-dialog) .dialog-card{
+  width:100%!important;
+  max-width:none!important;
+  min-width:0!important;
+  max-height:calc(100vh - 48px);
+  overflow-y:auto;
+  overflow-x:hidden!important;
+  box-sizing:border-box;
+}
+
+/* Quotation dialogs deserve more room because they contain project/link fields. */
+#pendingDialog,
+#editQuotationDialog,
+#quotationNotifDialog{
+  width:min(1040px,calc(100vw - 48px));
+  max-width:min(1040px,calc(100vw - 48px));
+}
+
+#pendingDialog .dialog-card,
+#editQuotationDialog .dialog-card,
+#quotationNotifDialog .dialog-card{
+  width:100%!important;
+  max-width:none!important;
+}
+
+/* Keep forms spacious and prevent controls from forcing a horizontal scrollbar. */
+.dialog-card .form-grid,
+.dialog-card .form-grid.two-col{
+  width:100%;
+  min-width:0;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px 16px;
+}
+.dialog-card .form-grid .full,
+.dialog-card .form-grid.two-col .full{
+  grid-column:1/-1;
+}
+.dialog-card input,
+.dialog-card select,
+.dialog-card textarea{
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  box-sizing:border-box;
+}
+.dialog-card .dialog-head,
+.dialog-card .dialog-actions{
+  min-width:0;
+  box-sizing:border-box;
+}
+.dialog-card .dialog-actions{
+  display:flex;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.dialog-card .dialog-actions button{
+  max-width:100%;
+  white-space:normal;
+}
+
+/* Notification dialog is wider and cleaner instead of looking compressed. */
+.quotation-notif-dialog{
+  width:100%!important;
+  max-width:none!important;
+}
+.quotation-notif-list{
+  max-height:52vh;
+}
+
+/* Summary/edit content inside dialogs should never create page-wide x-scroll. */
+.dialog-card table{
+  max-width:100%;
+}
+
+@media(max-width:760px){
+  dialog:not(.patch-required-dialog),
+  #pendingDialog,
+  #editQuotationDialog,
+  #quotationNotifDialog{
+    width:calc(100vw - 20px);
+    max-width:calc(100vw - 20px);
+    max-height:calc(100vh - 20px);
+  }
+  dialog:not(.patch-required-dialog) .dialog-card{
+    max-height:calc(100vh - 20px);
+  }
+  .dialog-card .form-grid,
+  .dialog-card .form-grid.two-col{
+    grid-template-columns:1fr;
+  }
+  .dialog-card .form-grid .full,
+  .dialog-card .form-grid.two-col .full{
+    grid-column:auto;
+  }
+}
