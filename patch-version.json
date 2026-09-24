@@ -1,5 +1,5 @@
 {
-  "version": "25.4",
-  "label": "SAIKO Construction AI v25.4",
-  "message": "Dashboard now auto-matches Projected and Actual scope descriptions and generates a common matched S-Curve."
+  "version": "25.6",
+  "label": "SAIKO Construction AI v25.6",
+  "message": "Fixes Actual Progress selected-tab detection and visible-only Google Sheet parsing by resolving the exact gid tab before reading hidden-row metadata."
 }

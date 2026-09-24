@@ -975,3 +975,28 @@ No MutationObserver or page-wide repeated scan is used.
 - 10-second live sync remains active.
 - Hidden Google Sheet rows/columns remain excluded.
 - No new SQL required.
+
+
+## v25.5 — Bulk Action Fix
+- Fixed **Select All** in Schedule Tracker and Actual Progress.
+- Fixed selected item counter.
+- Fixed **Clear Selection**.
+- Fixed **Delete Selected** using one bulk Supabase delete request.
+- Uses event delegation so checkbox controls continue to work after the 10-second live-sync table re-render.
+- No extra timer or MutationObserver added.
+- Important: when a tracker is linked to Google Sheets, deleted local rows can be imported again by the next live sync if they still exist in the source Sheet. Hide/remove them in the Google Sheet if they should stay excluded.
+- No SQL required.
+
+
+## v25.6 — Correct Google Sheet Tab Detection
+- Fixes the Actual Progress popup: **“Could not auto-detect Actual Progress columns”** when the linked URL pointed to the correct tab but the XLSX reader accidentally opened another worksheet.
+- Google `gid` is no longer treated as an Excel worksheet id.
+- The API now:
+  1. reads the exact selected tab using its Google `gid`,
+  2. downloads XLSX for hidden-row/column metadata,
+  3. identifies the matching XLSX worksheet by content,
+  4. returns only visible rows/columns from that exact tab.
+- If XLSX worksheet matching cannot be verified, it falls back to the exact-gid tab instead of silently reading the wrong worksheet.
+- Actual block detection is more tolerant of merged scope headings and alternate `OVERALL ... STATUS` labels.
+- Existing 10-second live sync and bulk action fixes remain.
+- No SQL required.

@@ -205,21 +205,29 @@
       if(valueCol<0) continue;
 
       // Find the scope heading immediately above the table header.
+      // Merged headings may land in any visible column after XLSX export.
       let scope='';
-      for(let r=i-1;r>=Math.max(0,i-6);r--){
+      for(let r=i-1;r>=Math.max(0,i-8);r--){
         const vals=(rows[r]||[]).map(clean).filter(Boolean);
-        if(!vals.length) continue;
-        const cand=vals.find(x=>
+        if(!vals.length)continue;
+
+        const candidates=vals.filter(x=>
           /[A-Za-z]/.test(x) &&
           !/%/.test(x) &&
-          !/description|total|distribution|status|projected|planned|actual|accomplishment/i.test(x)
+          !/^\d+([.,]\d+)?$/.test(x) &&
+          !/description|total distribution|distribution percentage|status|projected|planned|actual|accomplishment|balanced|equivalent percentage/i.test(x)
         );
+
+        // Prefer a construction-like section title ending in WORK/WORKS,
+        // otherwise use the longest text cell from the row.
+        const explicit=candidates.find(x=>/\bworks?\b/i.test(x));
+        const cand=explicit || candidates.sort((a,b)=>b.length-a.length)[0];
         if(cand){
           scope=cand;
           break;
         }
       }
-      if(!scope) continue;
+      if(!scope)continue;
 
       // Read the OVERALL summary row only.
       let overall=null;
@@ -231,6 +239,7 @@
 
         if(
           /overall.*(accomplishment|status|percentage|progress)/i.test(clean(row[descCol])) ||
+          /(overall|total)\s*status/i.test(clean(row[descCol])) ||
           /total.*(accomplishment|status|progress)/i.test(clean(row[descCol]))
         ){
           overall=row;
