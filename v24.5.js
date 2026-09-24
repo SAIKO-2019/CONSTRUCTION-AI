@@ -40,7 +40,7 @@
         <td>${money(regularGross)}</td>
         <td>${money(collected)}</td>
         <td>${money(outstanding)}</td>
-        <td>${money(linkedAvailable)}</td>
+        <td>${money(n(p.subcon_contract_amount))}</td>
         <td>${money(subconPaid)}</td>
       </tr>`;
     }).join(''):'<tr><td colspan="8" class="empty">No financial data yet.</td></tr>';

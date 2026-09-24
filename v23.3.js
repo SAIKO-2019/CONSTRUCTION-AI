@@ -81,18 +81,21 @@
   window.renderDashSubconSummary=function(){
     const tbody=$('dashSubconSummaryRows');
     if(!tbody)return;
-    const projects=(cache.projects||[]).filter(p=>p.subcon_dependency==='Dependent');
+    const projects=(cache.projects||[]).filter(p=>p.subcon_dependency==='Dependent' || Number(p.subcon_contract_amount||0)>0);
     tbody.innerHTML=projects.length?projects.map(p=>{
       const s=projectSubconStats(p);
+      const contract=Math.max(0,Number(p.subcon_contract_amount||0));
+      const remaining=Math.max(0,contract-s.issued);
       return `<tr>
         <td><strong>${esc(p.project_name)}</strong></td>
-        <td>${money(s.totalAllocation)}</td>
+        <td>${esc(p.subcon_scope_caption||'—')}</td>
+        <td><strong>${money(contract)}</strong></td>
         <td>${money(s.issued)}</td>
         <td>${money(s.billed)}</td>
         <td>${money(s.paid)}</td>
-        <td><strong>${money(s.remaining)}</strong></td>
+        <td><strong>${money(remaining)}</strong></td>
       </tr>`;
-    }).join(''):'<tr><td colspan="6" class="empty">No subcontract-dependent projects yet.</td></tr>';
+    }).join(''):'<tr><td colspan="7" class="empty">No subcontract-dependent projects yet.</td></tr>';
   };
 
   // Keep existing billing renderer, then refresh the settings panel.

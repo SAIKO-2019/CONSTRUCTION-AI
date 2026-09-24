@@ -7,8 +7,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SAIKO Construction AI</title>
-  <link rel="stylesheet" href="styles.css?v=2461" />
-    <script src="patch-gate.js?v=2461"></script>
+  <link rel="stylesheet" href="styles.css?v=2471" />
+    <script src="patch-gate.js?v=2471"></script>
 <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
 </head>
 <body>
@@ -103,15 +103,15 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
             <th>Regular Billed</th>
             <th>Collected</th>
             <th>Client Outstanding</th>
-            <th>Subcon Available</th>
+            <th>Subcon Contract</th>
             <th>Subcon Paid</th>
           </tr></thead><tbody id="dashboardProjectFinancialRows"><tr><td colspan="8" class="empty">No financial data yet.</td></tr></tbody></table></div>
         </div>
         <div class="panel">
           <div class="panel-head"><h2>Subcontractor Summary</h2><button class="text-btn" data-go="billing">Open Billing</button></div>
           <div class="table-wrap"><table><thead><tr>
-            <th>Contract / Project</th><th>Total Subcon Allocation</th><th>Issued</th><th>Billed</th><th>Paid</th><th>Remaining</th>
-          </tr></thead><tbody id="dashSubconSummaryRows"><tr><td colspan="6" class="empty">No subcontract-dependent projects yet.</td></tr></tbody></table></div>
+            <th>Contract / Project</th><th>Subcontracted Scope</th><th>Subcon Contract Amount</th><th>Issued</th><th>Billed</th><th>Paid</th><th>Remaining</th>
+          </tr></thead><tbody id="dashSubconSummaryRows"><tr><td colspan="7" class="empty">No subcontract-dependent projects yet.</td></tr></tbody></table></div>
         </div>
       
         <div class="panel"><div class="panel-head"><h2>Ongoing Projects — Schedule Health</h2><button class="link-btn" data-jump="schedule">Open Schedule Tracker</button></div><div id="ongoingScheduleDashboard" class="ongoing-schedule-grid"></div></div>
@@ -149,6 +149,19 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
             <div>
               <h2>Linked GenCon → Subcon</h2>
               <span class="muted">Every GenCon billing appears here automatically. Choose whether that billing has a subcontractor, then set the deductions.</span>
+            </div>
+          </div>
+          <div id="subconProjectContractSetup" class="subcon-project-contract-setup">
+            <div class="subcon-contract-head">
+              <div>
+                <strong>Subcon Contract</strong>
+                <small>For the selected project/contract</small>
+              </div>
+              <button id="saveSubconProjectContractBtn" type="button" class="secondary-btn compact-btn">Save</button>
+            </div>
+            <div class="subcon-contract-fields">
+              <label>Subcon Contract Amount<input id="subconProjectContractAmount" type="number" min="0" step="0.01" value="0" placeholder="0.00"></label>
+              <label>Subcontracted Scope / Caption<input id="subconProjectScopeCaption" type="text" placeholder="e.g. Electrical Works, Plumbing Works"></label>
             </div>
           </div>
           <div id="linkedSubconRows"></div>
@@ -556,13 +569,13 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=2461"></script>
-  <script src="v13.js?v=2461"></script>
-  <script src="v14.js?v=2461"></script>
-  <script src="v14.2.js?v=2461"></script>
-  <script src="v14.3.js?v=2461"></script>
-  <script src="v14.4.js?v=2461"></script>
-  <script src="v14.5.js?v=2461"></script>
+  <script src="app.js?v=2471"></script>
+  <script src="v13.js?v=2471"></script>
+  <script src="v14.js?v=2471"></script>
+  <script src="v14.2.js?v=2471"></script>
+  <script src="v14.3.js?v=2471"></script>
+  <script src="v14.4.js?v=2471"></script>
+  <script src="v14.5.js?v=2471"></script>
 
   <dialog id="settingsDialog" class="settings-dialog-shell">
     <form id="settingsForm" class="dialog-card wide settings-dialog-card">
@@ -677,13 +690,13 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </div>
   </dialog>
 
-  <script src="v14.7.js?v=2461"></script>
-  <script src="v14.8.js?v=2461"></script>
-  <script src="v15.9.js?v=2461"></script>
-  <script src="v17-core.js?v=2461"></script>
-  <script src="v18.js?v=2461"></script>
-  <script src="v19.js?v=2461"></script>
-  <script src="v20.js?v=2461"></script>
+  <script src="v14.7.js?v=2471"></script>
+  <script src="v14.8.js?v=2471"></script>
+  <script src="v15.9.js?v=2471"></script>
+  <script src="v17-core.js?v=2471"></script>
+  <script src="v18.js?v=2471"></script>
+  <script src="v19.js?v=2471"></script>
+  <script src="v20.js?v=2471"></script>
 
   <dialog id="quotationNotifDialog">
     <div class="dialog-card quotation-notif-dialog">
@@ -706,9 +719,9 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </div>
   </dialog>
 
-  <script src="v20.3.js?v=2461"></script>
-  <script src="v20.5.js?v=2461"></script>
-  <script src="v20.6.js?v=2461"></script>
+  <script src="v20.3.js?v=2471"></script>
+  <script src="v20.5.js?v=2471"></script>
+  <script src="v20.6.js?v=2471"></script>
 
   <dialog id="editQuotationDialog">
     <form id="editQuotationForm" class="dialog-card quotation-edit-dialog">
@@ -731,25 +744,25 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </form>
   </dialog>
 
-  <script src="v20.7.js?v=2461"></script>
-  <script src="v21.js?v=2461"></script>
-  <script src="patch-watch.js?v=2461"></script>
-  <script src="v21.3.js?v=2461"></script>
-  <script src="v21.4.js?v=2461"></script>
-  <script src="v21.5.js?v=2461"></script>
-  <script src="v21.6.js?v=2461"></script>
-  <script src="v22.6.js?v=2461"></script>
-  <script src="v22.9.js?v=2461"></script>
-  <script src="v23.0.js?v=2461"></script>
-  <script src="v23.2.js?v=2461"></script>
-  <script src="v23.3.js?v=2461"></script>
-  <script src="v23.4.js?v=2461"></script>
-  <script src="v23.5.js?v=2461"></script>
-  <script src="v23.6.js?v=2461"></script>
-  <script src="v23.7.js?v=2461"></script>
-  <script src="v23.8.js?v=2461"></script>
-  <script src="v23.9.js?v=2461"></script>
-  <script src="v24.0.js?v=2461"></script>
+  <script src="v20.7.js?v=2471"></script>
+  <script src="v21.js?v=2471"></script>
+  <script src="patch-watch.js?v=2471"></script>
+  <script src="v21.3.js?v=2471"></script>
+  <script src="v21.4.js?v=2471"></script>
+  <script src="v21.5.js?v=2471"></script>
+  <script src="v21.6.js?v=2471"></script>
+  <script src="v22.6.js?v=2471"></script>
+  <script src="v22.9.js?v=2471"></script>
+  <script src="v23.0.js?v=2471"></script>
+  <script src="v23.2.js?v=2471"></script>
+  <script src="v23.3.js?v=2471"></script>
+  <script src="v23.4.js?v=2471"></script>
+  <script src="v23.5.js?v=2471"></script>
+  <script src="v23.6.js?v=2471"></script>
+  <script src="v23.7.js?v=2471"></script>
+  <script src="v23.8.js?v=2471"></script>
+  <script src="v23.9.js?v=2471"></script>
+  <script src="v24.0.js?v=2471"></script>
 
   <dialog id="linkedSubconDialog">
     <form id="linkedSubconForm" class="dialog-card wide">
@@ -776,9 +789,10 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </form>
   </dialog>
 
-  <script src="v24.1.js?v=2461"></script>
-  <script src="v24.4.js?v=2461"></script>
-  <script src="v24.5.js?v=2461"></script>
-  <script src="v24.6.js?v=2461"></script>
+  <script src="v24.1.js?v=2471"></script>
+  <script src="v24.4.js?v=2471"></script>
+  <script src="v24.5.js?v=2471"></script>
+  <script src="v24.6.js?v=2471"></script>
+  <script src="v24.7.js?v=2471"></script>
 </body>
 </html>

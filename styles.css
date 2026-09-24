@@ -1976,3 +1976,21 @@ dialog:not(.patch-required-dialog) .dialog-card{
 .dashboard-financial-table th,.dashboard-financial-table td{white-space:nowrap}
 .dashboard-financial-table td:first-child{white-space:normal;min-width:230px}
 .dashboard-financial-table tbody tr:hover{background:var(--surface-soft)}
+
+
+/* v24.7 explicit Subcon contract setup */
+.subcon-project-contract-setup{
+  margin:0 0 14px;
+  padding:12px;
+  border:1px solid rgba(217,119,6,.28);
+  border-left:4px solid #d97706;
+  border-radius:12px;
+  background:linear-gradient(180deg,rgba(255,247,237,.84),rgba(255,255,255,.96));
+}
+.subcon-contract-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.subcon-contract-head strong{display:block;font-size:13px}
+.subcon-contract-head small{display:block;margin-top:2px;font-size:9px;color:var(--muted)}
+.subcon-contract-fields{display:grid;grid-template-columns:minmax(180px,.8fr) minmax(260px,1.5fr);gap:10px;margin-top:10px}
+.subcon-contract-fields label{font-size:10px;font-weight:700;color:var(--muted)}
+.subcon-contract-fields input{margin-top:5px}
+@media(max-width:700px){.subcon-contract-fields{grid-template-columns:1fr}}

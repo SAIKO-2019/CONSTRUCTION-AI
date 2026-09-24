@@ -877,3 +877,13 @@ No MutationObserver or page-wide repeated scan is used.
 - The correct GenCon/Subcon Billing layout from v24.4 is preserved.
 - Downpayment support and the new summary-only Dashboard from v24.5 remain included.
 - No new SQL required beyond the v24.5 migration.
+
+
+## v24.7 — Subcon Contract Amount + Scope Caption
+- Subcon folder now has a compact **Subcon Contract** setup for the selected project.
+- Fields: **Subcon Contract Amount** and **Subcontracted Scope / Caption**.
+- Dashboard **Subcontractor Summary** now shows the explicit Subcon Contract Amount and Scope.
+- Remaining Subcon Contract = Subcon Contract Amount − Issued amount.
+- Project Financial Summary also shows the explicit **Subcon Contract** amount.
+- Detailed billing remains inside Billing & Payments.
+- Run `v24.7-subcon-contract-scope.sql` once in Supabase.

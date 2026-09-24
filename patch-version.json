@@ -1,5 +1,5 @@
 {
-  "version": "24.6",
-  "label": "SAIKO Construction AI v24.6",
-  "message": "Billing Project Folder selection is restored and Dashboard compatibility errors are fixed without changing the correct Billing layout."
+  "version": "24.7",
+  "label": "SAIKO Construction AI v24.7",
+  "message": "Subcon folder now includes an explicit subcontract contract amount and subcontracted scope caption, reflected in Dashboard summaries."
 }
