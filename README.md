@@ -348,3 +348,11 @@ New workflow:
 9. Creation, Sheet refresh, and completion are stored in the existing `activity_log` table as quotation history
 
 No new SQL migration is required.
+
+
+## v20.1 Google Sheets Reader Fix
+- The quotation link field is explicitly Google Sheets only.
+- Fixed null-cell/formula/rich-text handling that could trigger `Cannot read properties of null (reading toString)`.
+- The reader now safely ignores blank/unsupported cells while scanning the workbook.
+- Clearer error messages are shown when the Sheet is private or the required labels cannot be found.
+- No SQL migration required.

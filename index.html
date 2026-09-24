@@ -362,11 +362,11 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
       <div class="dialog-head">
         <div>
           <small>NEW QUOTATION PROJECT</small>
-          <h2>Add Project & Costing Link</h2>
+          <h2>Add Project & Google Sheet</h2>
         </div>
         <button type="button" data-close="pendingDialog">×</button>
       </div>
-      <p class="muted">Enter the quotation project and Google Sheets link. The amounts are read from the Sheet automatically.</p>
+      <p class="muted">Enter the quotation project and paste its Google Sheets link. The system reads the Sheet automatically; no manual amount entry is needed.</p>
       <div class="form-grid">
         <label>Project Name
           <input id="pwWorkItem" placeholder="e.g. ABC Resort Phase 2" required>
@@ -381,7 +381,7 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
       <div id="quotationAddStatus" class="quotation-add-status"></div>
       <div class="dialog-actions">
         <button type="button" class="secondary-btn" data-close="pendingDialog">Cancel</button>
-        <button id="createQuotationFromLinkBtn" class="primary-btn" type="submit">Save Project & Read Sheet</button>
+        <button id="createQuotationFromLinkBtn" class="primary-btn" type="submit">Save & Read Google Sheet</button>
       </div>
     </form>
   </dialog>
