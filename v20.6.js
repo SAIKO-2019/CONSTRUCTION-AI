@@ -22,29 +22,41 @@
     const categories=parsedSummary(q);
     const sheetBadge=$('quotationSummarySheetName');
     const box=$('quotationSummaryCategories');
-    if(sheetBadge)sheetBadge.textContent=q?.summary_sheet_name||'Summary';
+    if(sheetBadge)sheetBadge.textContent=q?.summary_sheet_name||'SUMMARY';
     if(!box)return;
 
     if(!categories.length){
-      box.innerHTML='<div class="settings-empty-state">No Summary-sheet category breakdown has been saved yet. Click “Refresh from Sheet” after uploading v20.6 and running its SQL migration.</div>';
+      box.innerHTML='<div class="settings-empty-state">No saved Summary breakdown yet. Click “Refresh from Sheet” to read Item No. A/B/C/D… from the SUMMARY tab.</div>';
       return;
     }
 
     box.innerHTML=categories.map((c,i)=>{
       const items=Array.isArray(c.items)?c.items:[];
-      return `<details class="quotation-summary-category" ${i<2?'open':''}>
-        <summary>
-          <span class="quotation-summary-swatch" style="background:${palette[i%palette.length]}"></span>
+      const no=esc(c.itemNo||String.fromCharCode(65+i));
+      return `<details class="quotation-summary-category" open>
+        <summary class="quotation-summary-major">
+          <span class="quotation-summary-itemno">${no}</span>
           <strong>${esc(c.name)}</strong>
           <span>${money(Number(c.amount||0))}</span>
-          <b title="Weighted percentage from Summary">${Number(c.percentage||0).toFixed(2)}%</b>
+          <span>${Number.isFinite(Number(c.costPerSqm))?money(Number(c.costPerSqm)):'—'}</span>
+          <b>${Number(c.percentage||0).toFixed(2)}%</b>
         </summary>
-        <div class="quotation-summary-items">
+        <div class="quotation-summary-items quotation-summary-grid">
+          <div class="quotation-summary-grid-head">
+            <span>Description</span><span>Total Amount</span><span>Cost / Sq.m</span><span>Weighted %</span>
+          </div>
           ${items.length?items.map(item=>`<div class="quotation-summary-item">
             <span>${esc(item.name)}</span>
-            <strong>${money(Number(item.amount||0))}</strong>
-            <b title="Weighted percentage / percentage from Summary">${Number(item.percentage||0).toFixed(2)}%</b>
-          </div>`).join(''):'<div class="muted">No child line-items detected under this category.</div>'}
+            <strong>${Number.isFinite(Number(item.amount))?money(Number(item.amount)):'—'}</strong>
+            <strong>${Number.isFinite(Number(item.costPerSqm))?money(Number(item.costPerSqm)):'—'}</strong>
+            <b>${Number.isFinite(Number(item.percentage))?Number(item.percentage).toFixed(2)+'%':'—'}</b>
+          </div>`).join(''):'<div class="muted">No child descriptions detected under this Item No.</div>'}
+          <div class="quotation-summary-subtotal">
+            <span>${esc(c.subtotalLabel||`${c.name} Sub-total`)}</span>
+            <strong>${money(Number(c.amount||0))}</strong>
+            <strong>${Number.isFinite(Number(c.costPerSqm))?money(Number(c.costPerSqm)):'—'}</strong>
+            <b>${Number(c.percentage||0).toFixed(2)}%</b>
+          </div>
         </div>
       </details>`;
     }).join('');
@@ -52,28 +64,54 @@
 
   function renderPieFromSummary(){
     const q=selectedQuotation();
-    const all=parsedSummary(q).filter(x=>Number(x.amount)>0 || Number(x.percentage)>0);
-    const pie=$('quotationScopePie'), legend=$('quotationScopeLegend'), count=$('quotationScopeCount'), total=$('quotationScopeTotalPct');
+    const categories=parsedSummary(q).filter(x=>Number(x.percentage)>0||Number(x.amount)>0);
+    const pie=$('quotationScopePie'),legend=$('quotationScopeLegend'),count=$('quotationScopeCount'),total=$('quotationScopeTotalPct');
     if(!pie||!legend||!count||!total)return;
-    count.textContent=`${all.length} major scope${all.length===1?'':'s'}`;
-    if(!all.length){
-      pie.style.background='conic-gradient(#e5e7eb 0 100%)'; total.textContent='0%';
-      legend.innerHTML='<div class="settings-empty-state">No Summary-sheet scopes detected yet.</div>'; return;
+
+    count.textContent=`${categories.length} major scope${categories.length===1?'':'s'}`;
+    if(!categories.length){
+      pie.style.background='conic-gradient(#e5e7eb 0 100%)';
+      total.textContent='0%';
+      legend.innerHTML='<div class="settings-empty-state">No Item No. scopes detected yet.</div>';
+      return;
     }
-    const amountTotal=all.reduce((s,x)=>s+(Number(x.amount)||0),0);
-    const rows=all.map((x,i)=>{
-      let pct=Number(x.percentage), source='Weighted % from Summary';
-      if(!Number.isFinite(pct)||pct<0){pct=amountTotal>0?(Number(x.amount||0)/amountTotal*100):0;source='Calculated from amount'}
-      return {...x,pct,color:palette[i%palette.length],pctSource:source};
-    }).filter(x=>x.pct>0);
+
+    const amountTotal=categories.reduce((s,x)=>s+(Number(x.amount)||0),0);
+    const rows=categories.map((x,i)=>{
+      let pct=Number(x.percentage);
+      if(!Number.isFinite(pct)||pct<0){
+        pct=amountTotal>0?(Number(x.amount||0)/amountTotal*100):0;
+      }
+      return {...x,pct,color:palette[i%palette.length]};
+    });
+
     const sourceTotal=rows.reduce((s,x)=>s+x.pct,0);
     let cursor=0; const stops=[];
-    rows.forEach(x=>{const a=Math.max(0,Math.min(100,cursor));cursor+=x.pct;const b=Math.max(a,Math.min(100,cursor));if(b>a)stops.push(`${x.color} ${a.toFixed(2)}% ${b.toFixed(2)}%`)});
+    rows.forEach(x=>{
+      const a=Math.max(0,Math.min(100,cursor));
+      cursor+=x.pct;
+      const b=Math.max(a,Math.min(100,cursor));
+      if(b>a)stops.push(`${x.color} ${a.toFixed(2)}% ${b.toFixed(2)}%`);
+    });
     if(cursor<99.995)stops.push(`#e5e7eb ${Math.max(0,cursor).toFixed(2)}% 100%`);
     if(!stops.length)stops.push('#e5e7eb 0 100%');
-    pie.style.background=`conic-gradient(${stops.join(',')})`; total.textContent=`${sourceTotal.toFixed(1)}%`;
-    legend.innerHTML=rows.map(x=>`<div class="quotation-scope-item"><span class="quotation-scope-swatch" style="background:${x.color}"></span><div class="quotation-scope-main"><strong>${esc(x.name)}</strong><small>${money(Number(x.amount||0))} · ${x.pctSource}</small></div><b>${x.pct.toFixed(2)}%</b></div>`).join('')
-      +(sourceTotal<99.995?`<div class="quotation-scope-item quotation-scope-unallocated"><span class="quotation-scope-swatch" style="background:#e5e7eb"></span><div class="quotation-scope-main"><strong>Unallocated / Not encoded</strong><small>Remaining percentage from Summary</small></div><b>${(100-sourceTotal).toFixed(2)}%</b></div>`:'');
+
+    pie.style.background=`conic-gradient(${stops.join(',')})`;
+    total.textContent=`${sourceTotal.toFixed(1)}%`;
+
+    legend.innerHTML=rows.map(x=>`<div class="quotation-scope-item">
+      <span class="quotation-scope-swatch" style="background:${x.color}"></span>
+      <div class="quotation-scope-main">
+        <strong>${esc(x.itemNo||'')} · ${esc(x.name)}</strong>
+        <small>${money(Number(x.amount||0))}${Number.isFinite(Number(x.costPerSqm))?` · ${money(Number(x.costPerSqm))}/sq.m`:''}</small>
+      </div>
+      <b>${x.pct.toFixed(2)}%</b>
+    </div>`).join('')
+    +(sourceTotal<99.995?`<div class="quotation-scope-item quotation-scope-unallocated">
+      <span class="quotation-scope-swatch" style="background:#e5e7eb"></span>
+      <div class="quotation-scope-main"><strong>Unallocated</strong><small>Remaining weighted percentage</small></div>
+      <b>${(100-sourceTotal).toFixed(2)}%</b>
+    </div>`:'');
   }
 
   function renderAll(){

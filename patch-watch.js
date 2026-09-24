@@ -1,6 +1,6 @@
 // SAIKO Construction AI v21.1 — lightweight patch/version watcher
 (function(){
-  const CURRENT_PATCH='21.5';
+  const CURRENT_PATCH='21.7';
   const CHECK_EVERY_MS=5*60*1000; // one tiny request every 5 minutes
   let checking=false;
   let patchRequired=false;
@@ -46,20 +46,30 @@
 
   async function logoutAndRefresh(){
     const btn=$('patchRefreshLoginBtn');
-    if(btn){btn.disabled=true;btn.textContent='Refreshing…'}
+    if(btn){btn.disabled=true;btn.textContent='Signing out…'}
+
     try{
-      // Supabase logout removes the active auth session for this browser/account.
-      if(window.sb?.auth?.signOut)await window.sb.auth.signOut();
+      if(window.sb?.auth?.signOut){
+        await window.sb.auth.signOut({scope:'local'});
+      }
     }catch(e){console.warn('patch logout',e)}
 
-    // Clear only session-scoped UI state. Remembered email is intentionally untouched.
     try{
-      sessionStorage.removeItem('saiko-active-project');
-      sessionStorage.removeItem('saiko-edit-mode');
-    }catch(_){ }
+      const remove=[];
+      for(let i=0;i<localStorage.length;i++){
+        const key=localStorage.key(i)||'';
+        const low=key.toLowerCase();
+        if((low.startsWith('sb-')&&low.includes('auth-token'))||low.includes('supabase.auth.token')){
+          remove.push(key);
+        }
+      }
+      remove.forEach(k=>localStorage.removeItem(k));
+      sessionStorage.clear();
+    }catch(_){}
 
-    const url=new URL(window.location.href);
+    const url=new URL(window.location.origin+window.location.pathname);
     url.searchParams.set('patch',Date.now().toString());
+    url.searchParams.set('login','required');
     window.location.replace(url.toString());
   }
 

@@ -539,3 +539,30 @@ No SQL migration required for v21.1.
 - No MutationObserver and no new timer added.
 - No new SQL required.
 - Patch version bumped to 21.5.
+
+
+## v21.6 — Upload Format Notice
+- Adds a clear notice above the final quotation file picker.
+- The required format is shown before the user selects a file:
+  `Project Name_Location_YYYY-MM-DD.pdf`
+- The sample filename updates automatically for the selected quotation project.
+- Clicking the file picker also shows a one-time in-app reminder for that project.
+- Invalid files are still rejected by the v21.5 validation and can be re-selected after correction.
+- No MutationObserver and no new recurring timer added.
+- No new SQL required.
+- Patch version bumped to 21.6.
+
+
+## v21.7 — Item No Summary Parser + Hard Patch Re-login
+- Summary parsing is now based strictly on Item No. A/B/C/D… in column A.
+- Column B is treated as Work Item Description.
+- Column C is Total Amount Php.
+- Column D is Cost per Sq.m.
+- Column E is Weighted %.
+- Every description row between an Item No header and the next Item No is retained under that scope.
+- Explicit Sub-total rows are authoritative for scope amount, Cost per Sq.m, and Weighted %.
+- Pie chart uses source Weighted % directly.
+- Patch refresh now signs the user out locally, removes Supabase auth-session keys, clears session state, and returns to the login page so the user must manually log in and pass reCAPTCHA again.
+- Reminder popup label changed to simply `REMINDER`.
+- No new MutationObserver or recurring timer added.
+- No new SQL migration required.

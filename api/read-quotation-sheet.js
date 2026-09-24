@@ -143,172 +143,143 @@ function summaryWorksheet(workbook){
   return sheets.find(ws=>normalize(ws.name)==="summary")||sheets.find(ws=>normalize(ws.name).includes("summary"))||sheets[0]||null;
 }
 function parseSummarySheet(workbook){
-  const ws=summaryWorksheet(workbook); if(!ws)return{sheetName:null,categories:[]};
-  const maxRows=Math.min(ws.rowCount||0,5000);
-  const cats=[]; let current=null;
-  function ensureCategory(name,source){
-    if(current&&normalize(current.name)===normalize(name))return current;
-    if(current)cats.push(current);
-    current={name,originalLabel:name,amount:null,percentage:null,source,items:[]};
-    return current;
-  }
-  function close(){if(current){cats.push(current);current=null}}
-
-  for(let r=1;r<=maxRows;r++){
-    const desc=getDescriptionCell(ws,r); if(!desc)continue;
-    const raw=String(desc.text).replace(/\s+/g," ").trim();
-    const n=normalize(raw); if(!raw||raw.length>180)continue;
-    const amount=firstAmountAfter(ws,r,desc.col);
-    const pct=firstPercentAfter(ws,r,desc.col);
-
-    // Subtotal is authoritative and closes the category.
-    if(isSubtotal(raw)){
-      const name=subtotalName(raw)||current?.name||"Other";
-      if(!current||normalize(current.name)!==normalize(name))ensureCategory(name,`${ws.name}!${desc.cell}`);
-      if(amount)current.amount=amount.value;
-      if(pct)current.percentage=pct.value;
-      current.subtotalSource=`${ws.name}!${desc.cell}`;
-      current.subtotalAmountCell=amount?.cell||null;
-      current.subtotalPercentCell=pct?.cell||null;
-      close();
-      continue;
-    }
-
-    const heading=canonicalHeading(raw);
-    if(heading && !amount){
-      ensureCategory(heading,`${ws.name}!${desc.cell}`);
-      current.originalLabel=raw;
-      continue;
-    }
-
-    // Ignore final summary metrics as line items.
-    if(n.includes("grand total")||n.includes("indirect total cost")||n.includes("present profit")||n==="total project cost")continue;
-
-    // If a row has an amount but no heading yet, preserve it in an Other block instead of dropping it.
-    if(amount){
-      if(!current)ensureCategory("Other",`${ws.name}!${desc.cell}`);
-      current.items.push({
-        name:raw,
-        amount:amount.value,
-        percentage:pct?.value??null,
-        source:`${ws.name}!${desc.cell}`,
-        amountCell:amount.cell,
-        percentCell:pct?.cell||null
-      });
-    }
-  }
-  close();
-
-  // Merge accidental adjacent/duplicate categories by exact category name.
-  const merged=[];
-  for(const c of cats){
-    const key=normalize(c.name); let m=merged.find(x=>normalize(x.name)===key);
-    if(!m){m={...c,items:[...(c.items||[])]};merged.push(m)}
-    else{
-      m.items.push(...(c.items||[]));
-      if(Number.isFinite(c.amount)&&c.amount>0)m.amount=c.amount;
-      if(Number.isFinite(c.percentage))m.percentage=c.percentage;
-      if(c.subtotalSource)m.subtotalSource=c.subtotalSource;
-      if(c.subtotalAmountCell)m.subtotalAmountCell=c.subtotalAmountCell;
-      if(c.subtotalPercentCell)m.subtotalPercentCell=c.subtotalPercentCell;
-    }
-  }
-
-  const cleaned=merged.map(c=>{
-    let amount=Number.isFinite(c.amount)&&c.amount>0?c.amount:null;
-    if(amount===null){const s=(c.items||[]).reduce((a,x)=>a+(Number.isFinite(x.amount)?x.amount:0),0);if(s>0)amount=s}
-    return{...c,amount,items:(c.items||[]).filter(x=>Number.isFinite(x.amount)&&x.amount>=0).slice(0,150)};
-  }).filter(c=>c.amount!==null||c.items.length);
-
-  const total=cleaned.reduce((s,c)=>s+(c.amount||0),0);
-  return{
-    sheetName:ws.name,
-    categories:cleaned.map(c=>({
-      name:c.name,originalLabel:c.originalLabel,amount:c.amount||0,
-      percentage:Number.isFinite(c.percentage)?c.percentage:(total>0?(c.amount||0)/total*100:0),
-      source:c.source,amountCell:c.subtotalAmountCell||null,percentCell:c.subtotalPercentCell||null,
-      items:c.items.map(i=>({
-        ...i,
-        percentage:Number.isFinite(i.percentage)?i.percentage:((c.amount||0)>0?i.amount/(c.amount||0)*100:0)
-      }))
-    }))
-  };
-}
-
-function columnLetter(n){
-  let s="";
-  while(n>0){ n--; s=String.fromCharCode(65+(n%26))+s; n=Math.floor(n/26); }
-  return s;
-}
-
-function readFullSummaryTable(workbook){
   const ws=summaryWorksheet(workbook);
-  if(!ws)return {sheetName:null,headers:[],rows:[],range:null};
+  if(!ws)return {sheetName:null,categories:[],totalArea:null};
 
   const maxRows=Math.min(ws.rowCount||0,5000);
-  let maxCols=0;
-  for(let r=1;r<=maxRows;r++){
-    maxCols=Math.max(maxCols,Math.min(ws.getRow(r).cellCount||0,120));
-  }
-  if(!maxCols)return {sheetName:ws.name,headers:[],rows:[],range:null};
 
-  let firstCol=maxCols,lastCol=1,firstRow=maxRows,lastRow=1,found=false;
-  for(let r=1;r<=maxRows;r++){
-    for(let c=1;c<=maxCols;c++){
-      const t=safeText(ws.getCell(r,c));
-      if(t!==""){
-        found=true;
-        firstCol=Math.min(firstCol,c); lastCol=Math.max(lastCol,c);
-        firstRow=Math.min(firstRow,r); lastRow=Math.max(lastRow,r);
+  function cellText(r,c){ return safeText(ws.getCell(r,c)); }
+  function cellNum(r,c){
+    const cell=ws.getCell(r,c);
+    let n=asNumber(cell?.value);
+    if(n===null)n=asNumber(safeText(cell));
+    return n;
+  }
+  function pctNum(r,c){
+    const cell=ws.getCell(r,c);
+    let n=cell?.value;
+    if(n&&typeof n==="object"&&n.result!=null)n=n.result;
+    if(typeof n!=="number")n=asNumber(safeText(cell));
+    if(!Number.isFinite(n))return null;
+    const txt=safeText(cell),fmt=String(cell?.numFmt||"");
+    if((txt.includes("%")||fmt.includes("%"))&&n>=0&&n<=1)n*=100;
+    return n;
+  }
+  function isItemNo(v){ return /^[A-Z]$/i.test(String(v||"").trim()); }
+  function isSubtotal(v){ return /\bsub\s*-?\s*total\b/i.test(String(v||"")); }
+
+  let totalArea=null;
+  for(let r=1;r<=Math.min(maxRows,80);r++){
+    for(let c=1;c<=Math.min(ws.getRow(r).cellCount||0,20);c++){
+      const t=normalize(cellText(r,c));
+      if(t.includes("total area")&&t.includes("sq")){
+        for(let dc=1;dc<=4;dc++){
+          const n=cellNum(r,c+dc);
+          if(Number.isFinite(n)){totalArea=n;break;}
+        }
       }
+      if(totalArea!==null)break;
     }
-  }
-  if(!found)return {sheetName:ws.name,headers:[],rows:[],range:null};
-
-  const headers=[];
-  for(let c=firstCol;c<=lastCol;c++){
-    headers.push({key:columnLetter(c),label:columnLetter(c),column:c});
+    if(totalArea!==null)break;
   }
 
-  const rows=[];
-  for(let r=firstRow;r<=lastRow;r++){
-    let hasAny=false;
-    const cells=[];
-    for(let c=firstCol;c<=lastCol;c++){
-      const cell=ws.getCell(r,c);
-      const display=safeText(cell);
-      if(display!=="")hasAny=true;
+  const categories=[];
+  let current=null;
 
-      let numeric=asNumber(cell?.value);
-      if(numeric===null)numeric=asNumber(display);
-
-      const isPercent=isPercentCell(cell);
-      let percentage=null;
-      if(isPercent && numeric!==null){
-        percentage=(numeric>=0&&numeric<=1)?numeric*100:numeric;
-      }
-
-      cells.push({
-        column:columnLetter(c),
-        address:cell.address,
-        display,
-        numeric,
-        isPercent,
-        percentage,
-        numberFormat:String(cell?.numFmt||""),
-        bold:!!cell?.font?.bold,
-        italic:!!cell?.font?.italic,
-        align:cell?.alignment?.horizontal||null
-      });
+  function closeCurrent(){
+    if(!current)return;
+    if(!Number.isFinite(current.amount)){
+      const sum=current.items.reduce((s,x)=>s+(Number.isFinite(x.amount)?x.amount:0),0);
+      if(sum>0)current.amount=sum;
     }
-    if(hasAny)rows.push({row:r,cells});
+    if(!Number.isFinite(current.costPerSqm)&&Number.isFinite(current.amount)&&Number.isFinite(totalArea)&&totalArea>0){
+      current.costPerSqm=current.amount/totalArea;
+    }
+    if(!Number.isFinite(current.percentage)){
+      const p=current.items.reduce((s,x)=>s+(Number.isFinite(x.percentage)?x.percentage:0),0);
+      if(p>0)current.percentage=p;
+    }
+    categories.push(current);
+    current=null;
   }
+
+  // Fixed Summary contract:
+  // A = ITEM NO
+  // B = WORK ITEM DESCRIPTION
+  // C = TOTAL AMOUNT PHP
+  // D = COST PER SQ.M
+  // E = WEIGHTED %
+  for(let r=1;r<=maxRows;r++){
+    const itemNo=cellText(r,1).trim();
+    const desc=cellText(r,2).replace(/\s+/g," ").trim();
+
+    if(isItemNo(itemNo)&&desc){
+      closeCurrent();
+      current={
+        itemNo:itemNo.toUpperCase(),
+        name:desc,
+        originalLabel:desc,
+        amount:null,
+        costPerSqm:null,
+        percentage:null,
+        source:`${ws.name}!A${r}:E${r}`,
+        headerRow:r,
+        items:[]
+      };
+      continue;
+    }
+
+    if(!current||!desc)continue;
+
+    const amount=cellNum(r,3);
+    const costPerSqm=cellNum(r,4);
+    const percentage=pctNum(r,5);
+
+    if(isSubtotal(desc)){
+      current.subtotalLabel=desc;
+      if(Number.isFinite(amount))current.amount=amount;
+      if(Number.isFinite(costPerSqm))current.costPerSqm=costPerSqm;
+      if(Number.isFinite(percentage))current.percentage=percentage;
+      current.amountCell=`C${r}`;
+      current.costPerSqmCell=`D${r}`;
+      current.percentCell=`E${r}`;
+      current.subtotalSource=`${ws.name}!B${r}:E${r}`;
+      continue;
+    }
+
+    current.items.push({
+      name:desc,
+      amount:Number.isFinite(amount)?amount:null,
+      costPerSqm:Number.isFinite(costPerSqm)?costPerSqm:null,
+      percentage:Number.isFinite(percentage)?percentage:null,
+      source:`${ws.name}!B${r}:E${r}`,
+      amountCell:`C${r}`,
+      costPerSqmCell:`D${r}`,
+      percentCell:`E${r}`,
+      row:r
+    });
+  }
+  closeCurrent();
 
   return {
     sheetName:ws.name,
-    headers,
-    rows,
-    range:`${columnLetter(firstCol)}${firstRow}:${columnLetter(lastCol)}${lastRow}`
+    totalArea,
+    categories:categories.map(c=>({
+      itemNo:c.itemNo,
+      name:c.name,
+      originalLabel:c.originalLabel,
+      amount:Number.isFinite(c.amount)?c.amount:0,
+      costPerSqm:Number.isFinite(c.costPerSqm)?c.costPerSqm:null,
+      percentage:Number.isFinite(c.percentage)?c.percentage:0,
+      source:c.source,
+      headerRow:c.headerRow,
+      amountCell:c.amountCell||null,
+      costPerSqmCell:c.costPerSqmCell||null,
+      percentCell:c.percentCell||null,
+      subtotalLabel:c.subtotalLabel||null,
+      subtotalSource:c.subtotalSource||null,
+      items:c.items
+    }))
   };
 }
 
@@ -332,14 +303,35 @@ export default async function handler(req,res){
     const firstSheet=(workbook.worksheets?.[0]?.name||`Quotation ${id.slice(0,6)}`).trim();
     const projectName=(project?.value&&String(project.value).trim().length<180)?String(project.value).trim():firstSheet;
     const summaryBreakdown=summary.categories.map(c=>({
-      name:c.name,originalLabel:c.originalLabel,amount:Math.round((c.amount||0)*100)/100,
-      percentage:Math.round((c.percentage||0)*100)/100,source:c.source,amountCell:c.amountCell,percentCell:c.percentCell,
-      items:(c.items||[]).map(i=>({name:i.name,amount:Math.round((i.amount||0)*100)/100,percentage:Math.round((i.percentage||0)*100)/100,source:i.source,amountCell:i.amountCell,percentCell:i.percentCell}))
+      itemNo:c.itemNo,
+      name:c.name,
+      originalLabel:c.originalLabel,
+      amount:Math.round((c.amount||0)*100)/100,
+      costPerSqm:Number.isFinite(c.costPerSqm)?Math.round(c.costPerSqm*100)/100:null,
+      percentage:Math.round((c.percentage||0)*100)/100,
+      source:c.source,
+      headerRow:c.headerRow,
+      amountCell:c.amountCell,
+      costPerSqmCell:c.costPerSqmCell,
+      percentCell:c.percentCell,
+      subtotalLabel:c.subtotalLabel,
+      subtotalSource:c.subtotalSource,
+      items:(c.items||[]).map(i=>({
+        name:i.name,
+        amount:Number.isFinite(i.amount)?Math.round(i.amount*100)/100:null,
+        costPerSqm:Number.isFinite(i.costPerSqm)?Math.round(i.costPerSqm*100)/100:null,
+        percentage:Number.isFinite(i.percentage)?Math.round(i.percentage*100)/100:null,
+        source:i.source,
+        amountCell:i.amountCell,
+        costPerSqmCell:i.costPerSqmCell,
+        percentCell:i.percentCell,
+        row:i.row
+      }))
     }));
     return res.status(200).json({
       ok:true,spreadsheetId:id,projectName,clientName:client?.value?String(client.value).trim():"",
       indirectTotalCost:indirect?.value??null,presentProfit:profit?.value??null,
-      summarySheetName:summary.sheetName,summaryBreakdown,
+      summarySheetName:summary.sheetName,summaryTotalArea:summary.totalArea,summaryBreakdown,
       summaryHeaders:fullSummary.headers,
       summaryTable:fullSummary.rows,
       summaryRange:fullSummary.range,

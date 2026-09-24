@@ -1451,3 +1451,106 @@ html[data-theme="executive"] .quotation-delete-btn{
 .quotation-file-rule code{padding:3px 6px;border-radius:7px;background:var(--surface);color:var(--heading);font-size:10px;font-weight:800}
 .quotation-file-rule.has-error{border-color:#fecaca;background:#fff7f7}
 .quotation-file-validation-error{width:100%;color:#b91c1c;font-weight:800;margin-top:2px}
+
+
+/* =========================================================
+   v21.6 final upload format awareness notice
+   ========================================================= */
+.quotation-upload-format-notice{
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr);
+  gap:10px;
+  align-items:start;
+  margin:10px 0 12px;
+  padding:12px;
+  border:1px solid #fde68a;
+  border-radius:13px;
+  background:#fffbea;
+}
+.quotation-upload-format-icon{
+  width:30px;height:30px;
+  border-radius:10px;
+  display:grid;place-items:center;
+  background:#fef3c7;
+  color:#92400e;
+  font-weight:900;
+  font-size:14px;
+}
+.quotation-upload-format-notice strong{
+  display:block;
+  color:#78350f;
+  font-size:11px;
+}
+.quotation-upload-format-notice p{
+  margin:3px 0 5px;
+  font-size:10px;
+  color:#92400e;
+}
+.quotation-upload-format-notice code{
+  display:inline-block;
+  margin-bottom:5px;
+  padding:4px 7px;
+  border-radius:7px;
+  background:#fff;
+  border:1px solid #fde68a;
+  font-size:10px;
+  font-weight:850;
+  color:#78350f;
+}
+.quotation-upload-format-notice span{
+  display:block;
+  color:#a16207;
+  font-size:9px;
+  line-height:1.45;
+}
+
+
+/* =========================================================
+   v21.7 Item No based Summary breakdown
+   ========================================================= */
+.quotation-summary-major{
+  grid-template-columns:42px minmax(220px,1fr) 140px 130px 100px!important;
+}
+.quotation-summary-itemno{
+  width:28px;height:28px;border-radius:9px;
+  display:grid;place-items:center;
+  background:var(--surface-soft);
+  border:1px solid var(--line);
+  font-weight:900;
+}
+.quotation-summary-grid{padding-left:14px!important}
+.quotation-summary-grid-head,
+.quotation-summary-item,
+.quotation-summary-subtotal{
+  display:grid!important;
+  grid-template-columns:minmax(220px,1fr) 140px 130px 100px!important;
+  gap:12px;
+  align-items:center;
+}
+.quotation-summary-grid-head{
+  padding:8px 0;
+  color:var(--muted);
+  font-size:9px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+.quotation-summary-subtotal{
+  padding:10px 0 2px;
+  border-top:1px solid var(--line);
+  font-weight:900;
+}
+@media(max-width:900px){
+  .quotation-summary-major{
+    grid-template-columns:36px minmax(160px,1fr) 110px 90px!important;
+  }
+  .quotation-summary-major>span:nth-of-type(3){display:none}
+  .quotation-summary-grid-head,
+  .quotation-summary-item,
+  .quotation-summary-subtotal{
+    grid-template-columns:minmax(160px,1fr) 110px 90px!important;
+  }
+  .quotation-summary-grid-head>span:nth-child(3),
+  .quotation-summary-item>strong:nth-child(3),
+  .quotation-summary-subtotal>strong:nth-child(3){display:none}
+}

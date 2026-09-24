@@ -314,7 +314,16 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
                 </div>
               </div>
               <div class="quotation-completion-row">
-                <label>Upload Final File
+                <div id="quotationUploadFormatNotice" class="quotation-upload-format-notice">
+                <div class="quotation-upload-format-icon">!</div>
+                <div>
+                  <strong>Before uploading the final quotation</strong>
+                  <p>PDF only. Filename must follow:</p>
+                  <code id="quotationUploadFormatExample">Project Name_Location_YYYY-MM-DD.pdf</code>
+                  <span>If the filename does not follow this format, the system will reject it and you can select the corrected file again.</span>
+                </div>
+              </div>
+              <label>Upload Final File
                   <input id="quotationBoqFile" type="file" accept="application/pdf,.pdf">
                 </label>
                 <button id="saveQuotationDataBtn" class="primary-btn" type="button">Upload & Mark Complete</button>
@@ -627,9 +636,9 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </div>
   </dialog>
 
-  <script src="v20.3.js?v=2031"></script>
+  <script src="v20.3.js?v=2171"></script>
   <script src="v20.5.js?v=2051"></script>
-  <script src="v20.6.js?v=2131"></script>
+  <script src="v20.6.js?v=2171"></script>
 
   <dialog id="editQuotationDialog">
     <form id="editQuotationForm" class="dialog-card quotation-edit-dialog">
@@ -654,9 +663,10 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
 
   <script src="v20.7.js?v=2071"></script>
   <script src="v21.js?v=2131"></script>
-  <script src="patch-watch.js?v=2151"></script>
+  <script src="patch-watch.js?v=2171"></script>
   <script src="v21.3.js?v=2131"></script>
   <script src="v21.4.js?v=2141"></script>
   <script src="v21.5.js?v=2151"></script>
+  <script src="v21.6.js?v=2161"></script>
 </body>
 </html>

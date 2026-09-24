@@ -66,7 +66,7 @@
       <button id="quotationReminderClose" class="quotation-reminder-close" type="button" aria-label="Close reminder" title="Close">×</button>
       <div class="quotation-reminder-icon">🔔</div>
       <div class="quotation-reminder-copy">
-        <small>FOR QUOTATION REMINDER</small>
+        <small>REMINDER</small>
         <strong id="quotationReminderTitle">Pending quotation</strong>
         <div id="quotationReminderBody"></div>
         <div class="quotation-reminder-progress"><i></i></div>
@@ -100,9 +100,7 @@
     const title=$('quotationReminderTitle');
     const body=$('quotationReminderBody');
 
-    title.textContent=rows.length===1
-      ? (rows[0].project_name||'Pending quotation')
-      : `${rows.length} pending quotation projects`;
+    title.textContent='Reminder';
 
     const shown=(urgent.length?urgent:rows).slice(0,4);
     body.innerHTML=shown.map(q=>{
