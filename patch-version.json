@@ -1,5 +1,5 @@
 {
-  "version": "24.1",
-  "label": "SAIKO Construction AI v24.1",
-  "message": "GenCon billings now appear automatically inside the Subcon folder with Has Subcon, deductions, retention and recoupment setup."
+  "version": "24.2",
+  "label": "SAIKO Construction AI v24.2",
+  "message": "Existing records now adopt new features immediately. No delete/re-create/re-upload is required."
 }

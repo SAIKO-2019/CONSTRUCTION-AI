@@ -831,3 +831,13 @@ No MutationObserver or page-wide repeated scan is used.
 - Original GenCon collection is never altered; the Subcon folder shows the derived amount available for subcontract use.
 - Dashboard adds Linked Subcon Available and Linked Subcon Deductions summaries.
 - Requires running `v24.1-linked-gencon-subcon.sql` once in Supabase.
+
+
+## v24.2 — Existing Records Update Automatically
+- New features now work immediately with **existing project and billing records**.
+- Existing GenCon billings automatically appear in the linked Subcon view.
+- No delete, re-create, re-upload, or re-encode is required.
+- Legacy records are normalized in memory after every refresh so missing new fields safely use defaults.
+- Added one-time database backfill: `v24.2-existing-records-backfill.sql`.
+- Added no-cache Vercel headers + cache-busted local assets to prevent the browser from showing an older patch after deployment.
+- The same compatibility approach applies to project/subcon fields added in earlier patches.
