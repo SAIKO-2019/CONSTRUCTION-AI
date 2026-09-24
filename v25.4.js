@@ -167,6 +167,14 @@
     return result;
   }
 
+
+  function exactProjectedSeries(pid){
+    return (cache.projectedSeries||[])
+      .filter(r=>String(r.project_id)===String(pid))
+      .map(r=>({date:String(r.progress_date).slice(0,10),projected:Math.max(0,n(r.cumulative_percent))}))
+      .sort((a,b)=>a.date.localeCompare(b.date));
+  }
+
   function renderMatchedScopeSCurve(){
     const chart=$('dashboardMatchedSCurve');
     const tbody=$('dashboardMatchedScopeRows');
@@ -185,6 +193,34 @@
       tbody.innerHTML='<tr><td colspan="6" class="empty">No matched scope data yet.</td></tr>';
       if(badge)badge.textContent='NO DATA';
       return;
+    }
+
+    const exactSeries=exactProjectedSeries(pid);
+    if(exactSeries.length){
+      const currentActual=actualForProject(pid);
+      const W=920,H=260,padL=44,padR=20,padT=18,padB=42;
+      const y=v=>H-padB-Math.max(0,Math.min(100,v))*(H-padT-padB)/100;
+      const x=i=>exactSeries.length===1?(padL+(W-padL-padR)/2):padL+i*(W-padL-padR)/(exactSeries.length-1);
+      const grid=[0,25,50,75,100].map(v=>
+        `<line x1="${padL}" y1="${y(v)}" x2="${W-padR}" y2="${y(v)}" stroke="rgba(100,116,139,.18)"/>
+         <text x="4" y="${y(v)+4}" font-size="11" fill="#64748b">${v}%</text>`
+      ).join('');
+      const pp=exactSeries.map((r,i)=>`${x(i)},${y(r.projected)}`).join(' ');
+      const actualPoints=exactSeries.map((r,i)=>{
+        const isLast=i===exactSeries.length-1;
+        return `${x(i)},${y(isLast?currentActual:0)}`;
+      }).join(' ');
+      chart.innerHTML=`
+        <svg class="scurve-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+          ${grid}
+          <polyline fill="none" stroke="#2563eb" stroke-width="3" points="${pp}"/>
+          <circle cx="${x(exactSeries.length-1)}" cy="${y(currentActual)}" r="5" fill="#16a34a"/>
+        </svg>
+        <div class="chart-legend">
+          <span><i class="legend-dot" style="background:#2563eb"></i>Projected cumulative %</span>
+          <span><i class="legend-dot" style="background:#16a34a"></i>Current Actual STATUS total</span>
+          <span>${pct(exactSeries[exactSeries.length-1].projected)} projected series end • ${pct(currentActual)} actual</span>
+        </div>`;
     }
 
     const totalProjected=rows.reduce((s,r)=>s+r.projected,0);

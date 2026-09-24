@@ -4,12 +4,32 @@
 (function(){
   const n=v=>{const x=Number(v);return Number.isFinite(x)?x:0};
 
+  function plannedFromCumulativeSeries(pid,atDate=new Date()){
+    const rows=(cache.projectedSeries||[])
+      .filter(r=>String(r.project_id)===String(pid))
+      .sort((a,b)=>String(a.progress_date).localeCompare(String(b.progress_date)));
+    if(!rows.length)return null;
+    const target=new Date(atDate);
+    const y=target.getFullYear();
+    const m=String(target.getMonth()+1).padStart(2,'0');
+    const d=String(target.getDate()).padStart(2,'0');
+    const today=`${y}-${m}-${d}`;
+    let chosen=null;
+    for(const r of rows){
+      if(String(r.progress_date).slice(0,10)<=today)chosen=r;
+      else break;
+    }
+    return chosen?Math.max(0,n(chosen.cumulative_percent)):0;
+  }
+  window.plannedFromCumulativeSeries=plannedFromCumulativeSeries;
+
   // Schedule page: planned data only.
   renderSchedule=function(){
     const pid=$('scheduleProject').value||cache.projects[0]?.id;
     if(pid&&!$('scheduleProject').value)$('scheduleProject').value=pid;
     const rows=scheduleData(pid);
-    const planned=plannedForProject(pid);
+    const exactProjected=plannedFromCumulativeSeries(pid);
+    const planned=exactProjected==null?plannedForProject(pid):exactProjected;
     const remaining=Math.max(0,100-planned);
     $('scheduleSummary').innerHTML=[
       ['Planned Today',pct(planned)],
@@ -65,7 +85,8 @@
   actualForProject=function(pid){
     const rows=(cache.progress||[]).filter(r=>String(r.project_id)===String(pid));
     if(rows.length){
-      return rows.reduce((sum,r)=>sum+(n(r.weight)*n(r.actual_percent)/100),0);
+      // Every top-level scope row stores its STATUS directly in actual_percent.
+      return rows.reduce((sum,r)=>sum+Math.max(0,n(r.actual_percent)),0);
     }
     return n(proj(pid)?.progress);
   };
@@ -76,7 +97,8 @@
     baseDash();
     const active=cache.projects.filter(p=>!['Completed'].includes(p.status));
     $('dashProjects').innerHTML=active.length?active.map(p=>{
-      const planned=plannedForProject(p.id),actual=actualForProject(p.id),variance=actual-planned;
+      const exactProjected=plannedFromCumulativeSeries(p.id);
+      const planned=exactProjected==null?plannedForProject(p.id):exactProjected,actual=actualForProject(p.id),variance=actual-planned;
       const label=variance<-2?'Behind':variance>2?'Ahead':'On Track';
       return `<tr>
         <td><strong>${esc(p.project_name)}</strong><br><small class="muted">${label}</small></td>

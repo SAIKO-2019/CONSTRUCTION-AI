@@ -1,5 +1,5 @@
 {
-  "version": "25.7",
-  "label": "SAIKO Construction AI v25.7",
-  "message": "Exact POC workbook reader: Actual Progress now reads one OVERALL STATUS per side-by-side scope block, and Projected uses only real timeline activities."
+  "version": "25.8",
+  "label": "SAIKO Construction AI v25.8",
+  "message": "Actual now uses the exact STATUS percentage per scope; Projected uses the PROJECTED ACCUMULATIVE ACCOMPLISHMENT %AGE series."
 }

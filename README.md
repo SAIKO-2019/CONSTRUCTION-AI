@@ -1030,3 +1030,25 @@ This patch is based on the uploaded `POC KAWIT CAVITE.xlsx` structure.
 - Keeps automatic scope normalization/matching for the common Projected-vs-Actual S-Curve.
 - 10-second live sync remains active.
 - No SQL required.
+
+
+## v25.8 — Exact Percentage Basis
+This patch changes the tracker percentages to the exact cells requested by the user.
+
+### Actual Progress
+- Uses the **STATUS** value on every top-level `OVERALL ACCOMPLISHMENT STATUS` row as the scope's Actual %.
+- Example: Ceiling Works `10.24%`, Cabinetry Works `11.60%`, Wall Finishing Works `10.44%`, Flooring Works `2.42%`.
+- Actual project accomplishment is the sum of those top-level scope STATUS percentages.
+- Floor detail rows are not imported as separate Actual scopes.
+
+### Projected / Schedule
+- Projected percentage no longer derives from schedule activity weights.
+- It reads the exact row labeled **PROJECTED ACCUMULATIVE ACCOMPLISHMENT %AGE**.
+- The date row above the timeline is paired with every cumulative percentage point.
+- `Projected Today` is the latest cumulative percentage on or before today's date.
+- Dashboard S-Curve uses this cumulative percentage series as the Projected curve.
+
+### Live Sync
+- 10-second live sync remains active.
+- Hidden rows/columns remain excluded through the exact-gid XLSX reader.
+- Run `v25.8-projected-cumulative-series.sql` once in Supabase.

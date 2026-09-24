@@ -255,15 +255,13 @@
         if(seen.has(key))continue;
         seen.add(key);
 
-        // Store the visible STATUS contribution exactly.
-        // Use TOTAL as the scope weight and back-compute completion %,
-        // so weight * actual_percent / 100 = STATUS contribution.
-        const actualPercent=total>0 ? Math.max(0,Math.min(100,status/total*100)) : 0;
-
+        // v25.8: The user wants the STATUS cell itself to be the Actual %.
+        // Keep one row per top-level scope and set weight to 100 so the
+        // weighted contribution is exactly the STATUS percentage.
         out.push({
           activity:scope,
-          weight:total,
-          actual_percent:actualPercent,
+          weight:100,
+          actual_percent:Math.max(0,Math.min(100,status)),
           source_summary_value:status,
           summary_only:true
         });
@@ -289,8 +287,8 @@
             if(value<=0)continue;
             out.push({
               activity:name,
-              weight:value,
-              actual_percent:100,
+              weight:100,
+              actual_percent:Math.max(0,Math.min(100,value)),
               source_summary_value:value,
               summary_only:true
             });
@@ -300,6 +298,56 @@
       }
     }
     return out;
+  }
+
+
+  // v25.8 — Read the exact PROJECTED ACCUMULATIVE ACCOMPLISHMENT %AGE row.
+  // The date header is located above the DAY columns; each visible date becomes one point.
+  function parseProjectedCumulativeSeries(rows){
+    const hh=x=>clean(x).toLowerCase().replace(/[^a-z0-9%]+/g,' ').replace(/\s+/g,' ').trim();
+    let targetRow=-1,targetCol=-1;
+
+    for(let r=0;r<rows.length;r++){
+      for(let c=0;c<(rows[r]||[]).length;c++){
+        const h=hh(rows[r][c]);
+        if(
+          h.includes('projected accumulative accomplishment') &&
+          (h.includes('%') || h.includes('age') || h.includes('percentage'))
+        ){
+          targetRow=r;
+          targetCol=c;
+          break;
+        }
+      }
+      if(targetRow>=0)break;
+    }
+    if(targetRow<0)return [];
+
+    // Search upward for the row containing the dates aligned with the cumulative values.
+    let dateRow=-1;
+    for(let r=targetRow-1;r>=Math.max(0,targetRow-95);r--){
+      let dateHits=0;
+      for(let c=targetCol+1;c<(rows[r]||[]).length;c++){
+        if(parseDate(rows[r][c]))dateHits++;
+      }
+      if(dateHits>=2){dateRow=r;break;}
+    }
+    if(dateRow<0)return [];
+
+    const points=[];
+    for(let c=targetCol+1;c<Math.max((rows[dateRow]||[]).length,(rows[targetRow]||[]).length);c++){
+      const d=parseDate((rows[dateRow]||[])[c]);
+      const raw=(rows[targetRow]||[])[c];
+      const pctValue=n(raw);
+      if(!d)continue;
+      if(raw==null || clean(raw)==='')continue;
+      points.push({progress_date:d,cumulative_percent:Math.max(0,Math.min(100,pctValue))});
+    }
+
+    // Dedupe dates, keep last visible value.
+    const byDate=new Map();
+    points.forEach(p=>byDate.set(p.progress_date,p));
+    return [...byDate.values()].sort((a,b)=>a.progress_date.localeCompare(b.progress_date));
   }
 
   function parseTrackerRows(rows,kind){
@@ -395,6 +443,24 @@
   async function syncSchedule(p,silent=false){
     if(!p?.schedule_sheet_link)return false;
     const raw=await readSheet(p.schedule_sheet_link);
+
+    // Exact projected basis: PROJECTED ACCUMULATIVE ACCOMPLISHMENT %AGE.
+    const projectedSeries=parseProjectedCumulativeSeries(raw);
+    if(projectedSeries.length){
+      const delSeries=await sb.from('projected_progress_series').delete().eq('project_id',p.id);
+      if(delSeries.error)throw delSeries.error;
+      const seriesRows=projectedSeries.map(x=>({
+        project_id:p.id,
+        progress_date:x.progress_date,
+        cumulative_percent:x.cumulative_percent,
+        source_label:'PROJECTED ACCUMULATIVE ACCOMPLISHMENT %AGE',
+        synced_at:new Date().toISOString()
+      }));
+      const insSeries=await sb.from('projected_progress_series').upsert(seriesRows,{onConflict:'project_id,progress_date'}).select();
+      if(insSeries.error)throw insSeries.error;
+      cache.projectedSeries=(cache.projectedSeries||[]).filter(x=>String(x.project_id)!==String(p.id)).concat(insSeries.data||seriesRows);
+    }
+
     const sourceRows=parseTrackerRows(raw,'schedule');
     const today=new Date().toISOString().slice(0,10);
     const parsed=sourceRows.map(x=>({
