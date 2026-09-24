@@ -293,3 +293,22 @@ Hotfix v15.1: fixed Team Activity modal button clicks and removed the horizontal
 - Edit Mode rescans only after navigation/data refresh instead of watching every DOM mutation.
 - Main JS URLs are cache-busted for this release.
 - No SQL migration required.
+
+
+## v18 Focused For Quotation
+The For Quotation workspace is now intentionally limited to:
+1. Google Sheets costing link
+2. automatic reading of **Indirect Total Cost**
+3. automatic reading of **Present Profit**
+4. final file upload
+5. automatic **Complete** status after final file upload
+
+The Sheet is read through `/api/read-quotation-sheet`. The linked Google Sheet must be accessible as **Anyone with the link can view** so the server can export it as XLSX.
+
+The reader searches every worksheet for labels matching `Indirect Total Cost` and `Present Profit`, then reads the nearby numeric value.
+
+No SQL migration is required because the existing quotation fields are reused:
+- `estimated_cost` = Indirect Total Cost
+- `projected_profit` = Present Profit
+- `boq_file_name/boq_storage_path` = final completion file
+- `status` = For Quotation / Complete

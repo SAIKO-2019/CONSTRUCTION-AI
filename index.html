@@ -192,20 +192,81 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
         </div>
       </section>
       <section id="quotation" class="view">
-        <div class="page-head"><div><small>PRE-CONSTRUCTION / ESTIMATING</small><h1>For Quotation</h1><p>Separate quotation workspace for prospective projects. Upload BOQ files or attach a Google Sheets link to track estimated cost, quoted amount, running amount, and projected profit.</p></div><button id="addPendingBtn" class="primary-btn">+ Add Quotation Project</button></div>
-        <div class="toolbar panel"><label>Quotation Project<select id="pendingProject"></select></label><label>Status<select id="pendingStatusFilter"><option value="">All</option><option>For Quotation</option><option>Submitted</option><option>Awarded</option><option>Lost</option></select></label></div>
-        <div id="pendingKPIs" class="kpi-grid"></div>
-        <div class="panel quotation-import-panel">
-          <div class="form-grid">
-            <label>Upload BOQ / Costing File<input id="quotationBoqFile" type="file" accept=".xlsx,.xls,.csv,.pdf"></label>
-            <label>Google Sheets Link<input id="quotationGsheetLink" placeholder="https://docs.google.com/spreadsheets/..."></label>
-            <label>Quoted Amount<input id="quotationQuotedAmount" type="number" min="0" step="0.01" placeholder="0.00"></label>
-            <label>Current Running Amount<input id="quotationRunningAmount" type="number" min="0" step="0.01" placeholder="0.00"></label>
+        <div class="page-head">
+          <div>
+            <small>PRE-CONSTRUCTION / ESTIMATING</small>
+            <h1>For Quotation</h1>
+            <p>Paste the Google Sheets costing link. The system reads the sheet automatically and tracks only the Indirect Total Cost and Present Profit. Upload the completed costing file when the quotation is finished.</p>
           </div>
-          <div class="dialog-actions"><button id="saveQuotationDataBtn" class="primary-btn">Save / Update Quotation Data</button></div>
+          <button id="addPendingBtn" class="primary-btn">+ Add Quotation Project</button>
         </div>
-        <div id="pendingAlert" class="smart-note"></div>
-        <div class="panel"><div class="table-wrap"><table><thead><tr><th>Quotation Project</th><th>Client</th><th>Estimator</th><th>Target Submission</th><th>BOQ / GSheet</th><th>Estimated Cost</th><th>Quoted Amount</th><th>Projected Profit</th><th>Status</th><th>Action</th></tr></thead><tbody id="pendingRows"></tbody></table></div></div>
+
+        <div class="toolbar panel quotation-toolbar">
+          <label>Quotation Project<select id="pendingProject"></select></label>
+          <div id="quotationSyncStatus" class="quotation-sync-status"><span class="status-dot"></span><span>Select a quotation project.</span></div>
+        </div>
+
+        <div id="pendingKPIs" class="kpi-grid quotation-kpis"></div>
+
+        <div class="panel quotation-source-panel">
+          <div class="panel-head">
+            <div>
+              <h2>Google Sheets Costing Source</h2>
+              <p class="muted">The Sheet must be accessible using the link. The system looks for “Indirect Total Cost” and “Present Profit”.</p>
+            </div>
+            <button id="refreshQuotationLinkBtn" class="secondary-btn" type="button">↻ Read Link Again</button>
+          </div>
+
+          <div class="quotation-link-grid">
+            <label class="quotation-link-field">Google Sheets Link
+              <input id="quotationGsheetLink" placeholder="Paste Google Sheets link here...">
+            </label>
+
+            <div class="quotation-auto-read-note">
+              <strong>Automatic Link Reading</strong>
+              <span>Paste or change the link and the values will refresh automatically.</span>
+            </div>
+
+            <div class="quotation-metric-card">
+              <span>Indirect Total Cost</span>
+              <strong id="quotationIndirectCost">₱0.00</strong>
+              <small id="quotationIndirectSource">Waiting for Google Sheet</small>
+            </div>
+
+            <div class="quotation-metric-card profit">
+              <span>Present Profit</span>
+              <strong id="quotationPresentProfit">₱0.00</strong>
+              <small id="quotationProfitSource">Waiting for Google Sheet</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel quotation-completion-panel">
+          <div class="panel-head">
+            <div>
+              <h2>Quotation Completion</h2>
+              <p class="muted">When the costing is finished, upload the final file. Uploading the file marks this quotation as Complete.</p>
+            </div>
+            <span id="quotationCompletionBadge" class="status-pill pending">For Quotation</span>
+          </div>
+          <div class="quotation-completion-row">
+            <label>Final Costing / Quotation File
+              <input id="quotationBoqFile" type="file" accept=".xlsx,.xls,.csv,.pdf,.doc,.docx">
+            </label>
+            <button id="saveQuotationDataBtn" class="primary-btn" type="button">Upload File & Mark Complete</button>
+          </div>
+          <div id="quotationCompletionFile" class="smart-note">No completion file uploaded yet.</div>
+        </div>
+
+        <div class="panel quotation-list-panel">
+          <div class="panel-head"><h2>Quotation Tracker</h2><span class="muted">Link-derived cost and profit only.</span></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Quotation Project</th><th>Client</th><th>Google Sheet</th><th>Indirect Total Cost</th><th>Present Profit</th><th>Status</th><th>Final File</th><th>Action</th></tr></thead>
+              <tbody id="pendingRows"></tbody>
+            </table>
+          </div>
+        </div>
       </section>
       <section id="files" class="view">
         <div class="page-head"><div><small>DOCUMENT CONTROL</small><h1>Project Files</h1><p>Store plans, contracts, billings, reports, schedules, photos, and quotations in the cloud.</p></div></div>
@@ -289,7 +350,6 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     <label>Client<input id="pwClient"></label>
     <label>Estimator / Assigned To<input id="pwAssignedTo"></label>
     <label>Target Submission<input id="pwTargetDate" type="date"></label>
-    <label>Status<select id="pwStatus"><option>For Quotation</option><option>Submitted</option><option>Awarded</option><option>Lost</option></select></label>
     <label>Notes<input id="pwNotes"></label>
   </div><div class="dialog-actions"><button type="button" class="secondary-btn" data-close="pendingDialog">Cancel</button><button class="primary-btn" type="submit">Save Quotation Project</button></div></form></dialog>
 
@@ -447,5 +507,6 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
   <script src="v14.8.js?v=1701"></script>
   <script src="v15.9.js?v=1701"></script>
   <script src="v17-core.js?v=1701"></script>
+  <script src="v18.js?v=1801"></script>
 </body>
 </html>

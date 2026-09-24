@@ -848,3 +848,38 @@ button{touch-action:manipulation}
 .settings-section.feature-card::after,.brand::after,.kpi::after{pointer-events:none!important}
 html[data-edit-mode="on"] .inline-editable{cursor:text!important;outline:1px dashed color-mix(in srgb,var(--blue) 35%,transparent)}
 html[data-edit-mode="on"] .inline-editable:hover{outline:2px solid color-mix(in srgb,var(--blue) 60%,transparent)}
+
+
+/* =========================================================
+   v18 focused For Quotation
+   ========================================================= */
+.quotation-toolbar{align-items:center}
+.quotation-sync-status{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:var(--muted)}
+.quotation-sync-status .status-dot{width:9px;height:9px;border-radius:50%;background:#94a3b8}
+.quotation-sync-status.loading .status-dot{background:#f59e0b;box-shadow:0 0 0 5px rgba(245,158,11,.10)}
+.quotation-sync-status.ok .status-dot{background:#22c55e;box-shadow:0 0 0 5px rgba(34,197,94,.10)}
+.quotation-sync-status.error{color:#b91c1c}
+.quotation-sync-status.error .status-dot{background:#ef4444}
+.quotation-source-panel,.quotation-completion-panel,.quotation-list-panel{margin-bottom:16px}
+.quotation-source-panel .panel-head p,.quotation-completion-panel .panel-head p{margin:4px 0 0}
+.quotation-link-grid{display:grid;grid-template-columns:1.35fr .65fr 1fr 1fr;gap:14px;padding:18px}
+.quotation-link-field{grid-column:1 / span 2}
+.quotation-auto-read-note{border:1px solid var(--line);border-radius:14px;padding:13px;background:var(--surface-soft);display:grid;gap:4px;align-content:center}
+.quotation-auto-read-note strong{font-size:12px}
+.quotation-auto-read-note span{font-size:11px;color:var(--muted)}
+.quotation-metric-card{border:1px solid var(--line);border-radius:16px;padding:16px;background:linear-gradient(180deg,var(--surface),var(--surface-soft))}
+.quotation-metric-card span{display:block;font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.05em}
+.quotation-metric-card strong{display:block;font-size:27px;margin-top:7px;letter-spacing:-.03em}
+.quotation-metric-card small{display:block;margin-top:6px;color:var(--muted);font-size:10px}
+.quotation-metric-card.profit strong{color:var(--green)!important}
+.quotation-completion-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:end;padding:18px}
+.quotation-completion-row .primary-btn{height:42px}
+.status-pill.complete{background:#dcfce7;color:#166534}
+.status-pill.pending{background:#fff7ed;color:#9a3412}
+@media(max-width:980px){
+  .quotation-link-grid{grid-template-columns:1fr 1fr}
+  .quotation-link-field{grid-column:1 / -1}
+}
+@media(max-width:680px){
+  .quotation-link-grid,.quotation-completion-row{grid-template-columns:1fr}
+}
