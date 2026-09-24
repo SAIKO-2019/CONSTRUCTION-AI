@@ -1,7 +1,6 @@
 // SAIKO Construction AI v24.8
 // Live per-project Google Sheet Schedule + Actual Progress sync with fuzzy scope matching.
 (function(){
-  const SYNC_MS=45*1000; // one lightweight timer, active-view only
   let syncing=false;
 
   const n=v=>{
@@ -269,34 +268,25 @@
 
   $('saveScheduleSheetLinkBtn').onclick=async()=>{
     const p=selectedProject('scheduleProject');if(!p)return alert('Select a project first.');
-    try{await saveProjectLink(p,'schedule_sheet_link',$('scheduleSheetLink').value.trim());updateTrackerLinkUI();await syncSchedule((cache.projects||[]).find(x=>x.id===p.id)||p);renderSchedule();renderProgress();}catch(e){alert(e.message)}
+    try{
+      await saveProjectLink(p,'schedule_sheet_link',$('scheduleSheetLink').value.trim());
+      updateTrackerLinkUI();
+      toast('Schedule link saved. Click Sync Now when ready.');
+    }catch(e){alert(e.message)}
   };
   $('saveActualSheetLinkBtn').onclick=async()=>{
     const p=selectedProject('progressProject');if(!p)return alert('Select a project first.');
-    try{await saveProjectLink(p,'actual_progress_sheet_link',$('actualSheetLink').value.trim());updateTrackerLinkUI();await syncActual((cache.projects||[]).find(x=>x.id===p.id)||p);renderProgress();renderSchedule();}catch(e){alert(e.message)}
+    try{
+      await saveProjectLink(p,'actual_progress_sheet_link',$('actualSheetLink').value.trim());
+      updateTrackerLinkUI();
+      toast('Actual Progress link saved. Click Sync Now when ready.');
+    }catch(e){alert(e.message)}
   };
   $('syncScheduleSheetBtn').onclick=async()=>{const p=selectedProject('scheduleProject');if(!p)return alert('Select a project.');try{await syncSchedule(p);renderSchedule();renderProgress();renderDashboard()}catch(e){alert(e.message)}};
   $('syncActualSheetBtn').onclick=async()=>{const p=selectedProject('progressProject');if(!p)return alert('Select a project.');try{await syncActual(p);renderProgress();renderSchedule();renderDashboard()}catch(e){alert(e.message)}};
 
-  async function autoSyncActive(){
-    if(syncing||document.visibilityState!=='visible'||!currentUser)return;
-    const active=document.querySelector('.view.active-view')?.id;
-    if(active!=='schedule'&&active!=='progress')return;
-    syncing=true;
-    try{
-      const p=selectedProject(active==='schedule'?'scheduleProject':'progressProject');
-      if(!p)return;
-      if(p.schedule_sheet_link)await syncSchedule(p,true);
-      if(p.actual_progress_sheet_link)await syncActual(p,true);
-      if(active==='schedule')renderSchedule();else renderProgress();
-      renderDashboard();
-    }catch(e){console.warn('tracker auto-sync',e)}
-    finally{syncing=false}
-  }
+  $('scheduleProject').addEventListener('change',()=>updateTrackerLinkUI());
+  $('progressProject').addEventListener('change',()=>updateTrackerLinkUI());
+  setTimeout(updateTrackerLinkUI,400);
 
-  $('scheduleProject').addEventListener('change',()=>{updateTrackerLinkUI();setTimeout(autoSyncActive,20)});
-  $('progressProject').addEventListener('change',()=>{updateTrackerLinkUI();setTimeout(autoSyncActive,20)});
-  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')autoSyncActive()},{passive:true});
-  setInterval(autoSyncActive,SYNC_MS);
-  setTimeout(()=>{updateTrackerLinkUI();autoSyncActive()},800);
 })();

@@ -910,3 +910,15 @@ No MutationObserver or page-wide repeated scan is used.
 - Schedule and Actual fuzzy scope matching remains active.
 - Old Excel-upload empty text is replaced with Google Sheet link instructions.
 - Run `v24.9-tracker-sync-fix.sql` once in Supabase.
+
+
+## v25.0 — Manual Tracker Sync + Dashboard Comparison
+- Schedule and Actual Progress sync **only when Sync Now is clicked**.
+- Saving a link no longer automatically imports data.
+- Removed the 45-second tracker background sync timer.
+- Schedule Tracker shows planned schedule information only.
+- Actual Progress shows actual accomplishment information only; Planned and Variance were removed from that page.
+- Planned-vs-Actual comparison remains on the Dashboard per project.
+- Definitively fixes the `selectedScheduleIds` / `selectedProgressIds` initialization error.
+- Retains duplicate-activity cleanup/upsert protection from v24.9.
+- Run `v25.0-tracker-sync-safety.sql` once if the v24.9 tracker SQL was not already applied.

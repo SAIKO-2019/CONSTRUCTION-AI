@@ -1,5 +1,5 @@
 {
-  "version": "24.9",
-  "label": "SAIKO Construction AI v24.9",
-  "message": "Schedule/Actual live-sync fixes: selection state initialization, duplicate activity handling, and normalized project weights."
+  "version": "25.0",
+  "label": "SAIKO Construction AI v25.0",
+  "message": "Tracker sync is now manual-only. Schedule shows planned data only, Actual Progress shows actual data only, and comparison is on Dashboard."
 }

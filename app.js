@@ -3,6 +3,13 @@ const sb=(window.supabase&&cfg.SUPABASE_URL&&cfg.SUPABASE_PUBLISHABLE_KEY)?windo
 const PROFILE_TABLE='SAIKO BUILDERS';
 let currentUser=null,currentProfile=null,cache={projects:[],billings:[],payments:[],schedule:[],progress:[],files:[],templates:[],boq:[]};
 let smartImportItems=[];
+// v25.0: selection state exists before auth/session can render any module.
+let selectedProjectIds=new Set();
+let selectedBillingIds=new Set();
+let selectedScheduleIds=new Set();
+let selectedProgressIds=new Set();
+let selectedFileIds=new Set();
+let selectedTemplateIds=new Set();
 // v24.9: selection state must exist before auth auto-entry can render any module.
 const $=id=>document.getElementById(id); const money=n=>new Intl.NumberFormat('en-PH',{style:'currency',currency:'PHP',maximumFractionDigits:2}).format(Number(n||0)); const pct=n=>`${Number(n||0).toFixed(2)}%`; const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 function toast(msg){const d=document.createElement('div');d.textContent=msg;Object.assign(d.style,{position:'fixed',right:'20px',bottom:'20px',background:'#10253a',color:'#fff',padding:'12px 16px',borderRadius:'10px',zIndex:2000,boxShadow:'0 8px 30px rgba(0,0,0,.22)'});document.body.appendChild(d);setTimeout(()=>d.remove(),3000)}
@@ -196,10 +203,8 @@ window.deleteProjectFile=async id=>{const f=cache.files.find(x=>String(x.id)===S
 async function deleteSelectedFiles(){const rows=visibleProjectFiles().filter(f=>selectedFileIds.has(String(f.id)));if(!rows.length)return;if(!confirm(`Delete ${rows.length} selected file(s)?`))return;const deleteImported=confirm('Also delete data imported from ALL selected files?\n\nOK = files + linked imported data\nCancel = stored files only');for(const f of rows){try{await removeProjectFileRecord(f,deleteImported)}catch(e){return alert(`Delete failed for ${f.file_name}: ${e.message}`)}}selectedFileIds.clear();await refreshAll();renderFiles();renderSchedule();renderBilling();renderProgress();toast(`${rows.length} file(s) deleted.`)}
 
 $('uploadTemplateBtn').onclick=async()=>{const file=$('templateFile').files[0],type=$('templateType').value;if(!file)return alert('Choose a template file.');const path=`${type.replace(/\W+/g,'_')}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;const {error}=await sb.storage.from('templates').upload(path,file);if(error)return alert(error.message);await q('document_templates','insert',{template_type:type,template_name:file.name,storage_path:path,created_by:currentUser.id});await refreshAll();renderTemplates();toast('Template saved.')};
-let selectedProjectIds=new Set(),selectedBillingIds=new Set(),selectedScheduleIds=new Set(),selectedProgressIds=new Set(),selectedFileIds=new Set();
 function bulkUI(prefix,set,rows){const cap=prefix.charAt(0).toUpperCase()+prefix.slice(1),all=$(prefix+'SelectAll'),count=$(prefix+'SelectedCount'),del=$('deleteSelected'+cap+'Btn');if(!all||!count||!del)return;const ids=rows.map(r=>String(r.id)),n=ids.filter(id=>set.has(id)).length;all.checked=ids.length>0&&n===ids.length;all.indeterminate=n>0&&n<ids.length;count.textContent=`${n} selected`;del.disabled=n===0}
 function wireBulkChecks(cls,set,cb){document.querySelectorAll('.'+cls).forEach(x=>x.onchange=()=>{x.checked?set.add(x.value):set.delete(x.value);cb()})}
-let selectedTemplateIds=new Set();
 function updateTemplateBulkUI(){
   const all=$('templateSelectAll'),count=$('templateSelectedCount'),del=$('deleteSelectedTemplatesBtn');
   if(!all||!count||!del)return;
