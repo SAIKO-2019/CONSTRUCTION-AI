@@ -38,7 +38,48 @@ $('logoutBtn').onclick=async()=>{
 (async()=>{if(!sb){$('loginError').textContent='Supabase config missing.';return}const {data}=await sb.auth.getSession();if(data.session?.user)await enter(data.session.user)})();
 
 async function q(table,op='select',payload=null){if(!sb)throw new Error('Supabase not configured');let r;if(op==='select')r=await sb.from(table).select(payload||'*');if(op==='insert')r=await sb.from(table).insert(payload).select();if(op==='update')r=await sb.from(table).update(payload.values).eq('id',payload.id).select();if(op==='delete')r=await sb.from(table).delete().eq('id',payload);if(r.error)throw r.error;return r.data||[]}
-async function refreshAll(){try{cache.projects=await q('projects');cache.billings=await q('billings');cache.payments=await q('payments');cache.schedule=await q('schedule_items');cache.progress=await q('actual_progress');cache.files=await q('project_files');cache.templates=await q('document_templates');try{cache.boq=await q('boq_items')}catch(_){cache.boq=[];}}catch(e){console.warn(e);toast('Database tables are not ready. Run supabase-setup.sql.')}syncProjectSelects();renderDashboard();}
+async function refreshAll(){
+  // Do not query protected project tables while the login screen is open.
+  // Older add-on scripts call refreshAll shortly after page load; without this
+  // guard Supabase correctly rejects the anonymous query and the UI used to
+  // show the misleading "Database tables are not ready" message.
+  if(!currentUser) return;
+
+  const loads=[
+    ['projects','projects'],
+    ['billings','billings'],
+    ['payments','payments'],
+    ['schedule','schedule_items'],
+    ['progress','actual_progress'],
+    ['files','project_files'],
+    ['templates','document_templates']
+  ];
+  const failures=[];
+
+  for(const [cacheKey,table] of loads){
+    try{
+      cache[cacheKey]=await q(table);
+    }catch(e){
+      console.warn(`Database read failed: ${table}`,e);
+      failures.push(`${table}: ${e?.message||e}`);
+      if(!Array.isArray(cache[cacheKey])) cache[cacheKey]=[];
+    }
+  }
+
+  try{cache.boq=await q('boq_items')}
+  catch(e){
+    console.warn('Database read failed: boq_items',e);
+    cache.boq=[];
+  }
+
+  if(failures.length){
+    const first=failures[0];
+    toast(`Database access issue: ${first}`);
+  }
+
+  syncProjectSelects();
+  renderDashboard();
+}
 function syncProjectSelects(){['scheduleProject','progressProject','fileProject','smartProject','bProject'].forEach(id=>{const s=$(id);if(!s)return;const old=s.value;s.innerHTML='<option value="">Select project</option>'+cache.projects.map(p=>`<option value="${p.id}">${esc(p.project_name)}</option>`).join('');if(cache.projects.some(p=>String(p.id)===String(old)))s.value=old;});}
 function proj(id){return cache.projects.find(p=>String(p.id)===String(id))}
 function plannedForProject(pid,at=new Date()){const items=cache.schedule.filter(x=>String(x.project_id)===String(pid));return items.reduce((sum,x)=>{const w=Number(x.weight||0),s=new Date(x.start_date),e=new Date(x.end_date);let f=0;if(at>=e)f=1;else if(at<=s)f=0;else f=(at-s)/(e-s||1);return sum+w*Math.max(0,Math.min(1,f));},0)}

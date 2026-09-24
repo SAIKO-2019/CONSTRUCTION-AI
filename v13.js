@@ -341,6 +341,7 @@ $('aiForm').onsubmit=async e=>{
 };
 
 setTimeout(async()=>{
+  if(!currentUser) return;
   try{
     await refreshAll();
     if($('workspaceProject')?.value) syncWorkspaceProject($('workspaceProject').value,false);

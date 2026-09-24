@@ -259,3 +259,11 @@ Hotfix v15.1: fixed Team Activity modal button clicks and removed the horizontal
 - Collaboration lock is respected when available.
 - Intended for controlled testing and quick corrections. Complex calculated/link fields remain protected.
 - No new SQL migration is required.
+
+
+## v15.9 Auth-Gated Database Refresh
+- Fixes the misleading `Database tables are not ready` toast shown on the login screen.
+- Older modules were automatically calling `refreshAll()` before a user was signed in; Supabase RLS correctly rejected those anonymous requests.
+- Startup database refreshes now run only after authentication.
+- If a real database query fails after login, the app now identifies the exact table/error instead of telling you to rerun the whole setup.
+- No SQL migration is required.

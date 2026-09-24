@@ -114,4 +114,4 @@ show=function(id){oldShowV142(id);if(id==='quotation'){renderPending()}};
 
 document.querySelectorAll('[data-jump="quotation"]').forEach(b=>b.onclick=()=>show('quotation'));
 
-setTimeout(async()=>{try{await refreshAll();renderPending();renderOngoingScheduleDashboard();renderQuotationDashboard();renderDashboard()}catch(e){console.warn('v14.2 init',e)}},800);
+setTimeout(async()=>{if(!currentUser)return;try{await refreshAll();renderPending();renderOngoingScheduleDashboard();renderQuotationDashboard();renderDashboard()}catch(e){console.warn('v14.2 init',e)}},800);

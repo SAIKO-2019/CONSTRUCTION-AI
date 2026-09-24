@@ -279,4 +279,4 @@ function dailyPendingReminder(){
   const due=cache.pendingWorks.filter(p=>String(p.project_id)===String(pid)&&p.status!=='Completed'&&p.target_date&&p.target_date<=today);
   if(due.length){toast(`${due.length} pending work item(s) need attention today. Open Pending Works.`);localStorage.setItem(key,'1')}
 }
-setTimeout(async()=>{try{await refreshAll();renderInventory();renderPending();renderDashboard();dailyPendingReminder()}catch(e){console.warn('v14 init',e)}},600);
+setTimeout(async()=>{if(!currentUser)return;try{await refreshAll();renderInventory();renderPending();renderDashboard();dailyPendingReminder()}catch(e){console.warn('v14 init',e)}},600);
