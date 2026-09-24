@@ -883,3 +883,50 @@ html[data-edit-mode="on"] .inline-editable:hover{outline:2px solid color-mix(in 
 @media(max-width:680px){
   .quotation-link-grid,.quotation-completion-row{grid-template-columns:1fr}
 }
+
+
+/* =========================================================
+   v19 For Quotation — project cards first
+   ========================================================= */
+.quotation-project-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-bottom:18px}
+.quotation-project-card{
+  border:1px solid var(--line);
+  background:var(--surface);
+  color:var(--text);
+  border-radius:20px;
+  padding:18px;
+  text-align:left;
+  box-shadow:var(--ultra-shadow-soft);
+  transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease;
+}
+.quotation-project-card:hover{transform:translateY(-2px);box-shadow:var(--ultra-shadow)}
+.quotation-project-card.active{border:2px solid var(--blue);box-shadow:0 14px 34px color-mix(in srgb,var(--blue) 12%,transparent)}
+.quotation-card-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.quotation-card-head small{display:block;color:var(--muted);font-size:9px;font-weight:900;letter-spacing:.12em}
+.quotation-card-head h3{margin:5px 0 0;font-size:19px}
+.quotation-card-metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.quotation-card-metrics>div{border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--surface-soft)}
+.quotation-card-metrics span{display:block;font-size:10px;color:var(--muted);margin-bottom:5px}
+.quotation-card-metrics strong{font-size:18px}
+.quotation-card-foot{display:flex;justify-content:space-between;gap:10px;margin-top:13px;font-size:10px;color:var(--muted)}
+.quotation-empty-state{text-align:center;padding:48px 24px;margin-bottom:18px}
+.quotation-empty-state h2{margin:8px 0}
+.quotation-empty-state p{color:var(--muted)}
+.quotation-empty-icon{width:52px;height:52px;border-radius:18px;margin:auto;display:grid;place-items:center;background:var(--surface-soft);font-size:24px}
+.quotation-selected-wrap{display:grid;gap:16px}
+.quotation-project-header{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px}
+.quotation-project-header small{color:var(--muted);font-size:9px;font-weight:900;letter-spacing:.12em}
+.quotation-project-header h2{margin:4px 0 5px}
+.quotation-project-header a{font-size:12px;color:var(--blue);font-weight:800}
+.quotation-header-actions{display:flex;gap:10px;align-items:center}
+.quotation-selected-kpis{margin-bottom:0}
+.quotation-add-dialog{width:min(620px,92vw)}
+.quotation-add-status{min-height:22px;font-size:12px;font-weight:700}
+.quotation-add-status.loading{color:#b7791f}
+.quotation-add-status.ok{color:#15803d}
+.quotation-add-status.error{color:#b91c1c}
+@media(max-width:760px){
+  .quotation-card-metrics{grid-template-columns:1fr}
+  .quotation-project-header{align-items:flex-start;flex-direction:column}
+  .quotation-header-actions{width:100%;justify-content:space-between}
+}

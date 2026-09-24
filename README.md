@@ -312,3 +312,22 @@ No SQL migration is required because the existing quotation fields are reused:
 - `projected_profit` = Present Profit
 - `boq_file_name/boq_storage_path` = final completion file
 - `status` = For Quotation / Complete
+
+
+## v19 Quotation Project Cards
+The For Quotation workspace is rebuilt around one simple workflow:
+
+1. Click **+ Add Quotation**
+2. Paste only the Google Sheets costing link
+3. The app reads the Sheet automatically
+4. A project card is created using the Sheet project name (or first worksheet name as fallback)
+5. Each project card immediately shows:
+   - Status
+   - Running / Indirect Total Cost
+   - Present Profit
+6. Click a project card to open its current details
+7. Upload the final quotation file when done
+8. Uploading the final file automatically changes the quotation to **Complete**
+
+No manual quotation amount entry is required.
+No SQL migration is required.
