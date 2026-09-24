@@ -1,5 +1,5 @@
 {
-  "version": "25.0",
-  "label": "SAIKO Construction AI v25.0",
-  "message": "Tracker sync is now manual-only. Schedule shows planned data only, Actual Progress shows actual data only, and comparison is on Dashboard."
+  "version": "25.2",
+  "label": "SAIKO Construction AI v25.2",
+  "message": "Schedule and Actual Progress live sync now checks every 10 seconds."
 }

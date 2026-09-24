@@ -893,7 +893,7 @@ No MutationObserver or page-wide repeated scan is used.
 - Schedule Tracker and Actual Progress are now **per-project Google Sheet link based**.
 - Paste the link while the exact Schedule/Actual tab is open so its `gid` is included.
 - The parser automatically detects common Activity/Description, Start, Finish, Weight, Actual/Accomplishment columns.
-- When either tracker page is open, linked sheets auto-sync every **45 seconds** and immediately when switching project/returning to the tab.
+- When either tracker page is open, linked sheets auto-sync every **10 seconds** and immediately when switching project/returning to the tab.
 - Sheet links are authoritative for their tracker: sync replaces that project's Schedule or Actual Progress rows with the latest linked Sheet data.
 - Schedule and Actual scope names are fuzzy-matched, so slightly different wording can still compare.
 - Overall Actual % uses Schedule weights against matched Actual Progress % when both linked datasets exist.
@@ -922,3 +922,24 @@ No MutationObserver or page-wide repeated scan is used.
 - Definitively fixes the `selectedScheduleIds` / `selectedProgressIds` initialization error.
 - Retains duplicate-activity cleanup/upsert protection from v24.9.
 - Run `v25.0-tracker-sync-safety.sql` once if the v24.9 tracker SQL was not already applied.
+
+
+## v25.1 — Visible-Only Live Tracker Sync
+- Live sync is restored while the app is open.
+- **Schedule link** reads only planned fields used by Schedule Tracker.
+- **Actual Progress link** reads only Actual/Accomplishment fields used by Actual Progress.
+- Schedule and Actual remain separate; their comparison appears only on Dashboard.
+- Google Sheet reading now uses XLSX export and filters out **hidden rows and hidden columns** before parsing.
+- Hidden Sheet data is therefore ignored by the tracker.
+- Live sync runs every **10 seconds** only for the active Schedule/Actual page, or both sources for the selected project while Dashboard is open.
+- Immediate sync also occurs when returning to the tab, reconnecting to the internet, or changing the selected project.
+- `Sync Now` remains available for an immediate manual refresh.
+- No new SQL required beyond v24.8/v25.0 link fields and tracker safety migration.
+
+
+## v25.2 — 10-Second Tracker Live Sync
+- Schedule and Actual Progress live sync interval reduced from 45 seconds to **10 seconds**.
+- Still syncs only the relevant active tracker/dashboard context.
+- No MutationObserver and no additional recurring timers were added.
+- `Sync Now` remains available for immediate refresh.
+- No SQL required.

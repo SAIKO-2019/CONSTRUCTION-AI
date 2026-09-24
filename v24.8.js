@@ -289,4 +289,9 @@
   $('progressProject').addEventListener('change',()=>updateTrackerLinkUI());
   setTimeout(updateTrackerLinkUI,400);
 
+  // v25.1 exposes only the small sync helpers needed by the live-sync controller.
+  window.syncSchedule=syncSchedule;
+  window.syncActual=syncActual;
+  window.updateTrackerLinkUI=updateTrackerLinkUI;
+
 })();
