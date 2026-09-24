@@ -887,3 +887,16 @@ No MutationObserver or page-wide repeated scan is used.
 - Project Financial Summary also shows the explicit **Subcon Contract** amount.
 - Detailed billing remains inside Billing & Payments.
 - Run `v24.7-subcon-contract-scope.sql` once in Supabase.
+
+
+## v24.8 — Live Google Sheet Schedule + Actual Progress
+- Schedule Tracker and Actual Progress are now **per-project Google Sheet link based**.
+- Paste the link while the exact Schedule/Actual tab is open so its `gid` is included.
+- The parser automatically detects common Activity/Description, Start, Finish, Weight, Actual/Accomplishment columns.
+- When either tracker page is open, linked sheets auto-sync every **45 seconds** and immediately when switching project/returning to the tab.
+- Sheet links are authoritative for their tracker: sync replaces that project's Schedule or Actual Progress rows with the latest linked Sheet data.
+- Schedule and Actual scope names are fuzzy-matched, so slightly different wording can still compare.
+- Overall Actual % uses Schedule weights against matched Actual Progress % when both linked datasets exist.
+- Match summary shows matched, schedule-only, and actual-only scopes.
+- No MutationObserver; one active-view-only timer.
+- Run `v24.8-schedule-actual-sheet-links.sql` once in Supabase.

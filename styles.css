@@ -1994,3 +1994,17 @@ dialog:not(.patch-required-dialog) .dialog-card{
 .subcon-contract-fields label{font-size:10px;font-weight:700;color:var(--muted)}
 .subcon-contract-fields input{margin-top:5px}
 @media(max-width:700px){.subcon-contract-fields{grid-template-columns:1fr}}
+
+
+/* v24.8 linked Schedule + Actual Progress trackers */
+.tracker-link-toolbar{display:grid;grid-template-columns:minmax(170px,.6fr) minmax(320px,1.6fr) auto auto;gap:10px;align-items:end}
+.tracker-link-field{min-width:0}
+.tracker-link-field input{width:100%}
+.tracker-sync-status{grid-column:2/-1;font-size:9px;color:var(--muted)}
+.tracker-match-summary{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:8px 0 12px}
+.tracker-match-summary span{padding:6px 9px;border:1px solid var(--line);border-radius:999px;background:var(--surface-soft);font-size:9px;color:var(--muted)}
+.tracker-match-summary span strong{color:var(--heading);font-size:10px}
+.tracker-match-summary small{font-size:9px;color:var(--muted)}
+.scope-match-note{display:block;margin-top:3px;font-size:8px;color:var(--muted);font-weight:500}
+@media(max-width:900px){.tracker-link-toolbar{grid-template-columns:1fr 1fr}.tracker-link-field{grid-column:1/-1}.tracker-sync-status{grid-column:1/-1}}
+@media(max-width:560px){.tracker-link-toolbar{grid-template-columns:1fr}.tracker-link-field,.tracker-sync-status{grid-column:1}}
