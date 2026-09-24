@@ -1,7 +1,7 @@
 // SAIKO Construction AI v21.1 — lightweight patch/version watcher
 (function(){
-  const CURRENT_PATCH='22.1';
-  const CHECK_EVERY_MS=5*60*1000; // one tiny request every 5 minutes
+  const CURRENT_PATCH='22.3';
+  const CHECK_EVERY_MS=20*1000; // one tiny request every 5 minutes
   let checking=false;
   let patchRequired=false;
   let intervalId=null;
@@ -67,9 +67,9 @@
       sessionStorage.clear();
     }catch(_){}
 
-    try{localStorage.setItem('saiko_patch_seen','22.1')}catch(_){}
+    try{localStorage.setItem('saiko_patch_seen','22.3')}catch(_){}
     const url=new URL(window.location.origin+window.location.pathname);
-    url.searchParams.set('patch','22.1');
+    url.searchParams.set('patch','22.3');
     url.searchParams.set('login','required');
     window.location.replace(url.toString());
   }
@@ -94,13 +94,15 @@
   }
 
   // Initial check is delayed so login/app rendering remains fast.
-  setTimeout(checkPatch,2500);
+  setTimeout(checkPatch,500);
   intervalId=setInterval(checkPatch,CHECK_EVERY_MS);
 
   // Also check immediately when a user returns to the tab; no polling while hidden is added.
   document.addEventListener('visibilitychange',()=>{
     if(document.visibilityState==='visible')checkPatch();
   },{passive:true});
+
+  window.addEventListener('online',checkPatch,{passive:true});
 
   window.checkForSaikoPatch=checkPatch;
 })();

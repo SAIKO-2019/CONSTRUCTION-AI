@@ -4,6 +4,11 @@ function extractSpreadsheetId(input=""){
   const m=String(input||"").trim().match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
   return m?m[1]:null;
 }
+function extractSheetGid(input=""){
+  const s=String(input||"");
+  const m=s.match(/[?#&]gid=(\d+)/);
+  return m?m[1]:null;
+}
 function safeText(cell){
   try{
     if(!cell)return "";
@@ -286,17 +291,47 @@ function parseSummarySheet(workbook){
 export default async function handler(req,res){
   if(req.method!=="POST")return res.status(405).json({ok:false,error:"Method not allowed"});
   try{
-    const id=extractSpreadsheetId(req.body?.link);
+    const link=req.body?.link;
+    const id=extractSpreadsheetId(link);
+    const gid=extractSheetGid(link);
     if(!id)return res.status(400).json({ok:false,error:"Paste a valid Google Sheets link."});
     const workbook=new ExcelJS.Workbook();
     let loaded=false;
-    let accessMode="xlsx";
+    let accessMode=null;
 
-    // Primary: full XLSX export. This works for link-shared Google Sheets.
+    function parseCsvIntoSummary(csv){
+      if(!csv || /accounts\.google\.com|sign in/i.test(csv))return false;
+      const ws=workbook.getWorksheet("SUMMARY") || workbook.addWorksheet("SUMMARY");
+      const rows=[];
+      let row=[],field="",quoted=false;
+      for(let i=0;i<csv.length;i++){
+        const ch=csv[i],next=csv[i+1];
+        if(ch==='"'){
+          if(quoted && next==='"'){field+='"';i++;}
+          else quoted=!quoted;
+        }else if(ch===',' && !quoted){
+          row.push(field);field="";
+        }else if((ch==='\n'||ch==='\r') && !quoted){
+          if(ch==='\r'&&next==='\n')i++;
+          row.push(field);field="";
+          rows.push(row);row=[];
+        }else field+=ch;
+      }
+      if(field.length||row.length){row.push(field);rows.push(row);}
+      if(!rows.length)return false;
+      rows.forEach((vals,r)=>vals.forEach((v,c)=>{ws.getCell(r+1,c+1).value=v;}));
+      return true;
+    }
+
+    // 1) Full XLSX export. "Anyone with the link" works whether role is Viewer OR Editor.
     try{
       const response=await fetch(`https://docs.google.com/spreadsheets/d/${id}/export?format=xlsx`,{
         redirect:"follow",
-        headers:{"user-agent":"SAIKO-Construction-AI/1.0","cache-control":"no-cache"}
+        headers:{
+          "user-agent":"Mozilla/5.0 SAIKO-Construction-AI",
+          "accept":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,*/*",
+          "cache-control":"no-cache"
+        }
       });
       const ct=response.headers.get("content-type")||"";
       if(response.ok && !ct.includes("text/html")){
@@ -304,42 +339,58 @@ export default async function handler(req,res){
         if(buf.length){
           await workbook.xlsx.load(buf);
           loaded=true;
+          accessMode="xlsx";
         }
       }
     }catch(_){}
 
-    // Fallback: Google Visualization CSV endpoint for the SUMMARY tab.
-    // This is often more tolerant for Sheets shared by link, including edit-style share URLs.
+    // 2) Direct CSV export using the exact gid from the user's Google Sheets URL.
+    if(!loaded && gid){
+      try{
+        const url=`https://docs.google.com/spreadsheets/d/${id}/export?format=csv&gid=${encodeURIComponent(gid)}`;
+        const r=await fetch(url,{
+          redirect:"follow",
+          headers:{"user-agent":"Mozilla/5.0 SAIKO-Construction-AI","cache-control":"no-cache"}
+        });
+        const ct=r.headers.get("content-type")||"";
+        const body=await r.text();
+        if(r.ok && !ct.includes("text/html") && parseCsvIntoSummary(body)){
+          loaded=true;
+          accessMode="csv_gid";
+        }
+      }catch(_){}
+    }
+
+    // 3) Google Visualization endpoint using gid.
+    if(!loaded && gid){
+      try{
+        const url=`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&gid=${encodeURIComponent(gid)}`;
+        const r=await fetch(url,{
+          redirect:"follow",
+          headers:{"user-agent":"Mozilla/5.0 SAIKO-Construction-AI","cache-control":"no-cache"}
+        });
+        const ct=r.headers.get("content-type")||"";
+        const body=await r.text();
+        if(r.ok && !ct.includes("text/html") && parseCsvIntoSummary(body)){
+          loaded=true;
+          accessMode="gviz_gid";
+        }
+      }catch(_){}
+    }
+
+    // 4) Last fallback: query the tab by the literal SUMMARY sheet name.
     if(!loaded){
       try{
-        const csvUrl=`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent("SUMMARY")}`;
-        const response=await fetch(csvUrl,{
+        const url=`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent("SUMMARY")}`;
+        const r=await fetch(url,{
           redirect:"follow",
-          headers:{"user-agent":"SAIKO-Construction-AI/1.0","cache-control":"no-cache"}
+          headers:{"user-agent":"Mozilla/5.0 SAIKO-Construction-AI","cache-control":"no-cache"}
         });
-        const ct=response.headers.get("content-type")||"";
-        const csv=await response.text();
-        if(response.ok && csv && !ct.includes("text/html") && !/accounts\.google\.com|sign in/i.test(csv)){
-          const ws=workbook.addWorksheet("SUMMARY");
-          const rows=[];
-          let row=[],field="",quoted=false;
-          for(let i=0;i<csv.length;i++){
-            const ch=csv[i],next=csv[i+1];
-            if(ch==='"'){
-              if(quoted && next==='"'){field+='"';i++;}
-              else quoted=!quoted;
-            }else if(ch===',' && !quoted){
-              row.push(field);field="";
-            }else if((ch==='\n'||ch==='\r') && !quoted){
-              if(ch==='\r'&&next==='\n')i++;
-              row.push(field);field="";
-              rows.push(row);row=[];
-            }else field+=ch;
-          }
-          if(field.length||row.length){row.push(field);rows.push(row);}
-          rows.forEach((vals,r)=>vals.forEach((v,c)=>{ws.getCell(r+1,c+1).value=v;}));
-          loaded=rows.length>0;
-          accessMode="summary_csv";
+        const ct=r.headers.get("content-type")||"";
+        const body=await r.text();
+        if(r.ok && !ct.includes("text/html") && parseCsvIntoSummary(body)){
+          loaded=true;
+          accessMode="gviz_summary";
         }
       }catch(_){}
     }
@@ -347,9 +398,10 @@ export default async function handler(req,res){
     if(!loaded){
       return res.status(400).json({
         ok:false,
-        error:"Google Sheet could not be read by the server. If it is shared only to specific Google accounts, link access is not enough for server-side reading. Set General access to “Anyone with the link” (Viewer or Editor), then try again."
+        error:"Google Sheet is shared by link, but Google did not expose a readable export to the server. Keep General access as “Anyone with the link”; Viewer OR Editor is accepted. Try copying the link again from the SUMMARY tab so its gid is included."
       });
     }
+
     const indirect=findMetric(workbook,"indirect",{numeric:true});
     const profit=findMetric(workbook,"profit",{numeric:true});
     const project=findMetric(workbook,"project",{numeric:false});

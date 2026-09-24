@@ -604,3 +604,26 @@ No SQL migration required for v21.1.
 - Renamed `Test Cute Reminder` to simply `Reminder`.
 - Keeps the same reminder behavior and sound; only the label/copy was simplified.
 - No new SQL required.
+
+
+## v22.2 — Faster Mandatory Patch Detection
+- Patch notice check interval reduced from 5 minutes to **20 seconds**.
+- Initial patch check starts about **0.5 second** after page load.
+- Returning to the tab still triggers an immediate check.
+- Reconnecting to the internet also triggers an immediate check.
+- Request remains a tiny `patch-version.json` no-cache fetch.
+- No MutationObserver or page-wide scans were added.
+- Mandatory refresh + hard logout + manual login + reCAPTCHA flow remains enabled.
+- No new SQL required.
+
+
+## v22.3 — Google Sheets “Anyone with the link — Editor” Support
+- You do **not** need to change the Sheet from Editor to Viewer.
+- The reader now tries four methods automatically:
+  1. XLSX workbook export
+  2. CSV export using the exact `gid` from the pasted link
+  3. Google Visualization CSV using `gid`
+  4. Google Visualization CSV using the `SUMMARY` tab name
+- For best results, open the `SUMMARY` tab first, then use **Copy link** and paste that URL into the quotation form.
+- This patch keeps the Item No. A/B/C/D scope parser from v21.7.
+- No SQL migration required.
