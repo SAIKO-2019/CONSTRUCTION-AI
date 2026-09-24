@@ -4,7 +4,7 @@
 // 2) explicit database release bumps from migrations
 // Normal For Quotation Google Sheet data changes NEVER trigger logout/reCAPTCHA.
 (function(){
-  const CURRENT_PATCH='24.0';
+  const CURRENT_PATCH='24.1';
   const CHECK_EVERY_MS=10*1000;
   const APP_DEPLOY_KEY='saiko_seen_deployment';
   const DB_RELEASE_KEY='saiko_seen_db_release';

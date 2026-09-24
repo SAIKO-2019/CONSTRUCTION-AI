@@ -817,3 +817,17 @@ No MutationObserver or page-wide repeated scan is used.
 - Only one `setTimeout`; no interval, MutationObserver, or page-wide scan.
 - Respects `prefers-reduced-motion`.
 - No SQL required.
+
+
+## v24.1 — Linked GenCon → Subcon Allocation
+- Every GenCon/Client Billing automatically appears in the Subcon folder.
+- Each linked GenCon billing has **Has Subcon? Yes/No**.
+- If Has Subcon = Yes, encode only:
+  - Total Deductions
+  - Retention %
+  - Recoupment %
+- The system calculates deductions against the **actual GenCon collected amount**.
+- Net Available for Subcon = GenCon Collection − Total Deductions − Retention − Recoupment.
+- Original GenCon collection is never altered; the Subcon folder shows the derived amount available for subcontract use.
+- Dashboard adds Linked Subcon Available and Linked Subcon Deductions summaries.
+- Requires running `v24.1-linked-gencon-subcon.sql` once in Supabase.

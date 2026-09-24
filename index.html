@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SAIKO Construction AI</title>
   <link rel="stylesheet" href="styles.css?v=2201" />
-    <script src="patch-gate.js?v=2402"></script>
+    <script src="patch-gate.js?v=2411"></script>
 <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
 </head>
 <body>
@@ -133,6 +133,15 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
           </button>
         </div>
         <div id="billingFolderTransition" class="billing-folder-transition"></div>
+        <div id="linkedSubconPanel" class="linked-subcon-panel" hidden>
+          <div class="panel-head">
+            <div>
+              <h2>Linked GenCon → Subcon</h2>
+              <span class="muted">Every GenCon billing appears here automatically. Choose whether that billing has a subcontractor, then set the deductions.</span>
+            </div>
+          </div>
+          <div id="linkedSubconRows"></div>
+        </div>
         <div id="billingKPIs" class="kpi-grid"></div>
         <div class="panel subcon-commercial-settings" id="subconCommercialSettings">
           <div class="panel-head">
@@ -713,7 +722,7 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
 
   <script src="v20.7.js?v=2071"></script>
   <script src="v21.js?v=2131"></script>
-  <script src="patch-watch.js?v=2402"></script>
+  <script src="patch-watch.js?v=2411"></script>
   <script src="v21.3.js?v=2131"></script>
   <script src="v21.4.js?v=2141"></script>
   <script src="v21.5.js?v=2151"></script>
@@ -730,5 +739,32 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
   <script src="v23.8.js?v=2381"></script>
   <script src="v23.9.js?v=2391"></script>
   <script src="v24.0.js?v=2402"></script>
+
+  <dialog id="linkedSubconDialog">
+    <form id="linkedSubconForm" class="dialog-card wide">
+      <div class="dialog-head"><h2>Subcon Allocation Setup</h2><button type="button" data-close="linkedSubconDialog">×</button></div>
+      <input id="linkedSubconBillingId" type="hidden">
+      <div class="form-grid">
+        <label class="span-2">GenCon Billing<input id="linkedSubconBillingLabel" readonly></label>
+        <label>Has Subcontractor?
+          <select id="linkedHasSubcon">
+            <option value="false">No Subcon</option>
+            <option value="true">Has Subcon</option>
+          </select>
+        </label>
+        <label>Collected from GenCon<input id="linkedCollected" readonly></label>
+        <label>Total Deductions<input id="linkedTotalDeductions" type="number" min="0" step="0.01" value="0"></label>
+        <label>Retention %<input id="linkedRetentionPct" type="number" min="0" max="100" step="0.01" value="0"></label>
+        <label>Recoupment %<input id="linkedRecoupmentPct" type="number" min="0" max="100" step="0.01" value="0"></label>
+      </div>
+      <div id="linkedSubconCalc" class="summary-cards compact-summary"></div>
+      <div class="dialog-actions">
+        <button type="button" class="secondary-btn" data-close="linkedSubconDialog">Cancel</button>
+        <button type="submit" class="primary-btn">Save Subcon Setup</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="v24.1.js?v=2411"></script>
 </body>
 </html>
