@@ -331,3 +331,20 @@ The For Quotation workspace is rebuilt around one simple workflow:
 
 No manual quotation amount entry is required.
 No SQL migration is required.
+
+
+## v20 For Quotation — Project Dashboard + History
+New workflow:
+1. Click **+ Add Quotation Project**
+2. Enter Project Name, optional Client, and Google Sheets Link
+3. Save
+4. The Sheet is read automatically for:
+   - Indirect Total Cost
+   - Present Profit
+5. The project is saved and appears in quotation history
+6. Each quotation project has its own mini dashboard
+7. When finished, upload the final quotation file
+8. The project is automatically marked **Complete**
+9. Creation, Sheet refresh, and completion are stored in the existing `activity_log` table as quotation history
+
+No new SQL migration is required.

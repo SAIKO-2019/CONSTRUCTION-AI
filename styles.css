@@ -930,3 +930,24 @@ html[data-edit-mode="on"] .inline-editable:hover{outline:2px solid color-mix(in 
   .quotation-project-header{align-items:flex-start;flex-direction:column}
   .quotation-header-actions{width:100%;justify-content:space-between}
 }
+
+
+/* =========================================================
+   v20 quotation project dashboard
+   ========================================================= */
+#quotationOverviewKPIs{grid-template-columns:repeat(5,minmax(0,1fr));margin-bottom:18px}
+.quotation-project-subline{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.quotation-dashboard-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);gap:16px}
+.quotation-history-panel{min-height:280px}
+.quotation-history-list{display:grid;gap:10px;padding:16px}
+.quotation-history-item{display:grid;grid-template-columns:14px minmax(0,1fr);gap:10px;align-items:flex-start}
+.quotation-history-dot{width:10px;height:10px;border-radius:50%;background:var(--blue);margin-top:5px;box-shadow:0 0 0 4px color-mix(in srgb,var(--blue) 12%,transparent)}
+.quotation-history-item strong{display:block;font-size:12px}
+.quotation-history-item span{display:block;font-size:10px;color:var(--muted);margin-top:3px}
+@media(max-width:1100px){
+  #quotationOverviewKPIs{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .quotation-dashboard-grid{grid-template-columns:1fr}
+}
+@media(max-width:680px){
+  #quotationOverviewKPIs{grid-template-columns:1fr}
+}

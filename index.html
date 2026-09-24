@@ -196,25 +196,31 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
           <div>
             <small>PRE-CONSTRUCTION / ESTIMATING</small>
             <h1>For Quotation</h1>
-            <p>Add a quotation by pasting only its Google Sheets link. The system automatically reads the project, Indirect Total Cost, Present Profit, and tracks the quotation until the final file is uploaded.</p>
+            <p>Create a quotation project, attach its Google Sheets costing link, and let the system read the running Indirect Total Cost and Present Profit automatically. Upload the final file when the quotation is finished.</p>
           </div>
-          <button id="addPendingBtn" class="primary-btn">+ Add Quotation</button>
+          <button id="addPendingBtn" class="primary-btn">+ Add Quotation Project</button>
         </div>
+
+        <div id="quotationOverviewKPIs" class="kpi-grid"></div>
 
         <div id="quotationProjectCards" class="quotation-project-card-grid"></div>
 
         <div id="quotationEmptyState" class="panel quotation-empty-state">
           <div class="quotation-empty-icon">↗</div>
           <h2>No quotation projects yet</h2>
-          <p>Click <strong>+ Add Quotation</strong> and paste the Google Sheets link. No manual amount encoding is needed.</p>
+          <p>Click <strong>+ Add Quotation Project</strong>, enter the project name and Google Sheets link, then Save.</p>
         </div>
 
         <div id="quotationSelectedPanel" class="quotation-selected-wrap hidden">
           <div class="panel quotation-project-header">
             <div>
-              <small>SELECTED QUOTATION</small>
+              <small>QUOTATION PROJECT DASHBOARD</small>
               <h2 id="quotationSelectedName">Quotation Project</h2>
-              <a id="quotationSelectedLink" href="#" target="_blank" rel="noopener">Open Google Sheet ↗</a>
+              <div class="quotation-project-subline">
+                <span id="quotationSelectedClient">—</span>
+                <span>•</span>
+                <a id="quotationSelectedLink" href="#" target="_blank" rel="noopener">Open Google Sheet ↗</a>
+              </div>
             </div>
             <div class="quotation-header-actions">
               <button id="refreshQuotationLinkBtn" class="secondary-btn" type="button">↻ Refresh from Sheet</button>
@@ -245,20 +251,32 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
             </div>
           </div>
 
-          <div class="panel quotation-completion-panel">
-            <div class="panel-head">
-              <div>
-                <h2>Complete This Quotation</h2>
-                <p class="muted">Once the quotation is done, upload the final costing / quotation file. The status becomes Complete automatically.</p>
+          <div class="quotation-dashboard-grid">
+            <div class="panel quotation-completion-panel">
+              <div class="panel-head">
+                <div>
+                  <h2>Final Quotation File</h2>
+                  <p class="muted">When the quotation is approved/finished, upload the final file. This project becomes Complete automatically.</p>
+                </div>
               </div>
+              <div class="quotation-completion-row">
+                <label>Upload Final File
+                  <input id="quotationBoqFile" type="file" accept=".xlsx,.xls,.csv,.pdf,.doc,.docx">
+                </label>
+                <button id="saveQuotationDataBtn" class="primary-btn" type="button">Upload & Mark Complete</button>
+              </div>
+              <div id="quotationCompletionFile" class="smart-note">No final file uploaded yet.</div>
             </div>
-            <div class="quotation-completion-row">
-              <label>Final Quotation File
-                <input id="quotationBoqFile" type="file" accept=".xlsx,.xls,.csv,.pdf,.doc,.docx">
-              </label>
-              <button id="saveQuotationDataBtn" class="primary-btn" type="button">Upload & Mark Complete</button>
+
+            <div class="panel quotation-history-panel">
+              <div class="panel-head">
+                <div>
+                  <h2>Quotation History</h2>
+                  <p class="muted">Saved link reads, amount updates, and final-file completion.</p>
+                </div>
+              </div>
+              <div id="quotationHistoryList" class="quotation-history-list"></div>
             </div>
-            <div id="quotationCompletionFile" class="smart-note">No final file uploaded yet.</div>
           </div>
         </div>
       </section>
@@ -343,19 +361,27 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     <form id="pendingForm" class="dialog-card quotation-add-dialog">
       <div class="dialog-head">
         <div>
-          <small>NEW QUOTATION</small>
-          <h2>Add Google Sheets Link</h2>
+          <small>NEW QUOTATION PROJECT</small>
+          <h2>Add Project & Costing Link</h2>
         </div>
         <button type="button" data-close="pendingDialog">×</button>
       </div>
-      <p class="muted">Paste the costing sheet link only. The system will read the project name, Indirect Total Cost, and Present Profit automatically.</p>
+      <p class="muted">Enter the quotation project and Google Sheets link. The amounts are read from the Sheet automatically.</p>
+      <div class="form-grid">
+        <label>Project Name
+          <input id="pwWorkItem" placeholder="e.g. ABC Resort Phase 2" required>
+        </label>
+        <label>Client / Owner
+          <input id="pwClient" placeholder="Optional">
+        </label>
+      </div>
       <label>Google Sheets Link
         <input id="pwGsheetLink" type="url" placeholder="https://docs.google.com/spreadsheets/d/..." required>
       </label>
       <div id="quotationAddStatus" class="quotation-add-status"></div>
       <div class="dialog-actions">
         <button type="button" class="secondary-btn" data-close="pendingDialog">Cancel</button>
-        <button id="createQuotationFromLinkBtn" class="primary-btn" type="submit">Read Link & Add Project</button>
+        <button id="createQuotationFromLinkBtn" class="primary-btn" type="submit">Save Project & Read Sheet</button>
       </div>
     </form>
   </dialog>
@@ -516,5 +542,6 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
   <script src="v17-core.js?v=1701"></script>
   <script src="v18.js?v=1801"></script>
   <script src="v19.js?v=1901"></script>
+  <script src="v20.js?v=2001"></script>
 </body>
 </html>
