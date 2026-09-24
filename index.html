@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SAIKO Construction AI</title>
   <link rel="stylesheet" href="styles.css?v=2201" />
-    <script src="patch-gate.js?v=2351"></script>
+    <script src="patch-gate.js?v=2371"></script>
 <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
 </head>
 <body>
@@ -80,7 +80,12 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </header>
 
       <section id="dashboard" class="view active-view">
-        <div class="page-head"><div><small>CONSTRUCTION MANAGEMENT</small><h1>Dashboard</h1><p>Live overview of projects, billing, schedule, progress, and files.</p></div></div>
+        <div class="page-head"><div><small>CONSTRUCTION MANAGEMENT</small><h1>Dashboard</h1><p>Live overview of projects, billing, schedule, progress, and files.</p>
+        <div id="dashboardQuotationRemarks" class="dashboard-quotation-remarks">
+          <strong>For Quotation:</strong>
+          <span>Quotation projects are tracked separately before award. Once classified/awarded, the related project can be monitored here under Projects, Billing, Progress, and Budget.</span>
+          <button type="button" class="text-btn" data-go="quotation">Open For Quotation</button>
+        </div></div></div>
         <div id="kpiGrid" class="kpi-grid"></div>
         <div class="dashboard-grid">
           <div class="panel"><div class="panel-head"><h2>Active Projects</h2><button class="text-btn" data-go="projects">Manage</button></div><div class="table-wrap"><table><thead><tr><th>Project</th><th>Status</th><th>Actual</th><th>Planned</th><th>Variance</th></tr></thead><tbody id="dashProjects"></tbody></table></div></div>
@@ -691,7 +696,7 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
 
   <script src="v20.7.js?v=2071"></script>
   <script src="v21.js?v=2131"></script>
-  <script src="patch-watch.js?v=2351"></script>
+  <script src="patch-watch.js?v=2371"></script>
   <script src="v21.3.js?v=2131"></script>
   <script src="v21.4.js?v=2141"></script>
   <script src="v21.5.js?v=2151"></script>
@@ -703,5 +708,7 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
   <script src="v23.3.js?v=2332"></script>
   <script src="v23.4.js?v=2341"></script>
   <script src="v23.5.js?v=2351"></script>
+  <script src="v23.6.js?v=2361"></script>
+  <script src="v23.7.js?v=2371"></script>
 </body>
 </html>

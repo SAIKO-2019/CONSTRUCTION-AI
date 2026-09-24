@@ -772,3 +772,20 @@ No MutationObserver or page-wide repeated scan is used.
 - Includes one consolidated SQL migration: `v23.5-required-database-fix.sql`.
 - The migration creates any missing subcontract/billing columns from v23.0-v23.3 and reloads the Supabase schema cache.
 - After running SQL, wait 10-20 seconds and refresh the app.
+
+
+## v23.6 — Dashboard For Quotation Remarks
+- Adds a small Dashboard remark showing the connection to **For Quotation**.
+- Shows live counts for Active Quotations, Awarded, and Not Awarded.
+- Includes an **Open For Quotation** shortcut.
+- Detailed quotation data stays inside the For Quotation module; Dashboard remains summary-only.
+- No new SQL required.
+
+
+## v23.7 — Sticky Project / Stay Where You Are
+- Fixes the recurring jump back to the global Project Folder during background refreshes and Google Sheet auto-sync.
+- Billing, Schedule, Progress, Inventory, Budget, Files, and the global Workspace now remember their own selected project independently.
+- Changing the top Project Folder still intentionally synchronizes module project filters.
+- Background `refreshAll()` no longer overwrites the project you are currently viewing.
+- The active module and scroll position are preserved across refresh/re-login.
+- No SQL required.

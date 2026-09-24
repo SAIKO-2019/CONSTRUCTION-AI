@@ -1,5 +1,5 @@
 {
-  "version": "23.5",
-  "label": "SAIKO Construction AI v23.5",
-  "message": "Billing save schema fix. Run the included consolidated SQL once, then log in again."
+  "version": "23.7",
+  "label": "SAIKO Construction AI v23.7",
+  "message": "A new system patch is required. Project/module selection is now sticky and background sync will no longer jump users back to another project."
 }
