@@ -841,3 +841,10 @@ No MutationObserver or page-wide repeated scan is used.
 - Added one-time database backfill: `v24.2-existing-records-backfill.sql`.
 - Added no-cache Vercel headers + cache-busted local assets to prevent the browser from showing an older patch after deployment.
 - The same compatibility approach applies to project/subcon fields added in earlier patches.
+
+
+## v24.3 — Clean Subcon View
+- In the **Subcon** folder, only the linked summary cards are shown.
+- Hidden from the Subcon folder to reduce clutter: KPI cards, commercial settings block, and the billing records table.
+- The **Setup** button remains available on every linked card.
+- GenCon view remains unchanged.

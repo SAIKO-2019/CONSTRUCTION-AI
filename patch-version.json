@@ -1,5 +1,5 @@
 {
-  "version": "24.2",
-  "label": "SAIKO Construction AI v24.2",
-  "message": "Existing records now adopt new features immediately. No delete/re-create/re-upload is required."
+  "version": "24.3",
+  "label": "SAIKO Construction AI v24.3",
+  "message": "Subcon folder now uses a simplified view showing only linked summary cards and setup actions."
 }
