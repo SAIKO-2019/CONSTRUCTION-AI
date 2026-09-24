@@ -1701,3 +1701,20 @@ dialog:not(.patch-required-dialog) .dialog-card{
 @media(max-width:640px){
   .quotation-auto-sync-bar{align-items:flex-start;flex-direction:column}
 }
+
+
+/* v23.0 Project subcontract dependency */
+.project-subcon-badge{
+  display:inline-flex;
+  align-items:center;
+  min-width:82px;
+  justify-content:center;
+  padding:4px 8px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  font-size:10px;
+  font-weight:700;
+  line-height:1;
+  background:var(--surface-soft);
+}
+.project-subcon-badge.dependent{font-weight:800}

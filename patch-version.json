@@ -1,5 +1,5 @@
 {
-  "version": "22.8",
-  "label": "SAIKO Construction AI v22.8",
-  "message": "A new software patch is required. For Quotation Google Sheet links now auto-sync almost immediately without re-login for normal data changes."
+  "version": "23.0",
+  "label": "SAIKO Construction AI v23.0",
+  "message": "A new software/database patch is required. Projects now include a Subcontract Dependency category. Log in again with reCAPTCHA."
 }

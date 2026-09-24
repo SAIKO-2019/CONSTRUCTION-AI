@@ -713,3 +713,22 @@ No MutationObserver or page-wide repeated scan is used.
 - Complete, Awarded, and Not Awarded projects remain frozen from auto-sync.
 - No MutationObserver; one lightweight 30-second timer only.
 - No new SQL required.
+
+
+## v22.9 — Project Edit Button
+- Adds an **Edit** button beside Delete in the Projects table.
+- Edit opens the existing Project dialog pre-filled with the saved information.
+- Editable fields: Project Name, Client, Location, Original Contract Amount, Discount Amount, Net Contract Amount, Start Date, Target Date, and Status.
+- Net Contract Amount continues to recalculate from Original Contract Amount minus Discount Amount.
+- Saving updates the existing `projects` record instead of creating a duplicate.
+- Project accomplishment remains derived from Actual Progress and is not manually edited here.
+- No new SQL required.
+
+
+## v23.0 — Project Subcontract Dependency Category
+- Adds **Subcontract Dependency** to Add Project and Edit Project.
+- Choices: **Independent** or **Dependent**.
+- Shows the category directly in the Projects table.
+- Existing projects default to **Independent** after migration and can be edited anytime.
+- Requires running `v23.0-project-subcon-category.sql` once in Supabase SQL Editor.
+- The SQL migration also bumps the global system release gate when available, so logged-in users are required to refresh/re-login for the database change.

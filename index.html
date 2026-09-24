@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SAIKO Construction AI</title>
   <link rel="stylesheet" href="styles.css?v=2201" />
-    <script src="patch-gate.js?v=2281"></script>
+    <script src="patch-gate.js?v=2301"></script>
 <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
 </head>
 <body>
@@ -99,7 +99,7 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
           <div class="panel-head"><h2>Project Cost Folders</h2><span class="muted">Open the cost ledger directly by category for the selected project.</span></div>
           <div id="projectFolderCards" class="folder-card-grid"></div>
         </div>
-        <div class="panel"><div class="bulk-actions"><label class="select-all-wrap"><input id="projectSelectAll" type="checkbox"> Select all</label><span id="projectSelectedCount" class="selection-count">0 selected</span><button id="deleteSelectedProjectBtn" class="danger-btn" disabled>Delete Selected</button><button id="clearProjectSelectionBtn" class="secondary-btn">Clear Selection</button></div><div class="table-wrap"><table><thead><tr><th class="check-col"></th><th>Project</th><th>Client</th><th>Location</th><th>Contract</th><th>Status</th><th>Actual %</th><th>Action</th></tr></thead><tbody id="projectRows"></tbody></table></div></div>
+        <div class="panel"><div class="bulk-actions"><label class="select-all-wrap"><input id="projectSelectAll" type="checkbox"> Select all</label><span id="projectSelectedCount" class="selection-count">0 selected</span><button id="deleteSelectedProjectBtn" class="danger-btn" disabled>Delete Selected</button><button id="clearProjectSelectionBtn" class="secondary-btn">Clear Selection</button></div><div class="table-wrap"><table><thead><tr><th class="check-col"></th><th>Project</th><th>Client</th><th>Location</th><th>Contract</th><th>Status</th><th>SUBCON CATEGORY</th><th>Actual %</th><th>Action</th></tr></thead><tbody id="projectRows"></tbody></table></div></div>
       </section>
 
       <section id="billing" class="view">
@@ -398,7 +398,13 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </main>
   </div>
 
-  <dialog id="projectDialog"><form id="projectForm" class="dialog-card wide"><div class="dialog-head"><h2>Project</h2><button type="button" data-close="projectDialog">×</button></div><div class="form-grid"><label>Project Name<input id="pName" required></label><label>Client<input id="pClient"></label><label>Location<input id="pLocation"></label><label>Original Contract Amount<input id="pOriginalContract" type="number" min="0" step="0.01"></label><label>Discount Amount<input id="pDiscount" type="number" min="0" step="0.01" value="0"></label><label>Net Contract Amount<input id="pContract" type="number" min="0" step="0.01" readonly></label><label>Start Date<input id="pStart" type="date"></label><label>Target Date<input id="pTarget" type="date"></label><label>Status<select id="pStatus"><option>Planning</option><option>For Mobilization</option><option>On-going</option><option>On Hold</option><option>Completed</option></select></label></div><div class="dialog-actions"><button type="button" class="secondary-btn" data-close="projectDialog">Cancel</button><button class="primary-btn" type="submit">Save Project</button></div></form></dialog>
+  <dialog id="projectDialog"><form id="projectForm" class="dialog-card wide"><div class="dialog-head"><h2 id="projectDialogTitle">Project</h2><button type="button" data-close="projectDialog">×</button></div><div class="form-grid"><label>Project Name<input id="pName" required></label><label>Client<input id="pClient"></label><label>Location<input id="pLocation"></label><label>Original Contract Amount<input id="pOriginalContract" type="number" min="0" step="0.01"></label><label>Discount Amount<input id="pDiscount" type="number" min="0" step="0.01" value="0"></label><label>Net Contract Amount<input id="pContract" type="number" min="0" step="0.01" readonly></label><label>Start Date<input id="pStart" type="date"></label><label>Target Date<input id="pTarget" type="date"></label><label>Status<select id="pStatus"><option>Planning</option><option>For Mobilization</option><option>On-going</option><option>On Hold</option><option>Completed</option></select></label>
+          <label>Subcontract Dependency
+            <select id="pSubconDependency">
+              <option value="Independent">Independent</option>
+              <option value="Dependent">Dependent</option>
+            </select>
+          </label></div><div class="dialog-actions"><button type="button" class="secondary-btn" data-close="projectDialog">Cancel</button><button id="projectSaveBtn" class="primary-btn" type="submit">Save Project</button></div></form></dialog>
 
   <dialog id="billingDialog"><form id="billingForm" class="dialog-card wide"><div class="dialog-head"><h2>Billing / Payment Record</h2><button type="button" data-close="billingDialog">×</button></div>
   <div class="form-grid">
@@ -664,11 +670,13 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
 
   <script src="v20.7.js?v=2071"></script>
   <script src="v21.js?v=2131"></script>
-  <script src="patch-watch.js?v=2281"></script>
+  <script src="patch-watch.js?v=2301"></script>
   <script src="v21.3.js?v=2131"></script>
   <script src="v21.4.js?v=2141"></script>
   <script src="v21.5.js?v=2151"></script>
   <script src="v21.6.js?v=2161"></script>
   <script src="v22.6.js?v=2281"></script>
+  <script src="v22.9.js?v=2291"></script>
+  <script src="v23.0.js?v=2301"></script>
 </body>
 </html>
