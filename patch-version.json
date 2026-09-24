@@ -1,5 +1,5 @@
 {
-  "version": "25.9",
-  "label": "SAIKO Construction AI v25.9",
-  "message": "Fixes Google Sheet/Excel date parsing that caused timezone displacement out-of-range errors in Projected sync."
+  "version": "26.1",
+  "label": "SAIKO Construction AI v26.1",
+  "message": "REVISE TIMELINE is now converted into the same per-scope percentage format as Actual STATUS for direct on-track checking."
 }

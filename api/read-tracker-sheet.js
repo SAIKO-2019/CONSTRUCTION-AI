@@ -11,12 +11,22 @@ function extractSheetGid(input=''){
 function cellText(cell){
   const v=cell?.value;
   if(v==null)return '';
+
+  const isPct=String(cell?.numFmt||'').includes('%');
+  const fmtNumber=n=>{
+    if(typeof n!=='number'||!Number.isFinite(n))return String(n??'');
+    return isPct ? `${n*100}%` : String(n);
+  };
+
   if(v instanceof Date && !Number.isNaN(v.getTime())){
     const y=v.getFullYear();
     const m=String(v.getMonth()+1).padStart(2,'0');
     const d=String(v.getDate()).padStart(2,'0');
     return `${y}-${m}-${d}`;
   }
+
+  if(typeof v==='number')return fmtNumber(v);
+
   if(typeof v==='object'){
     if(v.text!=null)return String(v.text);
     if(v.result!=null){
@@ -26,6 +36,7 @@ function cellText(cell){
         const d=String(v.result.getDate()).padStart(2,'0');
         return `${y}-${m}-${d}`;
       }
+      if(typeof v.result==='number')return fmtNumber(v.result);
       return String(v.result);
     }
     if(v.richText)return v.richText.map(x=>x.text||'').join('');

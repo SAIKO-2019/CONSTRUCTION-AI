@@ -7,8 +7,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SAIKO Construction AI</title>
-  <link rel="stylesheet" href="styles.css?v=2591" />
-    <script src="patch-gate.js?v=2591"></script>
+  <link rel="stylesheet" href="styles.css?v=2611" />
+    <script src="patch-gate.js?v=2611"></script>
 <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
 </head>
 <body>
@@ -94,11 +94,32 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
           <div class="panel"><div class="panel-head"><h2>Schedule vs Actual Summary</h2><button class="text-btn" data-go="projects">Manage</button></div><div class="table-wrap"><table><thead><tr><th>Project</th><th>Status</th><th>Actual</th><th>Planned</th><th>Variance</th></tr></thead><tbody id="dashProjects"></tbody></table></div></div>
           <div class="panel"><div class="panel-head"><h2>Today / Next Agenda</h2><button class="text-btn" data-go="schedule">Open Tracker</button></div><div id="agendaList" class="list-stack"></div></div>
         </div>
+        <div class="panel scope-compare-panel">
+          <div class="panel-head">
+            <div>
+              <h2>Projected vs Actual by Scope</h2>
+              <span class="muted">Actual STATUS is checked against the projected status for the same scope and date.</span>
+            </div>
+            <span id="scopeCompareOverallBadge" class="smart-badge">CHECK</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th>Scope</th>
+                <th>Projected %</th>
+                <th>Actual %</th>
+                <th>Variance</th>
+                <th>Condition</th>
+              </tr></thead>
+              <tbody id="dashboardScopeCompareRows"><tr><td colspan="5" class="empty">Sync both Projected and Actual Google Sheets.</td></tr></tbody>
+            </table>
+          </div>
+        </div>
         <div class="panel matched-scurve-panel">
           <div class="panel-head">
             <div>
-              <h2>Matched Scope S-Curve</h2>
-              <span class="muted">Projected and Actual descriptions are normalized and matched automatically for the selected project.</span>
+              <h2>Date-Aligned S-Curve</h2>
+              <span class="muted">Projected cumulative % and Actual STATUS are compared using the same calendar date.</span>
             </div>
             <span id="dashboardScopeMatchBadge" class="smart-badge">AUTO MATCH</span>
           </div>
@@ -215,6 +236,18 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
           <span id="scheduleSheetStatus" class="tracker-sync-status">Not linked</span>
         </div>
         <div id="scheduleSummary" class="kpi-grid"></div>
+        <div class="panel projected-scope-panel">
+          <div class="panel-head">
+            <h2>Projected Scope Status</h2>
+            <span class="muted">Converted from REVISE TIMELINE to the same scope format as Actual</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Scope</th><th>Projected Status</th><th>Basis Date</th></tr></thead>
+              <tbody id="projectedScopeStatusRows"><tr><td colspan="3" class="empty">Sync the Projected Google Sheet.</td></tr></tbody>
+            </table>
+          </div>
+        </div>
         <div class="dashboard-grid">
           <div class="panel"><div class="panel-head"><h2>Planned Schedule Curve</h2><span class="muted">Schedule data only</span></div><div id="sCurveChart" class="chart-box"></div></div>
           <div class="panel"><div class="panel-head"><h2>Schedule Guidance</h2><span id="scheduleHealthBadge" class="smart-badge">PLAN</span></div><div id="recoveryPlan" class="recovery-plan"></div></div>
@@ -604,13 +637,13 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=2591"></script>
-  <script src="v13.js?v=2591"></script>
-  <script src="v14.js?v=2591"></script>
-  <script src="v14.2.js?v=2591"></script>
-  <script src="v14.3.js?v=2591"></script>
-  <script src="v14.4.js?v=2591"></script>
-  <script src="v14.5.js?v=2591"></script>
+  <script src="app.js?v=2611"></script>
+  <script src="v13.js?v=2611"></script>
+  <script src="v14.js?v=2611"></script>
+  <script src="v14.2.js?v=2611"></script>
+  <script src="v14.3.js?v=2611"></script>
+  <script src="v14.4.js?v=2611"></script>
+  <script src="v14.5.js?v=2611"></script>
 
   <dialog id="settingsDialog" class="settings-dialog-shell">
     <form id="settingsForm" class="dialog-card wide settings-dialog-card">
@@ -725,13 +758,13 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </div>
   </dialog>
 
-  <script src="v14.7.js?v=2591"></script>
-  <script src="v14.8.js?v=2591"></script>
-  <script src="v15.9.js?v=2591"></script>
-  <script src="v17-core.js?v=2591"></script>
-  <script src="v18.js?v=2591"></script>
-  <script src="v19.js?v=2591"></script>
-  <script src="v20.js?v=2591"></script>
+  <script src="v14.7.js?v=2611"></script>
+  <script src="v14.8.js?v=2611"></script>
+  <script src="v15.9.js?v=2611"></script>
+  <script src="v17-core.js?v=2611"></script>
+  <script src="v18.js?v=2611"></script>
+  <script src="v19.js?v=2611"></script>
+  <script src="v20.js?v=2611"></script>
 
   <dialog id="quotationNotifDialog">
     <div class="dialog-card quotation-notif-dialog">
@@ -754,9 +787,9 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </div>
   </dialog>
 
-  <script src="v20.3.js?v=2591"></script>
-  <script src="v20.5.js?v=2591"></script>
-  <script src="v20.6.js?v=2591"></script>
+  <script src="v20.3.js?v=2611"></script>
+  <script src="v20.5.js?v=2611"></script>
+  <script src="v20.6.js?v=2611"></script>
 
   <dialog id="editQuotationDialog">
     <form id="editQuotationForm" class="dialog-card quotation-edit-dialog">
@@ -779,25 +812,25 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </form>
   </dialog>
 
-  <script src="v20.7.js?v=2591"></script>
-  <script src="v21.js?v=2591"></script>
-  <script src="patch-watch.js?v=2591"></script>
-  <script src="v21.3.js?v=2591"></script>
-  <script src="v21.4.js?v=2591"></script>
-  <script src="v21.5.js?v=2591"></script>
-  <script src="v21.6.js?v=2591"></script>
-  <script src="v22.6.js?v=2591"></script>
-  <script src="v22.9.js?v=2591"></script>
-  <script src="v23.0.js?v=2591"></script>
-  <script src="v23.2.js?v=2591"></script>
-  <script src="v23.3.js?v=2591"></script>
-  <script src="v23.4.js?v=2591"></script>
-  <script src="v23.5.js?v=2591"></script>
-  <script src="v23.6.js?v=2591"></script>
-  <script src="v23.7.js?v=2591"></script>
-  <script src="v23.8.js?v=2591"></script>
-  <script src="v23.9.js?v=2591"></script>
-  <script src="v24.0.js?v=2591"></script>
+  <script src="v20.7.js?v=2611"></script>
+  <script src="v21.js?v=2611"></script>
+  <script src="patch-watch.js?v=2611"></script>
+  <script src="v21.3.js?v=2611"></script>
+  <script src="v21.4.js?v=2611"></script>
+  <script src="v21.5.js?v=2611"></script>
+  <script src="v21.6.js?v=2611"></script>
+  <script src="v22.6.js?v=2611"></script>
+  <script src="v22.9.js?v=2611"></script>
+  <script src="v23.0.js?v=2611"></script>
+  <script src="v23.2.js?v=2611"></script>
+  <script src="v23.3.js?v=2611"></script>
+  <script src="v23.4.js?v=2611"></script>
+  <script src="v23.5.js?v=2611"></script>
+  <script src="v23.6.js?v=2611"></script>
+  <script src="v23.7.js?v=2611"></script>
+  <script src="v23.8.js?v=2611"></script>
+  <script src="v23.9.js?v=2611"></script>
+  <script src="v24.0.js?v=2611"></script>
 
   <dialog id="linkedSubconDialog">
     <form id="linkedSubconForm" class="dialog-card wide">
@@ -824,16 +857,18 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </form>
   </dialog>
 
-  <script src="v24.1.js?v=2591"></script>
-  <script src="v24.4.js?v=2591"></script>
-  <script src="v24.5.js?v=2591"></script>
-  <script src="v24.6.js?v=2591"></script>
-  <script src="v24.7.js?v=2591"></script>
-  <script src="v24.8.js?v=2591"></script>
-  <script src="v25.0.js?v=2591"></script>
-  <script src="v25.1.js?v=2591"></script>
-  <script src="v25.4.js?v=2591"></script>
-  <script src="v25.5.js?v=2591"></script>
-  <script src="v25.8.js?v=2591"></script>
+  <script src="v24.1.js?v=2611"></script>
+  <script src="v24.4.js?v=2611"></script>
+  <script src="v24.5.js?v=2611"></script>
+  <script src="v24.6.js?v=2611"></script>
+  <script src="v24.7.js?v=2611"></script>
+  <script src="v24.8.js?v=2611"></script>
+  <script src="v25.0.js?v=2611"></script>
+  <script src="v25.1.js?v=2611"></script>
+  <script src="v25.4.js?v=2611"></script>
+  <script src="v25.5.js?v=2611"></script>
+  <script src="v25.8.js?v=2611"></script>
+  <script src="v26.0.js?v=2611"></script>
+  <script src="v26.1.js?v=2611"></script>
 </body>
 </html>

@@ -1063,3 +1063,55 @@ This patch changes the tracker percentages to the exact cells requested by the u
 - Actual remains based on each scope's `STATUS`.
 - 10-second live sync remains active.
 - No SQL required beyond the v25.8 projected cumulative series migration.
+
+
+## v26.0 — Date-Aligned Projected vs Actual S-Curve
+- Fixes percentage-formatted XLSX cells so `0.1024` formatted as `%` is read as `10.24%`, and `0.6016` is read as `60.16%`.
+- **Projected** uses the `PROJECTED ACCUMULATIVE ACCOMPLISHMENT %AGE` row paired with the timeline date row.
+- **Actual** uses the per-scope `STATUS` values and sums them for the current accomplishment snapshot.
+- Each Actual sync stores one historical point in `actual_progress_series` using the accomplishment sheet date (or today's date if no explicit date is found).
+- Dashboard compares Projected and Actual on the **same date**.
+- Dashboard S-Curve uses:
+  - blue = Projected cumulative percentage by calendar date
+  - green = Actual STATUS total history by calendar date
+- As more days are synced, the green Actual curve builds automatically.
+- 10-second live sync remains active.
+- Run `v26.0-date-aligned-scurve.sql` once in Supabase.
+
+
+## v26.1 — Convert Projected to the Same Format as Actual
+This version converts `REVISE TIMELINE` into the same top-level scope structure used by `SUMMARY ACCOMPLISHMENT`.
+
+### Projected conversion
+The timeline's visible daily planned amounts are grouped into:
+- Ceiling Works
+- Cabinetry Works
+- Wall Finishing Works
+- Flooring Works
+- Electrical Works
+- Plumbing Works
+- Glass Works
+- General Requirements
+
+For every timeline date:
+`Projected Scope Status % = cumulative planned cost for that scope ÷ total projected project cost × 100`
+
+### Actual basis
+Actual remains exactly the `STATUS` value from each scope's `OVERALL ACCOMPLISHMENT STATUS`.
+
+### Dashboard checking
+For the Actual snapshot date, the web app now compares:
+`Variance = Actual STATUS % − Projected Scope Status %`
+
+Condition:
+- Ahead = positive variance above tolerance
+- On Track = within ±0.25 percentage point
+- Behind = negative variance below tolerance
+
+The overall date-aligned S-Curve remains:
+- Projected = `PROJECTED ACCUMULATIVE ACCOMPLISHMENT %AGE`
+- Actual = sum of current scope STATUS values, stored by snapshot date
+
+10-second live sync remains active.
+
+Run `v26.1-projected-scope-series.sql` once in Supabase.

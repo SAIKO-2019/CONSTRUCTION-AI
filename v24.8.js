@@ -363,6 +363,124 @@
 
   // v25.8 — Read the exact PROJECTED ACCUMULATIVE ACCOMPLISHMENT %AGE row.
   // The date header is located above the DAY columns; each visible date becomes one point.
+
+  function canonicalTrackerScope(name){
+    const s=clean(name).toLowerCase()
+      .replace(/&/g,' and ')
+      .replace(/[^a-z0-9]+/g,' ')
+      .replace(/\s+/g,' ')
+      .trim();
+
+    if(/\bceiling\b/.test(s))return 'CEILING WORKS';
+    if(/\b(cabinet|cabinetry|joinery|casework)\b/.test(s))return 'CABINETRY WORKS';
+    if(/\b(wall paint|wall cladding|cladding|wall finish|painting|skimcoat|plaster)\b/.test(s))return 'WALL FINISHING WORKS';
+    if(/\b(tiling|tile|flooring|floor finish|stair finish|spc|vinyl|epoxy)\b/.test(s))return 'FLOORING WORKS';
+    if(/\b(lighting|outlet|electrical|wiring|wire|panel board|panelboard)\b/.test(s))return 'ELECTRICAL WORKS';
+    if(/\b(plumbing|sanitary|fixture|water line|sewer|sewage|drain)\b/.test(s))return 'PLUMBING WORKS';
+    if(/\b(glass|glazing|window|windows|aluminum)\b/.test(s))return 'GLASS WORKS';
+    if(/\b(general requirement|mobilization|demobilization|temporary|permit|safety|fence|railings?)\b/.test(s))return 'GENERAL REQUIREMENTS';
+    if(/\b(door|doors)\b/.test(s))return 'GLASS WORKS';
+
+    return 'GENERAL REQUIREMENTS';
+  }
+
+  // v26.1 — Convert REVISE TIMELINE to the same per-scope STATUS format as Actual.
+  // Uses the visible daily planned amount matrix from each activity row.
+  // Each scope % = cumulative planned cost for that scope / total projected cost.
+  function parseProjectedScopeSeries(rows){
+    const hh=x=>clean(x).toLowerCase().replace(/[^a-z0-9%]+/g,' ').replace(/\s+/g,' ').trim();
+
+    let headerRow=-1,descCol=-1,totalAmountCol=-1;
+    for(let r=0;r<Math.min(rows.length,120);r++){
+      const h=(rows[r]||[]).map(hh);
+      const d=h.findIndex(x=>x.includes('work item description'));
+      const ta=h.findIndex(x=>x==='total amount'||x.includes('total amount'));
+      if(d>=0&&ta>=0){headerRow=r;descCol=d;totalAmountCol=ta;break;}
+    }
+    if(headerRow<0)return [];
+
+    // The next row with multiple dates aligned after TOTAL AMOUNT is the timeline date row.
+    let dateRow=-1;
+    for(let r=headerRow;r<Math.min(rows.length,headerRow+8);r++){
+      let hits=0;
+      for(let c=totalAmountCol+1;c<(rows[r]||[]).length;c++){
+        if(parseDate((rows[r]||[])[c]))hits++;
+      }
+      if(hits>=2){dateRow=r;break;}
+    }
+    if(dateRow<0)return [];
+
+    const dateCols=[];
+    for(let c=totalAmountCol+1;c<(rows[dateRow]||[]).length;c++){
+      const d=parseDate((rows[dateRow]||[])[c]);
+      if(d)dateCols.push({col:c,date:d});
+    }
+    if(!dateCols.length)return [];
+
+    // Find total projected cost if visible.
+    let totalProjectCost=0;
+    for(let r=0;r<rows.length;r++){
+      const row=rows[r]||[];
+      for(let c=0;c<row.length;c++){
+        if(/total projected cost/i.test(clean(row[c]))){
+          for(let cc=c+1;cc<Math.min(row.length,c+5);cc++){
+            const val=n(row[cc]);
+            if(val>0){totalProjectCost=val;break;}
+          }
+        }
+        if(totalProjectCost>0)break;
+      }
+      if(totalProjectCost>0)break;
+    }
+
+    const activities=[];
+    let visibleTotal=0;
+
+    for(let r=dateRow+1;r<rows.length;r++){
+      const row=rows[r]||[];
+      const activity=clean(row[descCol]);
+      if(!activity)continue;
+
+      if(
+        /^\d+(st|nd|rd|th)\s*floor$/i.test(activity) ||
+        /\b(total projected cost|projected accomplishment|projected accumulative|actual accomplishment|billing|difference|remaining|amount|percentage)\b/i.test(activity)
+      )continue;
+
+      const totalAmount=Math.max(0,n(row[totalAmountCol]));
+      if(totalAmount<=0)continue;
+
+      const scope=canonicalTrackerScope(activity);
+      const daily=dateCols.map(dc=>Math.max(0,n(row[dc.col])));
+      if(!daily.some(v=>v>0))continue;
+
+      visibleTotal+=totalAmount;
+      activities.push({scope,daily,totalAmount});
+    }
+
+    const denominator=totalProjectCost>0?totalProjectCost:visibleTotal;
+    if(denominator<=0||!activities.length)return [];
+
+    const cumulativeByScope=new Map();
+    const out=[];
+
+    for(let di=0;di<dateCols.length;di++){
+      for(const a of activities){
+        const prev=cumulativeByScope.get(a.scope)||0;
+        cumulativeByScope.set(a.scope,prev+a.daily[di]);
+      }
+
+      for(const [scope,cost] of cumulativeByScope.entries()){
+        out.push({
+          progress_date:dateCols[di].date,
+          scope_name:scope,
+          cumulative_percent:Math.max(0,Math.min(100,cost/denominator*100))
+        });
+      }
+    }
+
+    return out;
+  }
+
   function parseProjectedCumulativeSeries(rows){
     const hh=x=>clean(x).toLowerCase().replace(/[^a-z0-9%]+/g,' ').replace(/\s+/g,' ').trim();
     let targetRow=-1,targetCol=-1;
@@ -408,6 +526,26 @@
     const byDate=new Map();
     points.forEach(p=>byDate.set(p.progress_date,p));
     return [...byDate.values()].sort((a,b)=>a.progress_date.localeCompare(b.progress_date));
+  }
+
+
+  // v26.0 — Detect the accomplishment snapshot date from the Actual sheet.
+  // Looks for a Date label and the nearest readable date cell to its right.
+  function parseActualSnapshotDate(rows){
+    for(let r=0;r<Math.min(rows.length,80);r++){
+      const row=rows[r]||[];
+      for(let c=0;c<row.length;c++){
+        const label=clean(row[c]).toLowerCase().replace(/\s+/g,' ');
+        if(label==='date' || label==='date :' || label.startsWith('date ')){
+          for(let cc=c+1;cc<Math.min(row.length,c+5);cc++){
+            const d=parseDate(row[cc]);
+            if(d)return d;
+          }
+        }
+      }
+    }
+    const now=new Date();
+    return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
   }
 
   function parseTrackerRows(rows,kind){
@@ -504,7 +642,27 @@
     if(!p?.schedule_sheet_link)return false;
     const raw=await readSheet(p.schedule_sheet_link);
 
-    // Exact projected basis: PROJECTED ACCUMULATIVE ACCOMPLISHMENT %AGE.
+    // Convert REVISE TIMELINE into the same scope/% format as Actual STATUS.
+    const projectedScopeSeries=parseProjectedScopeSeries(raw);
+    if(projectedScopeSeries.length){
+      const delScopeSeries=await sb.from('projected_scope_series').delete().eq('project_id',p.id);
+      if(delScopeSeries.error)throw delScopeSeries.error;
+      const scopeRows=projectedScopeSeries.map(x=>({
+        project_id:p.id,
+        progress_date:x.progress_date,
+        scope_name:x.scope_name,
+        cumulative_percent:x.cumulative_percent,
+        synced_at:new Date().toISOString()
+      }));
+      const insScopeSeries=await sb.from('projected_scope_series')
+        .upsert(scopeRows,{onConflict:'project_id,progress_date,scope_name'}).select();
+      if(insScopeSeries.error)throw insScopeSeries.error;
+      cache.projectedScopeSeries=(cache.projectedScopeSeries||[])
+        .filter(x=>String(x.project_id)!==String(p.id))
+        .concat(insScopeSeries.data||scopeRows);
+    }
+
+    // Exact overall projected basis: PROJECTED ACCUMULATIVE ACCOMPLISHMENT %AGE.
     const projectedSeries=parseProjectedCumulativeSeries(raw);
     if(projectedSeries.length){
       const delSeries=await sb.from('projected_progress_series').delete().eq('project_id',p.id);
@@ -554,6 +712,21 @@
       updated_by:currentUser.id,
       updated_at:new Date().toISOString()
     }));
+
+    // Store one Actual cumulative point on the same date axis as Projected.
+    const actualSnapshotDate=parseActualSnapshotDate(raw);
+    const actualTotal=Math.max(0,Math.min(100,parsed.reduce((sum,x)=>sum+n(x.actual_percent),0)));
+    const histRow={
+      project_id:p.id,
+      progress_date:actualSnapshotDate,
+      cumulative_percent:actualTotal,
+      source_label:'SUMMARY ACCOMPLISHMENT STATUS',
+      synced_at:new Date().toISOString()
+    };
+    const hist=await sb.from('actual_progress_series').upsert([histRow],{onConflict:'project_id,progress_date'}).select();
+    if(hist.error)throw hist.error;
+    cache.actualSeries=(cache.actualSeries||[]).filter(x=>!(String(x.project_id)===String(p.id)&&String(x.progress_date).slice(0,10)===actualSnapshotDate)).concat(hist.data||[histRow]);
+
     const del=await sb.from('actual_progress').delete().eq('project_id',p.id);
     if(del.error)throw del.error;
     // Upsert is intentionally used even after cleanup as a second guard against
