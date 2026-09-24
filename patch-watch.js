@@ -1,6 +1,6 @@
 // SAIKO Construction AI v21.1 — lightweight patch/version watcher
 (function(){
-  const CURRENT_PATCH='22.3';
+  const CURRENT_PATCH='22.4';
   const CHECK_EVERY_MS=20*1000; // one tiny request every 5 minutes
   let checking=false;
   let patchRequired=false;
@@ -67,9 +67,9 @@
       sessionStorage.clear();
     }catch(_){}
 
-    try{localStorage.setItem('saiko_patch_seen','22.3')}catch(_){}
+    try{localStorage.setItem('saiko_patch_seen','22.4')}catch(_){}
     const url=new URL(window.location.origin+window.location.pathname);
-    url.searchParams.set('patch','22.3');
+    url.searchParams.set('patch','22.4');
     url.searchParams.set('login','required');
     window.location.replace(url.toString());
   }

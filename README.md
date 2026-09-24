@@ -627,3 +627,12 @@ No SQL migration required for v21.1.
 - For best results, open the `SUMMARY` tab first, then use **Copy link** and paste that URL into the quotation form.
 - This patch keeps the Item No. A/B/C/D scope parser from v21.7.
 - No SQL migration required.
+
+
+## v22.4 — SUMMARY CSV-First Reader
+- Fixes the remaining Google Sheet Editor-access failure path.
+- The reader now uses the exact SUMMARY-tab `gid` CSV first, then GViz by gid, then GViz by SUMMARY name, then XLSX as a last fallback.
+- Parsing errors in optional metrics no longer cause the entire Sheet read to fail.
+- Stale error text that incorrectly required Viewer access was removed.
+- `Anyone with the link — Editor` remains supported; no access change to Viewer is required.
+- No SQL migration required.
