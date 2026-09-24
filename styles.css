@@ -838,3 +838,13 @@ button{touch-action:manipulation}
 /* v16.1 password visibility fix */
 .password-toggle{cursor:pointer!important;pointer-events:auto!important;user-select:none}
 .password-toggle:active{transform:scale(.96)}
+
+
+/* =========================================================
+   v17 ultra-light performance
+   ========================================================= */
+.password-toggle{pointer-events:auto!important;cursor:pointer!important;will-change:auto}
+button{touch-action:manipulation}
+.settings-section.feature-card::after,.brand::after,.kpi::after{pointer-events:none!important}
+html[data-edit-mode="on"] .inline-editable{cursor:text!important;outline:1px dashed color-mix(in srgb,var(--blue) 35%,transparent)}
+html[data-edit-mode="on"] .inline-editable:hover{outline:2px solid color-mix(in srgb,var(--blue) 60%,transparent)}

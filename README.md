@@ -281,3 +281,15 @@ Hotfix v15.1: fixed Team Activity modal button clicks and removed the horizontal
 - Restores the login password show/hide eye button after the v16 stability cleanup.
 - Uses one lightweight click handler only; no additional observers or button wrappers.
 - No SQL migration required.
+
+
+## v17 Ultra-Light Performance
+- Password show/hide is handled inline in the login button itself, so it works even if an external JS bundle is cached.
+- Removed the `v15.js` theme MutationObserver.
+- Removed the `v15.8.js` page-wide MutationObserver.
+- Removed `v16.js` and replaced it with one cache-busted lightweight control file.
+- Settings team data loads only when Settings opens or Refresh is clicked.
+- Online icon refresh reduced to once per minute.
+- Edit Mode rescans only after navigation/data refresh instead of watching every DOM mutation.
+- Main JS URLs are cache-busted for this release.
+- No SQL migration required.

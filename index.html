@@ -16,7 +16,8 @@
         <h1>Welcome back</h1><p>Sign in to manage projects, billing, schedules, files, and AI guidance.</p>
         <div id="authLanding" class="auth-landing"><small>CONSTRUCTION MANAGEMENT</small><h1>Welcome back</h1><p>Click Sign In to continue.</p><button id="openSignInBtn" class="primary-btn auth-main-btn" type="button">Sign In</button></div><form id="loginForm" class="hidden stack-form">
           <label>Email<input id="loginEmail" type="email" required></label>
-          <label>Password<div class="password-field"><input id="loginPassword" type="password" required><button id="togglePasswordBtn" type="button" class="password-toggle" aria-label="Show password" title="Show password">👁</button></div></label>
+          <label>Password<div class="password-field"><input id="loginPassword" type="password" required><button id="togglePasswordBtn" type="button" class="password-toggle" aria-label="Show password" title="Show password"
+onclick="const p=document.getElementById('loginPassword');const show=p.type==='password';p.type=show?'text':'password';this.textContent=show?'🙈':'👁';this.title=show?'Hide password':'Show password';this.setAttribute('aria-label',this.title);p.focus();return false;">👁</button></div></label>
           <button class="primary-btn" type="submit">Sign in</button>
         <div class="auth-options"><label class="remember-row"><input id="rememberMe" type="checkbox"><span>Remember me</span></label></div><div class="captcha-wrap"><div id="recaptchaContainer"></div></div></form>
         <button id="forgotPasswordBtn" class="text-btn">Forgot password?</button>
@@ -321,13 +322,13 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=13"></script>
+  <script src="app.js?v=1701"></script>
   <script src="v13.js?v=13"></script>
   <script src="v14.js?v=14"></script>
   <script src="v14.2.js?v=142"></script>
   <script src="v14.3.js?v=143"></script>
   <script src="v14.4.js?v=144"></script>
-  <script src="v14.5.js?v=145"></script>
+  <script src="v14.5.js?v=1701"></script>
 
   <dialog id="settingsDialog" class="settings-dialog-shell">
     <form id="settingsForm" class="dialog-card wide settings-dialog-card">
@@ -442,11 +443,9 @@
     </div>
   </dialog>
 
-  <script src="v14.7.js?v=147"></script>
-  <script src="v14.8.js?v=148"></script>
-  <script src="v15.js?v=150"></script>
-  <script src="v15.8.js?v=158"></script>
-  <script src="v15.9.js?v=159"></script>
-  <script src="v16.js?v=160"></script>
+  <script src="v14.7.js?v=1701"></script>
+  <script src="v14.8.js?v=1701"></script>
+  <script src="v15.9.js?v=1701"></script>
+  <script src="v17-core.js?v=1701"></script>
 </body>
 </html>
