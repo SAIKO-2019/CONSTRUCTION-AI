@@ -92,6 +92,7 @@ function findMetric(workbook,kind,{numeric=true}={}){
 
 const MAJOR_SCOPE_ALIASES = [
   ["General Requirements",["general requirements","general requirement","gen req","genreq","preliminaries","preliminary works"]],
+  ["Earth Works",["earth works","earthworks","earth work","site earthworks"]],
   ["Architectural",["architectural","architecture","architectural works","finishing works","finishes"]],
   ["Structural",["structural","structural works","civil structural","concrete works","reinforced concrete"]],
   ["Electrical",["electrical","electrical works"]],
@@ -100,7 +101,7 @@ const MAJOR_SCOPE_ALIASES = [
   ["Fire Protection",["fire protection","fire protection works","fdas","sprinkler"]],
   ["Sanitary",["sanitary","sanitary works","sewerage","sewage"]],
   ["Civil / Site Development",["civil works","site development","site development works","earthworks","roadworks"]],
-  ["Auxiliary / Electronics",["auxiliary","electronics","auxiliary works","structured cabling","cctv"]],
+  ["Auxiliary Works",["auxiliary","electronics","auxiliary works","structured cabling","cctv"]],
   ["Landscaping",["landscaping","landscape","landscape works"]],
   ["Specialties",["specialties","specialty works"]],
   ["Equipment",["equipment","equipment works"]],
@@ -118,19 +119,43 @@ function canonicalMajorScope(text){
   return null;
 }
 
-function rowRightmostNumeric(ws,rowNum,labelCol){
+function isPercentCell(cell){
+  if(!cell) return false;
+  const fmt=String(cell.numFmt||"").toLowerCase();
+  const txt=safeText(cell);
+  return fmt.includes("%") || txt.includes("%");
+}
+
+function firstAmountNumeric(ws,rowNum,labelCol){
   const row=ws.getRow(rowNum);
   const maxCols=Math.min(Math.max(row.cellCount||0,1),160);
-  let candidate=null;
   for(let c=Math.max(1,labelCol+1);c<=maxCols;c++){
     const cell=row.getCell(c);
+    if(isPercentCell(cell)) continue;
     let n=asNumber(cell?.value);
     if(n===null) n=asNumber(safeText(cell));
     if(n===null) continue;
-    // Ignore likely percentages as the amount if there are later larger values.
-    candidate={value:n,cell:cell.address,col:c};
+    return {value:n,cell:cell.address,col:c};
   }
-  return candidate;
+  return null;
+}
+
+function percentNumeric(ws,rowNum,labelCol){
+  const row=ws.getRow(rowNum);
+  const maxCols=Math.min(Math.max(row.cellCount||0,1),160);
+  for(let c=Math.max(1,labelCol+1);c<=maxCols;c++){
+    const cell=row.getCell(c);
+    const txt=safeText(cell);
+    const fmt=String(cell.numFmt||"").toLowerCase();
+    if(!(txt.includes("%") || fmt.includes("%"))) continue;
+    let n=cell?.value;
+    if(n && typeof n==="object" && n.result!=null) n=n.result;
+    if(typeof n!=="number") n=asNumber(txt);
+    if(!Number.isFinite(n)) continue;
+    if(n>=0 && n<=1) n*=100;
+    return {value:n,cell:cell.address,col:c};
+  }
+  return null;
 }
 
 function firstMeaningfulText(ws,rowNum){
@@ -155,6 +180,31 @@ function summaryWorksheet(workbook){
   return contains || sheets[0];
 }
 
+function isSubtotalLabel(text){
+  const n=normalize(text);
+  return n.includes("sub total") || n.includes("subtotal");
+}
+
+function normalizeHeadingLabel(text){
+  return String(text||"")
+    .replace(/\bsub[- ]?total\s*:?/ig,"")
+    .replace(/\s+/g," ")
+    .trim();
+}
+
+function canonicalSummaryHeading(text){
+  if(isSubtotalLabel(text)) return null;
+  const direct=canonicalMajorScope(text);
+  if(direct) return direct;
+  const n=normalize(text);
+  // Major headings in SAIKO summaries commonly end in WORKS.
+  if(n.endsWith(" works") && n.split(" ").length<=5){
+    return String(text).replace(/\s+/g," ").trim()
+      .toLowerCase().replace(/\b\w/g,m=>m.toUpperCase());
+  }
+  return null;
+}
+
 function parseSummarySheet(workbook){
   const ws=summaryWorksheet(workbook);
   if(!ws) return {sheetName:null,categories:[]};
@@ -165,6 +215,7 @@ function parseSummarySheet(workbook){
 
   function flush(){
     if(!current) return;
+    // Prefer the explicit Sub-total row. If unavailable, sum child items.
     if((!Number.isFinite(current.amount) || current.amount<=0) && current.items.length){
       const sum=current.items.reduce((s,x)=>s+(Number.isFinite(x.amount)&&x.amount>0?x.amount:0),0);
       if(sum>0) current.amount=sum;
@@ -176,22 +227,35 @@ function parseSummarySheet(workbook){
   for(let r=1;r<=maxRows;r++){
     const label=firstMeaningfulText(ws,r);
     if(!label) continue;
-
     const raw=String(label.text).replace(/\s+/g," ").trim();
     const n=normalize(raw);
-    if(!raw || raw.length>160) continue;
+    if(!raw || raw.length>180) continue;
 
-    const amountCell=rowRightmostNumeric(ws,r,label.col);
-    const major=canonicalMajorScope(raw);
+    const amountCell=firstAmountNumeric(ws,r,label.col); // first number after description = column C in the shown Summary
+    const percentCell=percentNumeric(ws,r,label.col);     // percentage-formatted cell = column E in the shown Summary
 
+    // IMPORTANT: handle subtotal BEFORE heading detection. Example: "Structural Sub-total:".
+    if(isSubtotalLabel(raw)){
+      if(current){
+        if(amountCell && Number.isFinite(amountCell.value)) current.amount=amountCell.value;
+        if(percentCell && Number.isFinite(percentCell.value)) current.percentage=percentCell.value;
+        current.subtotalSource=`${ws.name}!${label.cell}`;
+        current.subtotalAmountCell=amountCell?.cell||null;
+        current.subtotalPercentCell=percentCell?.cell||null;
+      }
+      continue;
+    }
+
+    const major=canonicalSummaryHeading(raw);
     if(major){
       flush();
       current={
         name:major,
         originalLabel:raw,
-        amount:amountCell?.value ?? null,
+        amount:null,
+        percentage:null,
         source:`${ws.name}!${label.cell}`,
-        amountCell:amountCell?.cell ?? null,
+        amountCell:null,
         items:[]
       };
       continue;
@@ -199,70 +263,54 @@ function parseSummarySheet(workbook){
 
     if(!current) continue;
 
-    // Stop category details on clear total/profit/indirect summary rows.
-    if(n.includes("grand total") || n.includes("indirect total cost") || n.includes("present profit") || n==="total project cost"){
-      continue;
-    }
+    if(n.includes("grand total") || n.includes("indirect total cost") || n.includes("present profit") || n==="total project cost") continue;
 
     if(amountCell && Number.isFinite(amountCell.value)){
-      const looksHeader = n==="scope" || n==="description" || n==="particulars" || n==="works";
+      const looksHeader=n==="scope" || n==="description" || n==="particulars" || n==="works";
       if(!looksHeader && raw.length>=2){
         current.items.push({
           name:raw,
           amount:amountCell.value,
+          percentage:percentCell?.value??null,
           source:`${ws.name}!${label.cell}`,
-          amountCell:amountCell.cell
+          amountCell:amountCell.cell,
+          percentCell:percentCell?.cell||null
         });
       }
     }
   }
   flush();
 
-  // If no canonical sections were found, fall back to amount-bearing rows in Summary.
-  if(!categories.length){
-    const fallback=[];
-    for(let r=1;r<=maxRows;r++){
-      const label=firstMeaningfulText(ws,r);
-      if(!label) continue;
-      const amount=rowRightmostNumeric(ws,r,label.col);
-      if(!amount || !Number.isFinite(amount.value) || amount.value<=0) continue;
-      const raw=String(label.text).replace(/\s+/g," ").trim();
-      const n=normalize(raw);
-      if(!raw || raw.length>120) continue;
-      if(n.includes("grand total") || n.includes("indirect total cost") || n.includes("present profit")) continue;
-      fallback.push({name:raw,originalLabel:raw,amount:amount.value,source:`${ws.name}!${label.cell}`,amountCell:amount.cell,items:[]});
-      if(fallback.length>=24) break;
-    }
-    return finalizeSummary(ws.name,fallback);
-  }
-
-  return finalizeSummary(ws.name,categories);
-}
-
-function finalizeSummary(sheetName,categories){
   const cleaned=categories
     .map(c=>({
       ...c,
       amount:Number.isFinite(c.amount)&&c.amount>0?c.amount:null,
-      items:(c.items||[]).filter(x=>Number.isFinite(x.amount)&&x.amount>=0).slice(0,80)
+      percentage:Number.isFinite(c.percentage)?c.percentage:null,
+      items:(c.items||[]).filter(x=>Number.isFinite(x.amount)&&x.amount>=0).slice(0,100)
     }))
     .filter(c=>c.amount!==null || c.items.length);
 
-  const total=cleaned.reduce((s,c)=>s+(c.amount||0),0);
+  // Prefer the explicit percentages from the Summary sheet. Only calculate when missing.
+  const amountTotal=cleaned.reduce((s,c)=>s+(c.amount||0),0);
   const final=cleaned.map(c=>({
     name:c.name,
     originalLabel:c.originalLabel,
     amount:c.amount||0,
-    percentage:total>0 ? (c.amount||0)/total*100 : 0,
+    percentage:Number.isFinite(c.percentage)
+      ? c.percentage
+      : (amountTotal>0 ? (c.amount||0)/amountTotal*100 : 0),
     source:c.source,
-    amountCell:c.amountCell,
+    amountCell:c.subtotalAmountCell||c.amountCell,
+    percentCell:c.subtotalPercentCell||null,
     items:c.items.map(i=>({
       ...i,
-      percentage:(c.amount||0)>0 ? i.amount/(c.amount||0)*100 : 0
+      percentage:Number.isFinite(i.percentage)
+        ? i.percentage
+        : ((c.amount||0)>0 ? i.amount/(c.amount||0)*100 : 0)
     }))
   }));
 
-  return {sheetName,categories:final};
+  return {sheetName:ws.name,categories:final};
 }
 
 export default async function handler(req,res){

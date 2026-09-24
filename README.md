@@ -434,3 +434,26 @@ The quotation dashboard shows:
 The parsed Summary data is saved in `quotation_projects.summary_breakdown`, so the latest read remains available even when the Google Sheet is closed.
 
 Run `v20.6-summary-reader.sql` once in Supabase SQL Editor.
+
+
+## v20.7 Summary Reader Fix + Project Edit
+- Fixed Summary parsing for the shown SAIKO layout: Description in column B, amount in column C, unit/per-sqm value in column D, percentage in column E.
+- Amount reader now uses the **first non-percentage numeric value after the description**, avoiding the previous mistake where percentage decimals were read as money.
+- Explicit `Sub-total` rows are used as the authoritative major-scope amount and percentage.
+- Recognizes Earth Works and Auxiliary Works in addition to General Requirements, Structural, Architectural, Electrical, Plumbing, Mechanical, etc.
+- Child line items keep their amount and percentage from the Summary sheet.
+- Adds a pencil Edit icon to every quotation project card. Project name, client, deadline, and Google Sheets link can be edited.
+- Money/scope values remain Sheet-controlled and are updated through Refresh from Sheet.
+- No new SQL is required beyond the v20.6 migration.
+
+
+## v20.8 Cute Quotation Reminder Popup
+- For Quotation reminders still run five times per working day: 8 AM, 10 AM, 12 PM, 2 PM, and 4 PM.
+- Pending quotation projects with deadlines are included in the reminder; overdue / near-deadline items are shown first.
+- Adds a lightweight in-app popup that stays for 30 seconds.
+- Popup has a working X close button and fades smoothly in/out.
+- Plays a short three-note cute chime using WebAudio; no audio file or network request is needed.
+- Browser sound policies require one user interaction after page load before audio can play; the app unlocks audio on the first click/key press.
+- Adds a “Test Cute Reminder” button inside the notification dialog.
+- Keeps only one 60-second reminder timer and does not add MutationObservers or page-wide repeated scans.
+- No SQL migration required.

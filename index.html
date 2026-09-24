@@ -593,6 +593,7 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
       </div>
       <div id="quotationNotifList" class="quotation-notif-list"></div>
       <div class="dialog-actions">
+        <button type="button" class="secondary-btn" onclick="window.testQuotationReminder?.()">🔔 Test Cute Reminder</button>
         <button type="button" class="secondary-btn" data-close="quotationNotifDialog">Close</button>
       </div>
     </div>
@@ -601,5 +602,28 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
   <script src="v20.3.js?v=2031"></script>
   <script src="v20.5.js?v=2051"></script>
   <script src="v20.6.js?v=2061"></script>
+
+  <dialog id="editQuotationDialog">
+    <form id="editQuotationForm" class="dialog-card quotation-edit-dialog">
+      <div class="dialog-head">
+        <div><small>QUOTATION PROJECT</small><h2>Edit Project</h2></div>
+        <button type="button" data-close="editQuotationDialog">×</button>
+      </div>
+      <div class="form-grid two-col">
+        <label>Project Name<input id="eqProjectName" required></label>
+        <label>Client / Owner<input id="eqClient"></label>
+        <label>Deadline<input id="eqDeadline" type="date" required></label>
+        <label class="full">Google Sheets Link<input id="eqGsheetLink" type="url" required></label>
+      </div>
+      <p class="muted quotation-edit-note">Cost, profit, scope and Summary breakdown still come from the Google Sheet. Use Refresh from Sheet after changing the link.</p>
+      <div id="editQuotationError" class="form-error"></div>
+      <div class="dialog-actions">
+        <button type="button" class="secondary-btn" data-close="editQuotationDialog">Cancel</button>
+        <button type="submit" class="primary-btn">Save Changes</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="v20.7.js?v=2071"></script>
 </body>
 </html>

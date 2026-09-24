@@ -1140,3 +1140,122 @@ html[data-theme="executive"] .quotation-delete-btn{
   .quotation-summary-category summary span:nth-of-type(2){display:none}
   .quotation-summary-items{padding-left:14px}
 }
+
+
+/* v20.7 quotation project edit */
+.quotation-project-card{position:relative}
+.quotation-card-edit-btn{
+  position:absolute;right:12px;bottom:12px;
+  width:30px;height:30px;border-radius:9px;
+  border:1px solid var(--line);background:var(--surface);
+  color:var(--text);font-size:15px;font-weight:900;cursor:pointer;
+  display:grid;place-items:center;z-index:3;
+}
+.quotation-card-edit-btn:hover{transform:translateY(-1px);box-shadow:0 6px 14px rgba(15,23,42,.10)}
+.quotation-edit-dialog{width:min(680px,92vw)}
+.quotation-edit-note{padding:0 18px 8px}
+
+
+/* =========================================================
+   v20.8 cute, non-blocking quotation reminder popup
+   ========================================================= */
+.quotation-reminder-popup{
+  position:fixed;
+  right:22px;
+  top:88px;
+  z-index:9999;
+  width:min(390px,calc(100vw - 30px));
+  display:grid;
+  grid-template-columns:42px minmax(0,1fr);
+  gap:12px;
+  padding:16px 16px 14px;
+  border:1px solid color-mix(in srgb,var(--line) 78%,#7dd3fc 22%);
+  border-radius:18px;
+  background:color-mix(in srgb,var(--surface) 94%,#ecfeff 6%);
+  box-shadow:0 18px 52px rgba(15,23,42,.16);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  opacity:0;
+  transform:translateY(-6px) scale(.985);
+  pointer-events:none;
+  transition:opacity .38s ease,transform .38s ease;
+}
+.quotation-reminder-popup.is-visible{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  pointer-events:auto;
+}
+.quotation-reminder-popup.is-leaving{
+  opacity:0;
+  transform:translateY(-4px) scale(.99);
+  pointer-events:none;
+}
+.quotation-reminder-icon{
+  width:42px;height:42px;border-radius:14px;
+  display:grid;place-items:center;
+  font-size:20px;
+  background:linear-gradient(145deg,#fef3c7,#dbeafe);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.75);
+}
+.quotation-reminder-copy{min-width:0;padding-right:22px}
+.quotation-reminder-copy>small{
+  display:block;
+  font-size:9px;
+  letter-spacing:.11em;
+  font-weight:900;
+  color:var(--muted);
+}
+.quotation-reminder-copy>strong{
+  display:block;
+  margin-top:3px;
+  font-size:14px;
+  color:var(--heading);
+}
+.quotation-reminder-close{
+  position:absolute;
+  right:9px;top:8px;
+  width:28px;height:28px;
+  border:0;border-radius:9px;
+  background:transparent;
+  color:var(--muted);
+  font-size:20px;
+  line-height:1;
+  cursor:pointer;
+  display:grid;place-items:center;
+}
+.quotation-reminder-close:hover{background:var(--surface-soft);color:var(--heading)}
+#quotationReminderBody{display:grid;gap:5px;margin-top:10px}
+.quotation-popup-row{
+  display:flex;justify-content:space-between;gap:10px;align-items:center;
+  padding:6px 8px;border-radius:9px;background:var(--surface-soft);
+  font-size:10px;
+}
+.quotation-popup-row span{
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:750;
+}
+.quotation-popup-row b{font-size:9px;white-space:nowrap;color:var(--muted)}
+.quotation-popup-row.overdue b{color:#b91c1c}
+.quotation-popup-row.today b{color:#c2410c}
+.quotation-popup-row.soon b{color:#a16207}
+.quotation-popup-more{font-size:9px;color:var(--muted);padding:2px 8px}
+.quotation-reminder-progress{
+  height:3px;border-radius:999px;
+  background:var(--surface-soft);
+  overflow:hidden;margin-top:12px;
+}
+.quotation-reminder-progress i{
+  display:block;width:100%;height:100%;
+  border-radius:inherit;background:currentColor;
+  opacity:.34;transform-origin:left center;
+}
+@keyframes quotationReminderCountdown{
+  from{transform:scaleX(1)}
+  to{transform:scaleX(0)}
+}
+@media(max-width:640px){
+  .quotation-reminder-popup{right:15px;top:72px}
+}
+@media(prefers-reduced-motion:reduce){
+  .quotation-reminder-popup{transition:opacity .15s linear;transform:none}
+  .quotation-reminder-progress i{animation:none!important}
+}
