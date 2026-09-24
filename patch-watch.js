@@ -1,10 +1,15 @@
-// SAIKO Construction AI v21.1 — lightweight patch/version watcher
+// SAIKO Construction AI v22.5 — unified system release gate
+// Detects ONLY true software/system releases:
+// 1) new web/API deployment
+// 2) explicit database release bumps from migrations
+// Normal For Quotation Google Sheet data changes NEVER trigger logout/reCAPTCHA.
 (function(){
-  const CURRENT_PATCH='22.4';
-  const CHECK_EVERY_MS=20*1000; // one tiny request every 5 minutes
+  const CURRENT_PATCH='22.8';
+  const CHECK_EVERY_MS=10*1000;
+  const APP_DEPLOY_KEY='saiko_seen_deployment';
+  const DB_RELEASE_KEY='saiko_seen_db_release';
   let checking=false;
   let patchRequired=false;
-  let intervalId=null;
 
   function $(id){return document.getElementById(id)}
 
@@ -19,9 +24,9 @@
         <div class="patch-required-icon">↻</div>
         <div class="patch-required-copy">
           <small>SYSTEM UPDATE</small>
-          <h2>New Patch Required</h2>
-          <p id="patchRequiredMessage">A new system patch is available. Refresh is required before continuing.</p>
-          <p class="patch-required-note">You will be signed out first, then returned to the Login page. Please log in again manually after the refresh.</p>
+          <h2>Refresh Required</h2>
+          <p id="patchRequiredMessage">A system component changed. Refresh is required before continuing.</p>
+          <p class="patch-required-note">You will be signed out and returned to Login. Please log in again manually and complete reCAPTCHA.</p>
         </div>
         <div class="dialog-actions patch-required-actions">
           <button id="patchRefreshLoginBtn" type="button" class="primary-btn">Refresh & Login Again</button>
@@ -32,16 +37,14 @@
     return dlg;
   }
 
-  function showPatchRequired(info){
+  function showRequired(message){
     if(patchRequired)return;
     patchRequired=true;
     const dlg=ensurePatchDialog();
     const msg=$('patchRequiredMessage');
-    if(msg&&info?.message)msg.textContent=info.message;
+    if(msg)msg.textContent=message||'A system component changed. Refresh is required before continuing.';
     document.documentElement.classList.add('patch-required-active');
-    if(!dlg.open){
-      try{dlg.showModal()}catch(_){dlg.setAttribute('open','')}
-    }
+    try{if(!dlg.open)dlg.showModal()}catch(_){dlg.setAttribute('open','')}
   }
 
   async function logoutAndRefresh(){
@@ -49,10 +52,8 @@
     if(btn){btn.disabled=true;btn.textContent='Signing out…'}
 
     try{
-      if(window.sb?.auth?.signOut){
-        await window.sb.auth.signOut({scope:'local'});
-      }
-    }catch(e){console.warn('patch logout',e)}
+      if(window.sb?.auth?.signOut)await window.sb.auth.signOut({scope:'local'});
+    }catch(e){console.warn('release logout',e)}
 
     try{
       const remove=[];
@@ -65,44 +66,82 @@
       }
       remove.forEach(k=>localStorage.removeItem(k));
       sessionStorage.clear();
+      localStorage.setItem('saiko_patch_seen',CURRENT_PATCH);
     }catch(_){}
 
-    try{localStorage.setItem('saiko_patch_seen','22.4')}catch(_){}
     const url=new URL(window.location.origin+window.location.pathname);
-    url.searchParams.set('patch','22.4');
+    url.searchParams.set('patch',CURRENT_PATCH);
     url.searchParams.set('login','required');
     window.location.replace(url.toString());
   }
 
-  async function checkPatch(){
-    if(checking||patchRequired)return;
-    checking=true;
+  async function checkDeployment(){
     try{
-      const res=await fetch(`/patch-version.json?t=${Date.now()}`,{
+      const r=await fetch(`/api/system-version?t=${Date.now()}`,{
         cache:'no-store',
         headers:{'cache-control':'no-cache'}
       });
-      if(!res.ok)return;
-      const info=await res.json();
-      const latest=String(info?.version||'').trim();
-      if(latest&&latest!==CURRENT_PATCH)showPatchRequired(info);
-    }catch(_){
-      // Silent by design. A temporary network error must not block the app.
+      if(!r.ok)return;
+      const info=await r.json();
+      const deployment=String(info?.deployment||'').trim();
+      if(!deployment)return;
+
+      const seen=localStorage.getItem(APP_DEPLOY_KEY);
+      if(!seen){
+        localStorage.setItem(APP_DEPLOY_KEY,deployment);
+        return;
+      }
+      if(seen!==deployment){
+        localStorage.setItem(APP_DEPLOY_KEY,deployment);
+        showRequired('A new website/API deployment is live. Refresh and log in again before continuing.');
+      }
+    }catch(_){}
+  }
+
+  async function checkDatabaseRelease(){
+    // Dedicated release row only; ordinary app data changes are ignored here.
+    if(!window.currentUser || !window.sb?.from)return;
+    try{
+      const {data,error}=await window.sb
+        .from('system_release_state')
+        .select('release_no,release_label,changed_at')
+        .eq('id',1)
+        .maybeSingle();
+
+      if(error || !data)return;
+      const current=String(data.release_no ?? '').trim();
+      if(!current)return;
+
+      const seen=localStorage.getItem(DB_RELEASE_KEY);
+      if(!seen){
+        localStorage.setItem(DB_RELEASE_KEY,current);
+        return;
+      }
+      if(seen!==current){
+        localStorage.setItem(DB_RELEASE_KEY,current);
+        showRequired(`Database/system update detected: ${data.release_label||'new release'}. Refresh and log in again before continuing.`);
+      }
+    }catch(_){}
+  }
+
+  async function checkSystem(){
+    if(checking||patchRequired)return;
+    checking=true;
+    try{
+      await checkDeployment();
+      if(!patchRequired)await checkDatabaseRelease();
     }finally{
       checking=false;
     }
   }
 
-  // Initial check is delayed so login/app rendering remains fast.
-  setTimeout(checkPatch,500);
-  intervalId=setInterval(checkPatch,CHECK_EVERY_MS);
+  setTimeout(checkSystem,500);
+  setInterval(checkSystem,CHECK_EVERY_MS);
 
-  // Also check immediately when a user returns to the tab; no polling while hidden is added.
   document.addEventListener('visibilitychange',()=>{
-    if(document.visibilityState==='visible')checkPatch();
+    if(document.visibilityState==='visible')checkSystem();
   },{passive:true});
+  window.addEventListener('online',checkSystem,{passive:true});
 
-  window.addEventListener('online',checkPatch,{passive:true});
-
-  window.checkForSaikoPatch=checkPatch;
+  window.checkForSaikoPatch=checkSystem;
 })();

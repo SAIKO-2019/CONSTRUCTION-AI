@@ -636,3 +636,80 @@ No SQL migration required for v21.1.
 - Stale error text that incorrectly required Viewer access was removed.
 - `Anyone with the link — Editor` remains supported; no access change to Viewer is required.
 - No SQL migration required.
+
+
+## v22.5 — Unified Global System Release Gate
+This version centralizes mandatory refresh/re-login behavior.
+
+### What now triggers a mandatory re-login
+1. **Any new Vercel deployment**
+   - frontend files
+   - API/serverless files
+   - config changes that require a redeploy
+   - environment-variable changes after redeploy
+2. **Any Supabase/database migration that calls `bump_system_release()`**
+   - schema changes
+   - new tables/columns
+   - RLS/policy changes
+   - database functions or migration changes
+
+### User behavior after detection
+- Blocking `Refresh Required` notice
+- Supabase session is signed out
+- auth session keys are cleared locally
+- page returns to Login
+- user logs in manually again
+- reCAPTCHA is required again
+
+### Detection speed
+- first check after ~0.5 second
+- then every 10 seconds
+- immediate check when returning to the tab
+- immediate check when internet reconnects
+
+### Important rule for all future database changes
+Every SQL migration generated for this project must finish with:
+```sql
+select public.bump_system_release('description of change');
+```
+That makes every logged-in account detect the database change and require a fresh login.
+
+### Limitation
+A change made completely outside the app cannot be detected unless it changes the Vercel deployment fingerprint or bumps the Supabase system-release row. Therefore all future project changes should go through one of those two release paths.
+
+No MutationObserver or page-wide repeated scan is used.
+
+
+## v22.6 — Automatic Google Sheet Sync
+- Quotation projects with a Google Sheet link automatically re-read their source every **5 minutes** while the app is open.
+- First background sync runs about **10 seconds** after login/app load.
+- Returning to the tab triggers an immediate sync.
+- Adds **Sync Now** for immediate manual refresh of all linked quotation projects.
+- Auto-sync updates: Indirect Total Cost, Present Profit, scope breakdown, Summary breakdown, full Summary table, and pie-chart data.
+- Changes are logged to `activity_log` as `auto_sheet_sync`.
+- Awarded and Not Awarded quotation projects are excluded from automatic source syncing.
+- Requests run sequentially to avoid bursts and UI lag.
+- Only one 5-minute timer is added; no MutationObserver or page-wide scanning loop.
+- No SQL migration required.
+- Patch version bumped to 22.6.
+
+
+## v22.7 — For Quotation Live Sync Only
+- Google Sheet auto-sync is now restricted **only to active `For Quotation` projects**.
+- Complete, Awarded, and Not Awarded quotation projects are frozen and are not auto-synced from the source link.
+- Changes inside a linked Google Sheet update live on the next sync and **do not trigger logout, refresh-required, or reCAPTCHA**.
+- Mandatory re-login remains only for true software/system releases: new Vercel web/API deployments or explicit database migration release bumps.
+- Sync interval remains every 5 minutes, with immediate sync when returning to the tab and optional Sync Now.
+- No new SQL required.
+
+
+## v22.8 — Near-Instant Google Sheet Link Auto-Sync
+- Applies only to active **For Quotation** projects with a saved Google Sheets link.
+- First auto-sync runs about **1 second** after app load.
+- Background sync runs every **30 seconds** while the app tab is visible.
+- Selecting a quotation project triggers an additional immediate sync for that project.
+- The selected project is synchronized first, then the remaining active For Quotation projects sequentially.
+- Normal Google Sheet data changes do **not** trigger logout, refresh-required, or reCAPTCHA.
+- Complete, Awarded, and Not Awarded projects remain frozen from auto-sync.
+- No MutationObserver; one lightweight 30-second timer only.
+- No new SQL required.
