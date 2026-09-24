@@ -73,7 +73,9 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
       <label class="workspace-project">Project Folder
         <select id="workspaceProject"></select>
       </label>
-      <div id="topPresenceRail" class="top-presence-rail" aria-label="Who's online"><div class="presence-avatars"><span class="presence-empty">No one online yet</span></div></div><button id="editModeBtn" class="edit-mode-btn" type="button" title="Toggle inline edit mode">✎ Edit Mode</button><button id="quickThemeBtn" class="quick-theme-btn" type="button" title="Quick theme switch">◐</button><div class="mini-avatar">U</div>
+      <div id="topPresenceRail" class="top-presence-rail" aria-label="Who's online"><div class="presence-avatars"><span class="presence-empty">No one online yet</span></div></div><button id="editModeBtn" class="edit-mode-btn" type="button" title="Toggle inline edit mode">✎ Edit Mode</button><button id="quotationNotifBtn" class="quotation-notif-btn" type="button" title="Quotation deadline notifications" aria-label="Quotation deadline notifications">
+          🔔<span id="quotationNotifBadge" class="quotation-notif-badge hidden">0</span>
+        </button><button id="quickThemeBtn" class="quick-theme-btn" type="button" title="Quick theme switch">◐</button><div class="mini-avatar">U</div>
     </header>
 
       <section id="dashboard" class="view active-view">
@@ -251,6 +253,24 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
             </div>
           </div>
 
+          <div class="panel quotation-scope-panel">
+            <div class="panel-head">
+              <div>
+                <h2>Project Scope Breakdown</h2>
+                <p class="muted">Automatically read from the Google Sheet. Percentages are based on the scope values found in the costing sheet.</p>
+              </div>
+              <span id="quotationScopeCount" class="status-pill neutral">0 scopes</span>
+            </div>
+            <div class="quotation-scope-layout">
+              <div class="quotation-pie-wrap">
+                <div id="quotationScopePie" class="quotation-scope-pie" aria-label="Project scope pie chart">
+                  <div class="quotation-pie-center"><strong id="quotationScopeTotalPct">0%</strong><span>Scope Mix</span></div>
+                </div>
+              </div>
+              <div id="quotationScopeLegend" class="quotation-scope-legend"></div>
+            </div>
+          </div>
+
           <div class="quotation-dashboard-grid">
             <div class="panel quotation-completion-panel">
               <div class="panel-head">
@@ -373,6 +393,9 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
         </label>
         <label>Client / Owner
           <input id="pwClient" placeholder="Optional">
+        </label>
+        <label>Deadline
+          <input id="pwDeadline" type="date" required>
         </label>
       </div>
       <label>Google Sheets Link
@@ -543,5 +566,28 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
   <script src="v18.js?v=1801"></script>
   <script src="v19.js?v=1901"></script>
   <script src="v20.js?v=2001"></script>
+
+  <dialog id="quotationNotifDialog">
+    <div class="dialog-card quotation-notif-dialog">
+      <div class="dialog-head">
+        <div>
+          <small>QUOTATION DEADLINES</small>
+          <h2>Deadline Notifications</h2>
+        </div>
+        <button type="button" data-close="quotationNotifDialog">×</button>
+      </div>
+      <div class="quotation-reminder-schedule">
+        <strong>Reminder times:</strong>
+        <span>8:00 AM</span><span>10:00 AM</span><span>12:00 PM</span><span>2:00 PM</span><span>4:00 PM</span>
+      </div>
+      <div id="quotationNotifList" class="quotation-notif-list"></div>
+      <div class="dialog-actions">
+        <button type="button" class="secondary-btn" data-close="quotationNotifDialog">Close</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="v20.3.js?v=2031"></script>
+  <script src="v20.5.js?v=2051"></script>
 </body>
 </html>

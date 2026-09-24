@@ -97,6 +97,142 @@ function findMetric(workbook,kind,{numeric=true}={}){
   return null;
 }
 
+
+function isScopeHeader(text){
+  const n=normalize(text);
+  return n==="scope" || n==="scope of work" || n==="scope of works" || n==="work scope" ||
+         n==="description" || n==="work description" || n==="trade" || n==="division" || n==="category";
+}
+
+function isAmountHeader(text){
+  const n=normalize(text);
+  return n==="amount" || n==="total amount" || n==="cost" || n==="total cost" ||
+         n==="estimated cost" || n==="budget" || n==="subtotal";
+}
+
+function isPercentHeader(text){
+  const n=normalize(text);
+  return n.includes("percent") || n.includes("percentage") || n==="weight" || n==="weightage" || n==="%";
+}
+
+function cleanScopeName(text){
+  return String(text||"").replace(/^[-–—•\s]+/,"").replace(/\s+/g," ").trim();
+}
+
+function validScopeName(text){
+  const t=cleanScopeName(text);
+  const n=normalize(t);
+  if(!t || t.length<2 || t.length>120) return false;
+  if(/^\d+(\.\d+)?$/.test(t)) return false;
+  if(n.includes("grand total") || n==="total" || n.startsWith("total ") || n.includes("indirect total cost") || n.includes("present profit")) return false;
+  return true;
+}
+
+function numericFromCell(cell){
+  if(!cell) return null;
+  let n=asNumber(cell.value);
+  if(n!==null) return n;
+  const t=safeText(cell);
+  if(t) n=asNumber(t);
+  return n;
+}
+
+function percentFromCell(cell){
+  if(!cell) return null;
+  let v=cell.value;
+  if(v && typeof v==="object" && v.result!=null) v=v.result;
+  if(typeof v==="number" && Number.isFinite(v)){
+    if(v>=0 && v<=1) return v*100;
+    if(v>1 && v<=100) return v;
+  }
+  const t=safeText(cell);
+  if(t.includes("%")){
+    const n=asNumber(t);
+    if(n!==null) return n;
+  }
+  return null;
+}
+
+function detectScopeTable(workbook){
+  const candidates=[];
+
+  for(const ws of workbook.worksheets||[]){
+    const maxRows=Math.min(ws.rowCount||0,2500);
+    for(let r=1;r<=maxRows;r++){
+      const row=ws.getRow(r);
+      const maxCols=Math.min(Math.max(row.cellCount||0,1),120);
+      let scopeCol=null, amountCol=null, percentCol=null;
+
+      for(let c=1;c<=maxCols;c++){
+        const txt=safeText(row.getCell(c));
+        if(!txt) continue;
+        if(scopeCol===null && isScopeHeader(txt)) scopeCol=c;
+        if(amountCol===null && isAmountHeader(txt)) amountCol=c;
+        if(percentCol===null && isPercentHeader(txt)) percentCol=c;
+      }
+
+      if(scopeCol===null || (amountCol===null && percentCol===null)) continue;
+
+      const items=[];
+      let blankRun=0;
+      for(let rr=r+1;rr<=Math.min(r+80,maxRows);rr++){
+        const name=cleanScopeName(safeText(ws.getCell(rr,scopeCol)));
+        if(!name){
+          blankRun++;
+          if(blankRun>=4 && items.length>=2) break;
+          continue;
+        }
+        blankRun=0;
+        if(!validScopeName(name)){
+          if(normalize(name).includes("total") && items.length>=2) break;
+          continue;
+        }
+
+        const pct=percentCol!==null ? percentFromCell(ws.getCell(rr,percentCol)) : null;
+        const amount=amountCol!==null ? numericFromCell(ws.getCell(rr,amountCol)) : null;
+        if(pct===null && amount===null) continue;
+        items.push({name,amount,percentage:pct,source:`${ws.name}!${ws.getCell(rr,scopeCol).address}`});
+      }
+
+      if(items.length>=2){
+        candidates.push({ws:ws.name,headerRow:r,items,hasPercent:percentCol!==null,hasAmount:amountCol!==null});
+      }
+    }
+  }
+
+  if(!candidates.length) return [];
+  candidates.sort((a,b)=>{
+    const score=x=>(x.hasPercent?4:0)+(x.hasAmount?2:0)+Math.min(x.items.length,15)/10;
+    return score(b)-score(a);
+  });
+
+  const picked=candidates[0].items.slice(0,24);
+  const pctValues=picked.map(x=>x.percentage).filter(x=>Number.isFinite(x) && x>=0);
+  const pctSum=pctValues.reduce((a,b)=>a+b,0);
+
+  if(pctValues.length===picked.length && pctSum>95 && pctSum<105){
+    return picked.map(x=>({...x,percentage:(x.percentage/pctSum)*100}));
+  }
+
+  const amountTotal=picked.reduce((s,x)=>s+(Number.isFinite(x.amount)&&x.amount>0?x.amount:0),0);
+  if(amountTotal>0){
+    return picked
+      .filter(x=>Number.isFinite(x.amount)&&x.amount>0)
+      .map(x=>({...x,percentage:(x.amount/amountTotal)*100}));
+  }
+
+  if(pctValues.length){
+    const usableTotal=pctValues.reduce((a,b)=>a+b,0);
+    if(usableTotal>0){
+      return picked
+        .filter(x=>Number.isFinite(x.percentage)&&x.percentage>0)
+        .map(x=>({...x,percentage:(x.percentage/usableTotal)*100}));
+    }
+  }
+
+  return [];
+}
+
 export default async function handler(req,res){
   if(req.method!=="POST") return res.status(405).json({ok:false,error:"Method not allowed"});
   try{
@@ -136,6 +272,7 @@ export default async function handler(req,res){
     const profit=findMetric(workbook,"profit",{numeric:true});
     const project=findMetric(workbook,"project",{numeric:false});
     const client=findMetric(workbook,"client",{numeric:false});
+    const scopeBreakdown=detectScopeTable(workbook);
 
     const firstSheet=(workbook.worksheets?.[0]?.name || `Quotation ${id.slice(0,6)}`).trim();
     const projectName=(project?.value && String(project.value).trim().length<180)
@@ -156,6 +293,12 @@ export default async function handler(req,res){
       clientName:client?.value ? String(client.value).trim() : "",
       indirectTotalCost:indirect?.value ?? null,
       presentProfit:profit?.value ?? null,
+      scopeBreakdown:scopeBreakdown.map(x=>({
+        name:x.name,
+        amount:Number.isFinite(x.amount)?x.amount:null,
+        percentage:Math.round((x.percentage||0)*100)/100,
+        source:x.source
+      })),
       sources:{
         project:project ? `${project.sheet}!${project.labelCell} → ${project.valueCell}` : `Worksheet: ${firstSheet}`,
         indirect:indirect ? `${indirect.sheet}!${indirect.labelCell} → ${indirect.valueCell}` : null,

@@ -356,3 +356,49 @@ No new SQL migration is required.
 - The reader now safely ignores blank/unsupported cells while scanning the workbook.
 - Clearer error messages are shown when the Sheet is private or the required labels cannot be found.
 - No SQL migration required.
+
+
+## v20.2 Quotation Delete
+- Adds **Delete Quotation** to the selected quotation dashboard.
+- Requires confirmation before deletion.
+- Deletes the quotation record.
+- Best-effort removes the linked final uploaded file.
+- Cleans up quotation history entries from `activity_log`.
+- No SQL migration required.
+
+
+## v20.3 Quotation Deadlines & In-System Reminders
+- Adds a required **Deadline** when creating a quotation project.
+- Deadline is saved in the existing `target_submission` field.
+- Pending quotation deadlines are shown on project cards and the selected project dashboard.
+- Adds a notification bell in the top bar.
+- The system checks quotation deadlines five times during the working day:
+  - 8:00 AM
+  - 10:00 AM
+  - 12:00 PM
+  - 2:00 PM
+  - 4:00 PM
+- Reminders are shown for overdue quotations and quotations due within 3 days.
+- Each reminder slot triggers at most once per browser/user per day.
+- Browser desktop notification is used only if notification permission was already granted; in-app notification/toast works without it.
+- No SQL migration required because the existing `target_submission` column is reused.
+
+
+## v20.4 Per-Project Quotation Amounts
+- Removed summed quotation amount totals.
+- Indirect Total Cost and Present Profit are shown per quotation project only.
+- Top quotation KPI labels now include the selected project name.
+- Dashboard quotation snapshot also shows one card per quotation project instead of combining costs/profits.
+- Project/status counts may still be shown as counts, but money values are never totaled across projects.
+- No SQL migration required.
+
+
+## v20.5 Scope Breakdown + Pie Chart
+- Google Sheet reader now also looks for a scope table.
+- It recognizes columns such as Scope / Scope of Works / Description / Trade / Division / Category.
+- It looks for Amount / Cost / Total Cost or Weight / Percentage columns.
+- If percentages are present, they are normalized to 100%.
+- Otherwise percentages are calculated from the detected scope amounts.
+- The selected quotation project gets its own Scope Breakdown pie chart and percentage legend.
+- Scope data is saved in `quotation_projects.scope_breakdown` so the last read breakdown remains available even when the Sheet is closed.
+- Run `v20.5-scope-breakdown.sql` once in Supabase SQL Editor.

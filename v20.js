@@ -7,6 +7,18 @@
   function rows(){ return cache.quotationProjects||[]; }
   function selected(){ return rows().find(x=>String(x.id)===String(selectedId))||null; }
   function isComplete(q){ return q?.status==='Complete' || !!q?.boq_file_name; }
+  function deadlineState(q){
+    if(!q?.target_submission) return {label:'No deadline',className:'neutral',days:null};
+    const today=new Date(); today.setHours(0,0,0,0);
+    const d=new Date(`${q.target_submission}T00:00:00`);
+    const diff=Math.round((d-today)/86400000);
+    if(diff<0) return {label:`Overdue ${Math.abs(diff)}d`,className:'overdue',days:diff};
+    if(diff===0) return {label:'Due today',className:'today',days:0};
+    if(diff===1) return {label:'Due tomorrow',className:'soon',days:1};
+    if(diff<=3) return {label:`Due in ${diff} days`,className:'soon',days:diff};
+    return {label:d.toLocaleDateString(),className:'normal',days:diff};
+  }
+
 
   async function readSheet(link){
     const r=await fetch('/api/read-quotation-sheet',{
@@ -63,18 +75,23 @@
 
   function renderOverview(){
     const list=rows();
-    const totalCost=list.reduce((s,q)=>s+Number(q.estimated_cost||0),0);
-    const totalProfit=list.reduce((s,q)=>s+Number(q.projected_profit||0),0);
     const complete=list.filter(isComplete).length;
     const active=list.length-complete;
+    const current=selected();
     const box=$('quotationOverviewKPIs');
-    if(box)box.innerHTML=[
+    if(!box)return;
+
+    const currentName=current?.project_name||'Select a Project';
+    const currentCost=current?money(current.estimated_cost||0):'—';
+    const currentProfit=current?money(current.projected_profit||0):'—';
+
+    box.innerHTML=[
       ['Quotation Projects',String(list.length)],
       ['For Quotation',String(active)],
       ['Complete',String(complete)],
-      ['Total Indirect Cost',money(totalCost)],
-      ['Total Present Profit',money(totalProfit)]
-    ].map(x=>`<div class="kpi"><span>${x[0]}</span><strong>${x[1]}</strong></div>`).join('');
+      [`${currentName} — Indirect Total Cost`,currentCost],
+      [`${currentName} — Present Profit`,currentProfit]
+    ].map(x=>`<div class="kpi quotation-project-kpi"><span>${x[0]}</span><strong>${x[1]}</strong></div>`).join('');
   }
 
   function renderCards(){
@@ -114,6 +131,7 @@
         </div>
         <div class="quotation-card-foot">
           <span>${q.client_name?esc(q.client_name):'No client encoded'}</span>
+          <span class="deadline-chip ${deadlineState(q).className}">⏱ ${deadlineState(q).label}</span>
           <span>${q.boq_file_name?'Final file uploaded':'Waiting for final file'}</span>
         </div>
       </button>`;
@@ -123,6 +141,7 @@
       btn.onclick=()=>{
         selectedId=btn.dataset.quotationId;
         renderCards();
+        renderOverview();
       };
     });
     renderSelected();
@@ -137,7 +156,9 @@
 
     const complete=isComplete(q);
     $('quotationSelectedName').textContent=q.project_name||'Quotation Project';
-    $('quotationSelectedClient').textContent=q.client_name||'No client encoded';
+    const deadline=deadlineState(q);
+    $('quotationSelectedClient').textContent=`${q.client_name||'No client encoded'} • ${deadline.label}`;
+    $('quotationSelectedClient').className=`quotation-selected-client deadline-${deadline.className}`;
     $('quotationSelectedLink').href=q.gsheet_link||'#';
     $('quotationSelectedLink').style.pointerEvents=q.gsheet_link?'auto':'none';
 
@@ -155,7 +176,55 @@
       ? `Final file: <strong>${esc(q.boq_file_name)}</strong>`
       : 'No final file uploaded yet.';
 
+    let delBtn=$('deleteQuotationProjectBtn');
+    if(!delBtn){
+      delBtn=document.createElement('button');
+      delBtn.id='deleteQuotationProjectBtn';
+      delBtn.type='button';
+      delBtn.className='danger-btn quotation-delete-btn';
+      delBtn.textContent='Delete Quotation';
+      document.querySelector('.quotation-header-actions')?.prepend(delBtn);
+    }
+    delBtn.onclick=()=>deleteSelectedQuotation();
+
     loadHistory(q.id);
+  }
+
+
+  async function deleteSelectedQuotation(){
+    const q=selected();
+    if(!q)return;
+
+    const name=q.project_name||'this quotation project';
+    const ok=confirm(`Delete "${name}"?\n\nThis will remove the quotation project and its saved tracker data. Uploaded final files linked to this quotation will also be deleted when possible.`);
+    if(!ok)return;
+
+    try{
+      // Best-effort delete of linked final file first.
+      if(q.boq_storage_path){
+        const {error:storageError}=await sb.storage.from('project-files').remove([q.boq_storage_path]);
+        if(storageError)console.warn('quotation file delete',storageError);
+      }
+
+      // Delete quotation history entries for this record.
+      try{
+        await sb.from('activity_log')
+          .delete()
+          .eq('module','quotation')
+          .eq('record_id',String(q.id));
+      }catch(e){console.warn('quotation history cleanup',e)}
+
+      const {error}=await sb.from('quotation_projects').delete().eq('id',q.id);
+      if(error)throw error;
+
+      selectedId=null;
+      await refreshAll();
+      renderCards();
+      window.renderQuotationDashboard();
+      toast('Quotation project deleted.');
+    }catch(err){
+      alert('Delete failed: '+(err?.message||err));
+    }
   }
 
   window.renderPending=renderCards;
@@ -163,15 +232,27 @@
   window.renderQuotationDashboard=function(){
     const box=$('quotationDashboardSnapshot'); if(!box)return;
     const list=rows();
-    const indirect=list.reduce((s,q)=>s+Number(q.estimated_cost||0),0);
-    const profit=list.reduce((s,q)=>s+Number(q.projected_profit||0),0);
     const complete=list.filter(isComplete).length;
-    box.innerHTML=[
-      ['Quotation Projects',String(list.length)],
-      ['Indirect Total Cost',money(indirect)],
-      ['Present Profit',money(profit)],
-      ['Complete',`${complete} / ${list.length}`]
-    ].map(x=>`<div class="kpi"><span>${x[0]}</span><strong>${x[1]}</strong></div>`).join('');
+
+    if(!list.length){
+      box.innerHTML=[
+        ['Quotation Projects','0'],
+        ['For Quotation','0'],
+        ['Complete','0 / 0']
+      ].map(x=>`<div class="kpi"><span>${x[0]}</span><strong>${x[1]}</strong></div>`).join('');
+      return;
+    }
+
+    box.innerHTML=list.map(q=>{
+      const done=isComplete(q);
+      return `<div class="kpi quotation-dashboard-project">
+        <span>${esc(q.project_name||'Quotation Project')}</span>
+        <strong>${money(q.estimated_cost||0)}</strong>
+        <small>Indirect Total Cost</small>
+        <strong class="quotation-profit-value">${money(q.projected_profit||0)}</strong>
+        <small>Present Profit · ${done?'Complete':'For Quotation'}</small>
+      </div>`;
+    }).join('');
   };
 
   $('addPendingBtn')?.addEventListener('click',()=>{
@@ -188,8 +269,9 @@
 
       const projectName=$('pwWorkItem')?.value.trim()||'';
       const client=$('pwClient')?.value.trim()||'';
+      const deadline=$('pwDeadline')?.value||null;
       const link=$('pwGsheetLink')?.value.trim()||'';
-      if(!projectName||!link)return;
+      if(!projectName||!deadline||!link)return;
 
       readBusy=true;
       const btn=$('createQuotationFromLinkBtn');
@@ -206,13 +288,14 @@
           project_name:projectName,
           client_name:client || data.clientName || '',
           estimator:'',
-          target_submission:null,
+          target_submission:deadline,
           status:'For Quotation',
           notes:'',
           gsheet_link:link,
           estimated_cost:Number(data.indirectTotalCost||0),
           running_amount:Number(data.indirectTotalCost||0),
           projected_profit:Number(data.presentProfit||0),
+          scope_breakdown:Array.isArray(data.scopeBreakdown)?data.scopeBreakdown:[],
           created_by:currentUser.id,
           updated_at:new Date().toISOString()
         };
@@ -222,8 +305,10 @@
 
         await addHistory(inserted.id,'created','Quotation project created',{
           gsheet_link:link,
+          deadline:deadline,
           indirect_total_cost:row.estimated_cost,
-          present_profit:row.projected_profit
+          present_profit:row.projected_profit,
+          scope_count:row.scope_breakdown.length
         });
 
         selectedId=String(inserted.id);
@@ -256,6 +341,7 @@
         estimated_cost:Number(data.indirectTotalCost||0),
         running_amount:Number(data.indirectTotalCost||0),
         projected_profit:Number(data.presentProfit||0),
+        scope_breakdown:Array.isArray(data.scopeBreakdown)?data.scopeBreakdown:[],
         updated_at:new Date().toISOString()
       };
       const {error}=await sb.from('quotation_projects').update(values).eq('id',q.id);
@@ -263,7 +349,8 @@
 
       await addHistory(q.id,'sheet_refresh','Google Sheet values refreshed',{
         indirect_total_cost:values.estimated_cost,
-        present_profit:values.projected_profit
+        present_profit:values.projected_profit,
+        scope_count:values.scope_breakdown.length
       });
 
       await refreshAll();
