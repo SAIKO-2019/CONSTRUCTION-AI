@@ -1,5 +1,5 @@
 {
-  "version": "24.5",
-  "label": "SAIKO Construction AI v24.5",
-  "message": "Downpayment is now a dedicated billing row and the Dashboard financial section is a compact per-project summary."
+  "version": "24.6",
+  "label": "SAIKO Construction AI v24.6",
+  "message": "Billing Project Folder selection is restored and Dashboard compatibility errors are fixed without changing the correct Billing layout."
 }

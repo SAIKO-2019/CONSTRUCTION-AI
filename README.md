@@ -867,3 +867,13 @@ No MutationObserver or page-wide repeated scan is used.
 - Per project it shows Contract Amount, Downpayment, Regular Billed, Collected, Client Outstanding, Subcon Available, and Subcon Paid.
 - Detailed billing and subcontract settings remain in Billing & Payments only.
 - Run `v24.5-downpayment-category.sql` once in Supabase.
+
+
+## v24.6 — Restore Billing Project Folder / No Regression
+- Fixes the blank **Project Folder** selection visible in Billing & Payments.
+- Preserves the selected Billing project across refresh/background updates.
+- If a saved Billing project is unavailable, it safely falls back to the Workspace project, then the first accessible project.
+- Fixes a Dashboard compatibility error caused by removing the old detailed Billing Snapshot container in v24.5.
+- The correct GenCon/Subcon Billing layout from v24.4 is preserved.
+- Downpayment support and the new summary-only Dashboard from v24.5 remain included.
+- No new SQL required beyond the v24.5 migration.
