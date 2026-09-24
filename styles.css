@@ -1744,3 +1744,203 @@ dialog:not(.patch-required-dialog) .dialog-card{
 .dashboard-quotation-remarks strong{color:var(--heading)}
 .dashboard-quotation-remarks .text-btn{margin-left:auto}
 @media(max-width:720px){.dashboard-quotation-remarks .text-btn{margin-left:0}}
+
+
+/* v23.8 Billing folders */
+.billing-party-tabs{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  margin:12px 0;
+}
+.billing-party-tab{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-height:74px;
+  padding:14px 16px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--surface);
+  color:var(--text);
+  text-align:left;
+  cursor:pointer;
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+.billing-party-tab:hover{transform:translateY(-1px)}
+.billing-party-tab.active{box-shadow:0 8px 24px rgba(0,0,0,.08);border-color:var(--accent)}
+.billing-party-tab .folder-icon{font-size:22px;line-height:1}
+.billing-party-tab strong{display:block;font-size:13px;color:var(--heading)}
+.billing-party-tab small{display:block;margin-top:3px;font-size:10px;color:var(--muted)}
+.billing-folder-transition{height:0;opacity:0;transform:translateY(4px)}
+.billing-folder-transition.show{animation:billingFolderFlash .28s ease}
+@keyframes billingFolderFlash{0%{opacity:0;transform:translateY(5px)}50%{opacity:.5}100%{opacity:0;transform:translateY(0)}}
+@media(max-width:700px){.billing-party-tabs{grid-template-columns:1fr}}
+
+
+/* =========================================================
+   v23.9 GenCon/Subcon visual separation
+   ========================================================= */
+
+/* GenCon = cool blue family */
+.billing-party-tab.gencon-tab{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(135deg, rgba(224,242,254,.95), rgba(239,246,255,.92));
+  border-color:rgba(59,130,246,.28);
+}
+.billing-party-tab.gencon-tab.active{
+  background:linear-gradient(135deg, rgba(219,234,254,1), rgba(239,246,255,1));
+  border-color:rgba(37,99,235,.55);
+  box-shadow:0 10px 26px rgba(37,99,235,.12);
+}
+.billing-party-tab.gencon-tab .folder-icon,
+.billing-party-tab.gencon-tab strong{color:#1d4ed8}
+
+/* Subcon = warm amber/orange family */
+.billing-party-tab.subcon-tab{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(135deg, rgba(254,243,199,.95), rgba(255,247,237,.92));
+  border-color:rgba(245,158,11,.32);
+}
+.billing-party-tab.subcon-tab.active{
+  background:linear-gradient(135deg, rgba(253,230,138,.78), rgba(255,247,237,1));
+  border-color:rgba(217,119,6,.58);
+  box-shadow:0 10px 26px rgba(217,119,6,.13);
+}
+.billing-party-tab.subcon-tab .folder-icon,
+.billing-party-tab.subcon-tab strong{color:#b45309}
+
+/* Animated side marker */
+.billing-tab-side{
+  position:absolute;
+  left:0;
+  top:50%;
+  width:5px;
+  height:0;
+  border-radius:0 8px 8px 0;
+  transform:translateY(-50%);
+  transition:height .26s ease, box-shadow .26s ease;
+}
+.gencon-tab .billing-tab-side{background:#2563eb}
+.subcon-tab .billing-tab-side{background:#d97706}
+.billing-party-tab.active .billing-tab-side{
+  height:68%;
+  animation:billingSidePulse .72s ease;
+}
+@keyframes billingSidePulse{
+  0%{height:12%;opacity:.25;transform:translateY(-50%) scaleY(.7)}
+  55%{height:82%;opacity:1;transform:translateY(-50%) scaleY(1.04)}
+  100%{height:68%;opacity:1;transform:translateY(-50%) scaleY(1)}
+}
+
+/* Entire billing content gets a subtle matching tint */
+#billing.billing-mode-gencon #billingKPIs .kpi{
+  border-color:rgba(59,130,246,.22);
+  background:linear-gradient(180deg, rgba(239,246,255,.80), rgba(255,255,255,.96));
+}
+#billing.billing-mode-subcon #billingKPIs .kpi{
+  border-color:rgba(245,158,11,.24);
+  background:linear-gradient(180deg, rgba(255,247,237,.82), rgba(255,255,255,.96));
+}
+#billing.billing-mode-gencon #billingRows tr{
+  background:rgba(239,246,255,.26);
+}
+#billing.billing-mode-subcon #billingRows tr{
+  background:rgba(255,247,237,.30);
+}
+
+/* Slide-in from the side when switching folders */
+.billing-table-switch{
+  animation:billingSideIn .34s cubic-bezier(.2,.7,.2,1);
+}
+@keyframes billingSideIn{
+  0%{opacity:.35;transform:translateX(18px)}
+  100%{opacity:1;transform:translateX(0)}
+}
+
+/* Small mode accent on the commercial settings card */
+#billing.billing-mode-subcon #subconCommercialSettings{
+  border-left:4px solid #d97706;
+}
+#billing.billing-mode-gencon #subconCommercialSettings{
+  border-left:4px solid #2563eb;
+}
+
+@media(max-width:700px){
+  .billing-party-tab.active .billing-tab-side{height:60%}
+}
+
+
+/* =========================================================
+   v24.0 Tiny Paid Celebration
+   Lightweight: transform/opacity only, one 30s timeout.
+   ========================================================= */
+.paid-mini-celebration{
+  position:fixed;
+  right:20px;
+  bottom:22px;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-width:178px;
+  padding:10px 14px;
+  border:1px solid rgba(34,197,94,.28);
+  border-radius:14px;
+  background:rgba(248,255,250,.97);
+  box-shadow:0 12px 30px rgba(15,23,42,.14);
+  opacity:0;
+  transform:translate3d(18px,8px,0) scale(.97);
+  transition:opacity .24s ease,transform .24s ease;
+  pointer-events:none;
+  will-change:transform,opacity;
+}
+.paid-mini-celebration.show{
+  opacity:1;
+  transform:translate3d(0,0,0) scale(1);
+}
+.paid-mini-celebration.hide{
+  opacity:0;
+  transform:translate3d(12px,5px,0) scale(.98);
+}
+.paid-mini-icon{
+  width:30px;
+  height:30px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:rgba(34,197,94,.14);
+  font-size:17px;
+  font-weight:900;
+  animation:paidHappyBounce 1.1s ease-in-out 2;
+}
+.paid-mini-text{display:grid;line-height:1.15}
+.paid-mini-text strong{font-size:13px}
+.paid-mini-text small{margin-top:3px;font-size:10px;opacity:.7}
+.paid-mini-spark{
+  position:absolute;
+  font-size:11px;
+  opacity:.7;
+  animation:paidSparkFloat 1.4s ease-in-out 2;
+}
+.paid-mini-spark.p1{right:13px;top:7px}
+.paid-mini-spark.p2{right:36px;top:3px;animation-delay:.12s}
+.paid-mini-spark.p3{right:6px;bottom:7px;animation-delay:.22s}
+@keyframes paidHappyBounce{
+  0%,100%{transform:translate3d(0,0,0) scale(1)}
+  45%{transform:translate3d(0,-3px,0) scale(1.08)}
+}
+@keyframes paidSparkFloat{
+  0%,100%{transform:translate3d(0,0,0);opacity:.25}
+  50%{transform:translate3d(0,-5px,0);opacity:.9}
+}
+@media (prefers-reduced-motion:reduce){
+  .paid-mini-celebration,
+  .paid-mini-icon,
+  .paid-mini-spark{
+    animation:none!important;
+    transition:none!important;
+  }
+}

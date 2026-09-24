@@ -1,5 +1,5 @@
 {
-  "version": "23.7",
-  "label": "SAIKO Construction AI v23.7",
-  "message": "A new system patch is required. Project/module selection is now sticky and background sync will no longer jump users back to another project."
+  "version": "24.0",
+  "label": "SAIKO Construction AI v24.0",
+  "message": "A lightweight Paid celebration animation was added. It disappears automatically after 30 seconds."
 }

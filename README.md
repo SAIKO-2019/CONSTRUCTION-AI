@@ -789,3 +789,31 @@ No MutationObserver or page-wide repeated scan is used.
 - Background `refreshAll()` no longer overwrites the project you are currently viewing.
 - The active module and scroll position are preserved across refresh/re-login.
 - No SQL required.
+
+
+## v23.8 — GenCon / Subcon Billing Folders
+- Billing & Payments now has two folder-style views: **GenCon** and **Subcon**.
+- Switching folders uses a lightweight transition and remembers the last open folder.
+- GenCon shows Client Billing records only.
+- Subcon shows Subcontractor Billing records only, including issued amount/date, billed, paid, outstanding, and commercial settings.
+- Add Billing automatically defaults to Client Billing in GenCon and Subcontractor Billing in Subcon.
+- Main Dashboard automatically summarizes both sides: GenCon billed/collections, Subcon issued/billed/paid, client outstanding, subcon outstanding, and net cash position.
+- No new SQL required.
+
+
+## v23.9 — Color-Coded GenCon/Subcon + Side Animation
+- **GenCon** folder now uses a cool blue visual family.
+- **Subcon** folder now uses a warm amber/orange visual family.
+- KPI cells and billing rows inherit a subtle tint based on the active folder.
+- Active folder has an animated left-side indicator.
+- Switching folders uses a light horizontal slide-in transition.
+- No SQL required.
+
+
+## v24.0 — Tiny Paid Celebration
+- When a billing changes from unpaid/partial to fully **Paid**, a small happy animation appears.
+- It disappears automatically after **30 seconds**.
+- Uses only `transform` and `opacity` animations for smooth GPU-friendly rendering.
+- Only one `setTimeout`; no interval, MutationObserver, or page-wide scan.
+- Respects `prefers-reduced-motion`.
+- No SQL required.
