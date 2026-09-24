@@ -1,5 +1,5 @@
 {
-  "version": "26.2",
-  "label": "SAIKO Construction AI v26.2",
-  "message": "Schedule Tracker and Actual Progress now mirror the visible linked Google Sheet tab as view-only; calculations are handled internally."
+  "version": "26.3",
+  "label": "SAIKO Construction AI v26.3",
+  "message": "Projected now uses Excel file upload; Actual remains Google Sheet live sync. The system automatically computes S-Curve, variance, slippage status and methodology guidance."
 }

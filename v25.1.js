@@ -22,12 +22,7 @@
     syncing=true;
     try{
       if(view==='schedule'){
-        const p=selectedProjectFor('schedule');
-        if(p?.schedule_sheet_link){
-          await syncSchedule(p,silent);
-          renderSchedule();
-          renderDashboard();
-        }
+        // v26.3: Projected is file-upload based. No Google Sheet live sync here.
       }else if(view==='progress'){
         const p=selectedProjectFor('progress');
         if(p?.actual_progress_sheet_link){
@@ -39,7 +34,6 @@
         // Dashboard compares both sources for the selected workspace project only.
         // This keeps the sync lightweight instead of refreshing every project.
         const p=selectedProjectFor('dashboard');
-        if(p?.schedule_sheet_link)await syncSchedule(p,true);
         if(p?.actual_progress_sheet_link)await syncActual(p,true);
         renderDashboard();
       }

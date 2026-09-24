@@ -2082,3 +2082,30 @@ dialog:not(.patch-required-dialog) .dialog-card{
 .sheet-corner{z-index:4!important;top:0}
 .sheet-mirror-cell.numeric-cell{text-align:right;font-variant-numeric:tabular-nums}
 .sheet-col-letter{min-width:96px!important;color:var(--muted)}
+
+
+/* v26.3 Projected upload + Actual live */
+.projected-upload-toolbar{
+  display:grid;
+  grid-template-columns:minmax(200px,.7fr) minmax(320px,1.5fr) auto;
+  gap:10px;
+  align-items:end;
+}
+.projected-upload-toolbar .tracker-sync-status{grid-column:2/-1;font-size:9px;color:var(--muted)}
+.projected-upload-toolbar .file-label{display:flex;flex-direction:column;gap:5px}
+.projected-upload-toolbar .file-label input{
+  width:100%;
+  min-height:38px;
+  padding:7px 9px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:var(--surface);
+}
+.recovery-item{padding:10px 0;border-bottom:1px solid var(--line)}
+.recovery-item:last-child{border-bottom:0}
+.recovery-item strong{display:block;margin-bottom:4px}
+.recovery-item p{margin:0;color:var(--muted);font-size:10px;line-height:1.55}
+@media(max-width:800px){
+  .projected-upload-toolbar{grid-template-columns:1fr}
+  .projected-upload-toolbar .tracker-sync-status{grid-column:1}
+}

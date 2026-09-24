@@ -7,8 +7,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SAIKO Construction AI</title>
-  <link rel="stylesheet" href="styles.css?v=2621" />
-    <script src="patch-gate.js?v=2621"></script>
+  <link rel="stylesheet" href="styles.css?v=2631" />
+    <script src="patch-gate.js?v=2631"></script>
 <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
 </head>
 <body>
@@ -49,8 +49,8 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
         <button data-view="dashboard" class="active">▦ Dashboard</button>
         <button data-view="projects">▣ Projects</button>
         <button data-view="billing">₱ Billing & Payments</button>
-        <button data-view="schedule">◫ Schedule Tracker</button>
-        <button data-view="progress">◩ Actual Progress</button>
+        <button data-view="schedule">◫ Projected</button>
+        <button data-view="progress">◩ Actual</button>
         <button data-view="inventory">▥ Inventory / Purchases</button>
         <button data-view="budget">◒ Budget Monitoring</button>
         <button data-view="reports">▣ Project Reports</button>
@@ -158,7 +158,7 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
           </tr></thead><tbody id="dashSubconSummaryRows"><tr><td colspan="7" class="empty">No subcontract-dependent projects yet.</td></tr></tbody></table></div>
         </div>
       
-        <div class="panel"><div class="panel-head"><h2>Ongoing Projects — Schedule Health</h2><button class="link-btn" data-jump="schedule">Open Schedule Tracker</button></div><div id="ongoingScheduleDashboard" class="ongoing-schedule-grid"></div></div>
+        <div class="panel"><div class="panel-head"><h2>Ongoing Projects — Schedule Health</h2><button class="link-btn" data-jump="schedule">Open Projected</button></div><div id="ongoingScheduleDashboard" class="ongoing-schedule-grid"></div></div>
         <div class="panel"><div class="panel-head"><h2>For Quotation Snapshot</h2><button class="link-btn" data-jump="quotation">Open For Quotation</button></div><div id="quotationDashboardSnapshot" class="kpi-grid inset"></div></div>
 
 </section>
@@ -227,53 +227,81 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
       </section>
 
       <section id="schedule" class="view">
-        <div class="page-head"><div><small>PLANNING</small><h1>Schedule Tracker</h1><p>The linked Projected sheet is mirrored as view-only. The system reads the visible data and handles Projected calculations internally.</p></div></div>
-        <div class="toolbar panel tracker-link-toolbar">
+        <div class="page-head">
+          <div>
+            <small>PLANNING</small>
+            <h1>Projected</h1>
+            <p>Upload the Projected Excel file. The visible sheet data is mirrored as view-only, then the system computes the planned S-Curve and project status internally.</p>
+          </div>
+        </div>
+
+        <div class="toolbar panel projected-upload-toolbar">
           <label>Project<select id="scheduleProject"></select></label>
-          <label class="tracker-link-field">Schedule Google Sheet Link<input id="scheduleSheetLink" type="url" placeholder="Paste the link while the Schedule tab is open"></label>
-          <button id="saveScheduleSheetLinkBtn" class="secondary-btn" type="button">Save Link</button>
-          <button id="syncScheduleSheetBtn" class="primary-btn" type="button">Sync Now</button>
-          <span id="scheduleSheetStatus" class="tracker-sync-status">Not linked</span>
+          <label class="file-label grow">Projected Excel File
+            <input id="projectedFileUpload" type="file" accept=".xlsx,.xls,.xlsm">
+          </label>
+          <button id="uploadProjectedFileBtn" class="primary-btn" type="button">Upload Projected</button>
+          <span id="projectedFileStatus" class="tracker-sync-status">No uploaded file</span>
         </div>
+
         <div id="scheduleSummary" class="kpi-grid"></div>
+
         <div class="dashboard-grid">
-          <div class="panel"><div class="panel-head"><h2>Planned Schedule Curve</h2><span class="muted">Schedule data only</span></div><div id="sCurveChart" class="chart-box"></div></div>
-          <div class="panel"><div class="panel-head"><h2>Schedule Guidance</h2><span id="scheduleHealthBadge" class="smart-badge">PLAN</span></div><div id="recoveryPlan" class="recovery-plan"></div></div>
+          <div class="panel">
+            <div class="panel-head"><h2>Projected S-Curve</h2><span class="muted">Computed from the uploaded Projected schedule</span></div>
+            <div id="sCurveChart" class="chart-box"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><h2>Schedule / Methodology Guidance</h2><span id="scheduleHealthBadge" class="smart-badge">AUTO</span></div>
+            <div id="recoveryPlan" class="recovery-plan"></div>
+          </div>
         </div>
+
         <div class="panel tracker-sheet-mirror-panel">
           <div class="panel-head">
             <div>
-              <h2>Projected Google Sheet — View Only</h2>
-              <span class="muted">Shows the visible data from the linked sheet tab. Hidden rows and columns are excluded.</span>
+              <h2>Projected File — View Only</h2>
+              <span class="muted">Shows the visible data from the uploaded Projected sheet. Hidden rows and columns are excluded.</span>
             </div>
-            <span id="scheduleMirrorStatus" class="smart-badge">LIVE</span>
+            <span id="scheduleMirrorStatus" class="smart-badge">FILE</span>
           </div>
           <div id="scheduleSheetMirror" class="sheet-mirror-wrap">
-            <div class="empty">Save the Projected Google Sheet link, then Sync Now.</div>
+            <div class="empty">Upload a Projected Excel file.</div>
           </div>
         </div>
       </section>
 
       <section id="progress" class="view">
-        <div class="page-head"><div><small>SITE ACCOMPLISHMENT</small><h1>Actual Progress</h1><p>The linked Actual sheet is mirrored as view-only. The system reads the visible data and uses STATUS as Actual accomplishment for Dashboard checking.</p></div></div>
+        <div class="page-head">
+          <div>
+            <small>SITE ACCOMPLISHMENT</small>
+            <h1>Actual</h1>
+            <p>Link the Actual Google Sheet for live sync. The visible sheet data is mirrored as view-only and STATUS is used as the actual accomplishment basis.</p>
+          </div>
+        </div>
+
         <div class="toolbar panel tracker-link-toolbar">
           <label>Project<select id="progressProject"></select></label>
-          <label class="tracker-link-field">Actual Progress Google Sheet Link<input id="actualSheetLink" type="url" placeholder="Paste the link while the Actual Progress tab is open"></label>
+          <label class="tracker-link-field">Actual Google Sheet Link
+            <input id="actualSheetLink" type="url" placeholder="Paste the link while the Actual tab is open">
+          </label>
           <button id="saveActualSheetLinkBtn" class="secondary-btn" type="button">Save Link</button>
           <button id="syncActualSheetBtn" class="primary-btn" type="button">Sync Now</button>
           <span id="actualSheetStatus" class="tracker-sync-status">Not linked</span>
         </div>
+
         <div id="progressSummary" class="kpi-grid"></div>
+
         <div class="panel tracker-sheet-mirror-panel">
           <div class="panel-head">
             <div>
               <h2>Actual Google Sheet — View Only</h2>
-              <span class="muted">Shows the visible data from the linked sheet tab. Hidden rows and columns are excluded.</span>
+              <span class="muted">Live visible data only. Hidden rows and columns are excluded.</span>
             </div>
             <span id="actualMirrorStatus" class="smart-badge">LIVE</span>
           </div>
           <div id="actualSheetMirror" class="sheet-mirror-wrap">
-            <div class="empty">Save the Actual Progress Google Sheet link, then Sync Now.</div>
+            <div class="empty">Save the Actual Google Sheet link, then Sync Now.</div>
           </div>
         </div>
       </section>
@@ -325,7 +353,7 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
           <div class="report-section-picker">
             <label><input type="checkbox" class="report-section" value="overview" checked> Project Overview</label>
             <label><input type="checkbox" class="report-section" value="schedule" checked> Schedule / S-Curve</label>
-            <label><input type="checkbox" class="report-section" value="progress" checked> Actual Progress</label>
+            <label><input type="checkbox" class="report-section" value="progress" checked> Actual</label>
             <label><input type="checkbox" class="report-section" value="budget" checked> Budget Monitoring</label>
             <label><input type="checkbox" class="report-section" value="billing" checked> Billing / Subcontractor</label>
             <label><input type="checkbox" class="report-section" value="costs" checked> Cost Folders</label>
@@ -513,7 +541,7 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
           </div>
           <div id="storageStatus" class="form-msg">Storage: checking…</div><div id="smartUploadStatus" class="form-msg"></div>
           <div class="table-wrap"><table><thead><tr><th>File</th><th>Detected Project</th><th>Detected Modules</th><th>Detected Data</th><th>Action</th></tr></thead><tbody id="smartFileRows"><tr><td colspan="5" class="empty">Choose one or more existing project files. Scanning starts automatically.</td></tr></tbody></table></div>
-          <div class="smart-note"><strong>Import behavior:</strong> A single Excel file can feed multiple modules at once. BOQ → BOQ table; Schedule → Schedule Tracker; Billing → Billing & Payments; Variation Order → VO records. The original file is also stored in Supabase Project Files. Project matching is suggested from the file name, sheet names, client/location/project text, then you can confirm before import.</div>
+          <div class="smart-note"><strong>Import behavior:</strong> A single Excel file can feed multiple modules at once. BOQ → BOQ table; Schedule → Projected; Billing → Billing & Payments; Variation Order → VO records. The original file is also stored in Supabase Project Files. Project matching is suggested from the file name, sheet names, client/location/project text, then you can confirm before import.</div>
         </div>
 
         <div class="toolbar panel"><label>Project<select id="fileProject"></select></label><label>Category<select id="fileCategory"><option>Plans</option><option>Contracts</option><option>Billings</option><option>VO & EOT</option><option>Progress Reports</option><option>Schedules</option><option>Photos</option><option>Quotations</option><option>Other</option></select></label><label class="file-label">Choose file<input id="projectFile" type="file"></label><button id="uploadFileBtn" class="primary-btn">Upload Only</button></div>
@@ -647,13 +675,13 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=2621"></script>
-  <script src="v13.js?v=2621"></script>
-  <script src="v14.js?v=2621"></script>
-  <script src="v14.2.js?v=2621"></script>
-  <script src="v14.3.js?v=2621"></script>
-  <script src="v14.4.js?v=2621"></script>
-  <script src="v14.5.js?v=2621"></script>
+  <script src="app.js?v=2631"></script>
+  <script src="v13.js?v=2631"></script>
+  <script src="v14.js?v=2631"></script>
+  <script src="v14.2.js?v=2631"></script>
+  <script src="v14.3.js?v=2631"></script>
+  <script src="v14.4.js?v=2631"></script>
+  <script src="v14.5.js?v=2631"></script>
 
   <dialog id="settingsDialog" class="settings-dialog-shell">
     <form id="settingsForm" class="dialog-card wide settings-dialog-card">
@@ -768,13 +796,13 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </div>
   </dialog>
 
-  <script src="v14.7.js?v=2621"></script>
-  <script src="v14.8.js?v=2621"></script>
-  <script src="v15.9.js?v=2621"></script>
-  <script src="v17-core.js?v=2621"></script>
-  <script src="v18.js?v=2621"></script>
-  <script src="v19.js?v=2621"></script>
-  <script src="v20.js?v=2621"></script>
+  <script src="v14.7.js?v=2631"></script>
+  <script src="v14.8.js?v=2631"></script>
+  <script src="v15.9.js?v=2631"></script>
+  <script src="v17-core.js?v=2631"></script>
+  <script src="v18.js?v=2631"></script>
+  <script src="v19.js?v=2631"></script>
+  <script src="v20.js?v=2631"></script>
 
   <dialog id="quotationNotifDialog">
     <div class="dialog-card quotation-notif-dialog">
@@ -797,9 +825,9 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </div>
   </dialog>
 
-  <script src="v20.3.js?v=2621"></script>
-  <script src="v20.5.js?v=2621"></script>
-  <script src="v20.6.js?v=2621"></script>
+  <script src="v20.3.js?v=2631"></script>
+  <script src="v20.5.js?v=2631"></script>
+  <script src="v20.6.js?v=2631"></script>
 
   <dialog id="editQuotationDialog">
     <form id="editQuotationForm" class="dialog-card quotation-edit-dialog">
@@ -822,25 +850,25 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </form>
   </dialog>
 
-  <script src="v20.7.js?v=2621"></script>
-  <script src="v21.js?v=2621"></script>
-  <script src="patch-watch.js?v=2621"></script>
-  <script src="v21.3.js?v=2621"></script>
-  <script src="v21.4.js?v=2621"></script>
-  <script src="v21.5.js?v=2621"></script>
-  <script src="v21.6.js?v=2621"></script>
-  <script src="v22.6.js?v=2621"></script>
-  <script src="v22.9.js?v=2621"></script>
-  <script src="v23.0.js?v=2621"></script>
-  <script src="v23.2.js?v=2621"></script>
-  <script src="v23.3.js?v=2621"></script>
-  <script src="v23.4.js?v=2621"></script>
-  <script src="v23.5.js?v=2621"></script>
-  <script src="v23.6.js?v=2621"></script>
-  <script src="v23.7.js?v=2621"></script>
-  <script src="v23.8.js?v=2621"></script>
-  <script src="v23.9.js?v=2621"></script>
-  <script src="v24.0.js?v=2621"></script>
+  <script src="v20.7.js?v=2631"></script>
+  <script src="v21.js?v=2631"></script>
+  <script src="patch-watch.js?v=2631"></script>
+  <script src="v21.3.js?v=2631"></script>
+  <script src="v21.4.js?v=2631"></script>
+  <script src="v21.5.js?v=2631"></script>
+  <script src="v21.6.js?v=2631"></script>
+  <script src="v22.6.js?v=2631"></script>
+  <script src="v22.9.js?v=2631"></script>
+  <script src="v23.0.js?v=2631"></script>
+  <script src="v23.2.js?v=2631"></script>
+  <script src="v23.3.js?v=2631"></script>
+  <script src="v23.4.js?v=2631"></script>
+  <script src="v23.5.js?v=2631"></script>
+  <script src="v23.6.js?v=2631"></script>
+  <script src="v23.7.js?v=2631"></script>
+  <script src="v23.8.js?v=2631"></script>
+  <script src="v23.9.js?v=2631"></script>
+  <script src="v24.0.js?v=2631"></script>
 
   <dialog id="linkedSubconDialog">
     <form id="linkedSubconForm" class="dialog-card wide">
@@ -867,19 +895,20 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </form>
   </dialog>
 
-  <script src="v24.1.js?v=2621"></script>
-  <script src="v24.4.js?v=2621"></script>
-  <script src="v24.5.js?v=2621"></script>
-  <script src="v24.6.js?v=2621"></script>
-  <script src="v24.7.js?v=2621"></script>
-  <script src="v24.8.js?v=2621"></script>
-  <script src="v25.0.js?v=2621"></script>
-  <script src="v25.1.js?v=2621"></script>
-  <script src="v25.4.js?v=2621"></script>
-  <script src="v25.5.js?v=2621"></script>
-  <script src="v25.8.js?v=2621"></script>
-  <script src="v26.0.js?v=2621"></script>
-  <script src="v26.1.js?v=2621"></script>
-  <script src="v26.2.js?v=2621"></script>
+  <script src="v24.1.js?v=2631"></script>
+  <script src="v24.4.js?v=2631"></script>
+  <script src="v24.5.js?v=2631"></script>
+  <script src="v24.6.js?v=2631"></script>
+  <script src="v24.7.js?v=2631"></script>
+  <script src="v24.8.js?v=2631"></script>
+  <script src="v25.0.js?v=2631"></script>
+  <script src="v25.1.js?v=2631"></script>
+  <script src="v25.4.js?v=2631"></script>
+  <script src="v25.5.js?v=2631"></script>
+  <script src="v25.8.js?v=2631"></script>
+  <script src="v26.0.js?v=2631"></script>
+  <script src="v26.1.js?v=2631"></script>
+  <script src="v26.2.js?v=2631"></script>
+  <script src="v26.3.js?v=2631"></script>
 </body>
 </html>
