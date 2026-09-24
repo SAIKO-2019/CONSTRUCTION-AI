@@ -7,8 +7,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SAIKO Construction AI</title>
-  <link rel="stylesheet" href="styles.css?v=2611" />
-    <script src="patch-gate.js?v=2611"></script>
+  <link rel="stylesheet" href="styles.css?v=2621" />
+    <script src="patch-gate.js?v=2621"></script>
 <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
 </head>
 <body>
@@ -227,7 +227,7 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
       </section>
 
       <section id="schedule" class="view">
-        <div class="page-head"><div><small>PLANNING</small><h1>Schedule Tracker</h1><p>Projected percentage is read directly from PROJECTED ACCUMULATIVE ACCOMPLISHMENT %AGE. Live sync remains active.</p></div></div>
+        <div class="page-head"><div><small>PLANNING</small><h1>Schedule Tracker</h1><p>The linked Projected sheet is mirrored as view-only. The system reads the visible data and handles Projected calculations internally.</p></div></div>
         <div class="toolbar panel tracker-link-toolbar">
           <label>Project<select id="scheduleProject"></select></label>
           <label class="tracker-link-field">Schedule Google Sheet Link<input id="scheduleSheetLink" type="url" placeholder="Paste the link while the Schedule tab is open"></label>
@@ -236,27 +236,26 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
           <span id="scheduleSheetStatus" class="tracker-sync-status">Not linked</span>
         </div>
         <div id="scheduleSummary" class="kpi-grid"></div>
-        <div class="panel projected-scope-panel">
-          <div class="panel-head">
-            <h2>Projected Scope Status</h2>
-            <span class="muted">Converted from REVISE TIMELINE to the same scope format as Actual</span>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Scope</th><th>Projected Status</th><th>Basis Date</th></tr></thead>
-              <tbody id="projectedScopeStatusRows"><tr><td colspan="3" class="empty">Sync the Projected Google Sheet.</td></tr></tbody>
-            </table>
-          </div>
-        </div>
         <div class="dashboard-grid">
           <div class="panel"><div class="panel-head"><h2>Planned Schedule Curve</h2><span class="muted">Schedule data only</span></div><div id="sCurveChart" class="chart-box"></div></div>
           <div class="panel"><div class="panel-head"><h2>Schedule Guidance</h2><span id="scheduleHealthBadge" class="smart-badge">PLAN</span></div><div id="recoveryPlan" class="recovery-plan"></div></div>
         </div>
-        <div class="panel"><div class="panel-head"><h2>Schedule Activities</h2><span class="muted">Expected columns: Activity, Start Date, End Date, Weight (%)</span></div><div class="bulk-actions"><label class="select-all-wrap"><input id="scheduleSelectAll" type="checkbox"> Select all</label><span id="scheduleSelectedCount" class="selection-count">0 selected</span><button id="deleteSelectedScheduleBtn" class="danger-btn" disabled>Delete Selected</button><button id="clearScheduleSelectionBtn" class="secondary-btn">Clear Selection</button></div><div class="table-wrap"><table><thead><tr><th class="check-col"></th><th>Activity</th><th>Start</th><th>End</th><th>Weight %</th><th>Planned % Today</th><th>Action</th></tr></thead><tbody id="scheduleRows"></tbody></table></div></div>
+        <div class="panel tracker-sheet-mirror-panel">
+          <div class="panel-head">
+            <div>
+              <h2>Projected Google Sheet — View Only</h2>
+              <span class="muted">Shows the visible data from the linked sheet tab. Hidden rows and columns are excluded.</span>
+            </div>
+            <span id="scheduleMirrorStatus" class="smart-badge">LIVE</span>
+          </div>
+          <div id="scheduleSheetMirror" class="sheet-mirror-wrap">
+            <div class="empty">Save the Projected Google Sheet link, then Sync Now.</div>
+          </div>
+        </div>
       </section>
 
       <section id="progress" class="view">
-        <div class="page-head"><div><small>SITE ACCOMPLISHMENT</small><h1>Actual Progress</h1><p>Actual percentage is the STATUS value from each OVERALL ACCOMPLISHMENT STATUS row. Planned-versus-Actual comparison is shown on the Dashboard.</p></div></div>
+        <div class="page-head"><div><small>SITE ACCOMPLISHMENT</small><h1>Actual Progress</h1><p>The linked Actual sheet is mirrored as view-only. The system reads the visible data and uses STATUS as Actual accomplishment for Dashboard checking.</p></div></div>
         <div class="toolbar panel tracker-link-toolbar">
           <label>Project<select id="progressProject"></select></label>
           <label class="tracker-link-field">Actual Progress Google Sheet Link<input id="actualSheetLink" type="url" placeholder="Paste the link while the Actual Progress tab is open"></label>
@@ -265,7 +264,18 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
           <span id="actualSheetStatus" class="tracker-sync-status">Not linked</span>
         </div>
         <div id="progressSummary" class="kpi-grid"></div>
-        <div class="panel"><div class="bulk-actions"><label class="select-all-wrap"><input id="progressSelectAll" type="checkbox"> Select all</label><span id="progressSelectedCount" class="selection-count">0 selected</span><button id="deleteSelectedProgressBtn" class="danger-btn" disabled>Delete Selected</button><button id="clearProgressSelectionBtn" class="secondary-btn">Clear Selection</button></div><div class="table-wrap"><table><thead><tr><th class="check-col"></th><th>Activity / Scope</th><th>Weight %</th><th>Actual %</th><th>Weighted Contribution</th><th>Updated</th><th>Action</th></tr></thead><tbody id="progressRows"></tbody></table></div></div>
+        <div class="panel tracker-sheet-mirror-panel">
+          <div class="panel-head">
+            <div>
+              <h2>Actual Google Sheet — View Only</h2>
+              <span class="muted">Shows the visible data from the linked sheet tab. Hidden rows and columns are excluded.</span>
+            </div>
+            <span id="actualMirrorStatus" class="smart-badge">LIVE</span>
+          </div>
+          <div id="actualSheetMirror" class="sheet-mirror-wrap">
+            <div class="empty">Save the Actual Progress Google Sheet link, then Sync Now.</div>
+          </div>
+        </div>
       </section>
 
 
@@ -637,13 +647,13 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=2611"></script>
-  <script src="v13.js?v=2611"></script>
-  <script src="v14.js?v=2611"></script>
-  <script src="v14.2.js?v=2611"></script>
-  <script src="v14.3.js?v=2611"></script>
-  <script src="v14.4.js?v=2611"></script>
-  <script src="v14.5.js?v=2611"></script>
+  <script src="app.js?v=2621"></script>
+  <script src="v13.js?v=2621"></script>
+  <script src="v14.js?v=2621"></script>
+  <script src="v14.2.js?v=2621"></script>
+  <script src="v14.3.js?v=2621"></script>
+  <script src="v14.4.js?v=2621"></script>
+  <script src="v14.5.js?v=2621"></script>
 
   <dialog id="settingsDialog" class="settings-dialog-shell">
     <form id="settingsForm" class="dialog-card wide settings-dialog-card">
@@ -758,13 +768,13 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </div>
   </dialog>
 
-  <script src="v14.7.js?v=2611"></script>
-  <script src="v14.8.js?v=2611"></script>
-  <script src="v15.9.js?v=2611"></script>
-  <script src="v17-core.js?v=2611"></script>
-  <script src="v18.js?v=2611"></script>
-  <script src="v19.js?v=2611"></script>
-  <script src="v20.js?v=2611"></script>
+  <script src="v14.7.js?v=2621"></script>
+  <script src="v14.8.js?v=2621"></script>
+  <script src="v15.9.js?v=2621"></script>
+  <script src="v17-core.js?v=2621"></script>
+  <script src="v18.js?v=2621"></script>
+  <script src="v19.js?v=2621"></script>
+  <script src="v20.js?v=2621"></script>
 
   <dialog id="quotationNotifDialog">
     <div class="dialog-card quotation-notif-dialog">
@@ -787,9 +797,9 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </div>
   </dialog>
 
-  <script src="v20.3.js?v=2611"></script>
-  <script src="v20.5.js?v=2611"></script>
-  <script src="v20.6.js?v=2611"></script>
+  <script src="v20.3.js?v=2621"></script>
+  <script src="v20.5.js?v=2621"></script>
+  <script src="v20.6.js?v=2621"></script>
 
   <dialog id="editQuotationDialog">
     <form id="editQuotationForm" class="dialog-card quotation-edit-dialog">
@@ -812,25 +822,25 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </form>
   </dialog>
 
-  <script src="v20.7.js?v=2611"></script>
-  <script src="v21.js?v=2611"></script>
-  <script src="patch-watch.js?v=2611"></script>
-  <script src="v21.3.js?v=2611"></script>
-  <script src="v21.4.js?v=2611"></script>
-  <script src="v21.5.js?v=2611"></script>
-  <script src="v21.6.js?v=2611"></script>
-  <script src="v22.6.js?v=2611"></script>
-  <script src="v22.9.js?v=2611"></script>
-  <script src="v23.0.js?v=2611"></script>
-  <script src="v23.2.js?v=2611"></script>
-  <script src="v23.3.js?v=2611"></script>
-  <script src="v23.4.js?v=2611"></script>
-  <script src="v23.5.js?v=2611"></script>
-  <script src="v23.6.js?v=2611"></script>
-  <script src="v23.7.js?v=2611"></script>
-  <script src="v23.8.js?v=2611"></script>
-  <script src="v23.9.js?v=2611"></script>
-  <script src="v24.0.js?v=2611"></script>
+  <script src="v20.7.js?v=2621"></script>
+  <script src="v21.js?v=2621"></script>
+  <script src="patch-watch.js?v=2621"></script>
+  <script src="v21.3.js?v=2621"></script>
+  <script src="v21.4.js?v=2621"></script>
+  <script src="v21.5.js?v=2621"></script>
+  <script src="v21.6.js?v=2621"></script>
+  <script src="v22.6.js?v=2621"></script>
+  <script src="v22.9.js?v=2621"></script>
+  <script src="v23.0.js?v=2621"></script>
+  <script src="v23.2.js?v=2621"></script>
+  <script src="v23.3.js?v=2621"></script>
+  <script src="v23.4.js?v=2621"></script>
+  <script src="v23.5.js?v=2621"></script>
+  <script src="v23.6.js?v=2621"></script>
+  <script src="v23.7.js?v=2621"></script>
+  <script src="v23.8.js?v=2621"></script>
+  <script src="v23.9.js?v=2621"></script>
+  <script src="v24.0.js?v=2621"></script>
 
   <dialog id="linkedSubconDialog">
     <form id="linkedSubconForm" class="dialog-card wide">
@@ -857,18 +867,19 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </form>
   </dialog>
 
-  <script src="v24.1.js?v=2611"></script>
-  <script src="v24.4.js?v=2611"></script>
-  <script src="v24.5.js?v=2611"></script>
-  <script src="v24.6.js?v=2611"></script>
-  <script src="v24.7.js?v=2611"></script>
-  <script src="v24.8.js?v=2611"></script>
-  <script src="v25.0.js?v=2611"></script>
-  <script src="v25.1.js?v=2611"></script>
-  <script src="v25.4.js?v=2611"></script>
-  <script src="v25.5.js?v=2611"></script>
-  <script src="v25.8.js?v=2611"></script>
-  <script src="v26.0.js?v=2611"></script>
-  <script src="v26.1.js?v=2611"></script>
+  <script src="v24.1.js?v=2621"></script>
+  <script src="v24.4.js?v=2621"></script>
+  <script src="v24.5.js?v=2621"></script>
+  <script src="v24.6.js?v=2621"></script>
+  <script src="v24.7.js?v=2621"></script>
+  <script src="v24.8.js?v=2621"></script>
+  <script src="v25.0.js?v=2621"></script>
+  <script src="v25.1.js?v=2621"></script>
+  <script src="v25.4.js?v=2621"></script>
+  <script src="v25.5.js?v=2621"></script>
+  <script src="v25.8.js?v=2621"></script>
+  <script src="v26.0.js?v=2621"></script>
+  <script src="v26.1.js?v=2621"></script>
+  <script src="v26.2.js?v=2621"></script>
 </body>
 </html>

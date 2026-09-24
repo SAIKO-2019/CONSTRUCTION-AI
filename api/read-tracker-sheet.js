@@ -147,10 +147,9 @@ export default async function handler(req,res){
     }});
     if(!xr.ok){
       // Correct tab is more important than failing entirely. Fall back to exact-gid CSV.
-      return res.status(200).json({
-        ok:true,rows:selectedCsvRows,mode:'csv-gid-fallback',
-        rowCount:selectedCsvRows.length,visibleOnly:false,
-        warning:'Correct tab detected, but hidden-row metadata was unavailable for this sync.'
+      return res.status(400).json({
+        ok:false,
+        error:'The selected Google Sheet tab was found, but hidden-row/column metadata could not be verified. Please keep the Sheet accessible and try Sync Now again.'
       });
     }
 
@@ -169,10 +168,9 @@ export default async function handler(req,res){
 
     if(!best || bestScore<0.12){
       // Never silently read the wrong worksheet.
-      return res.status(200).json({
-        ok:true,rows:selectedCsvRows,mode:'csv-gid-fallback',
-        rowCount:selectedCsvRows.length,visibleOnly:false,
-        warning:'Exact tab synced. Hidden-row filtering could not be verified for this worksheet.'
+      return res.status(400).json({
+        ok:false,
+        error:'The exact Google Sheet tab was found, but its XLSX worksheet could not be verified for visible-only reading. Sync was stopped so hidden rows/columns are not shown.'
       });
     }
 

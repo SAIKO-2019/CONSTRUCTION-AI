@@ -1115,3 +1115,21 @@ The overall date-aligned S-Curve remains:
 10-second live sync remains active.
 
 Run `v26.1-projected-scope-series.sql` once in Supabase.
+
+
+## v26.2 — View-Only Linked Sheet Mirror
+- **Schedule Tracker** shows the visible data from the linked Projected Google Sheet tab.
+- **Actual Progress** shows the visible data from the linked Actual Google Sheet tab.
+- The tracker pages no longer show normalized/editable activity tables as the main data view.
+- Hidden Google Sheet rows and columns are strictly excluded.
+- The web app does not write back to the linked Google Sheet; it is treated as **view-only**.
+- The existing parser/calculation layer still runs internally for:
+  - Projected cumulative %
+  - Actual STATUS %
+  - same-date comparison
+  - scope matching
+  - variance / Ahead / On Track / Behind
+  - Dashboard S-Curve
+- The 10-second live sync remains active.
+- `Sync Now` still forces an immediate refresh.
+- No new SQL is required beyond v26.0/v26.1 migrations already used for calculations.

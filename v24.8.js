@@ -641,6 +641,8 @@
   async function syncSchedule(p,silent=false){
     if(!p?.schedule_sheet_link)return false;
     const raw=await readSheet(p.schedule_sheet_link);
+    window.trackerSheetViews=window.trackerSheetViews||{schedule:{},actual:{}};
+    window.trackerSheetViews.schedule[String(p.id)]=raw;
 
     // Convert REVISE TIMELINE into the same scope/% format as Actual STATUS.
     const projectedScopeSeries=parseProjectedScopeSeries(raw);
@@ -704,6 +706,8 @@
   async function syncActual(p,silent=false){
     if(!p?.actual_progress_sheet_link)return false;
     const raw=await readSheet(p.actual_progress_sheet_link);
+    window.trackerSheetViews=window.trackerSheetViews||{schedule:{},actual:{}};
+    window.trackerSheetViews.actual[String(p.id)]=raw;
     const parsed=parseTrackerRows(raw,'actual').map(x=>({
       activity:x.activity,
       weight:Math.max(0,n(x.weight)),
