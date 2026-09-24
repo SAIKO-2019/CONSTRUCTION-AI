@@ -11,9 +11,23 @@ function extractSheetGid(input=''){
 function cellText(cell){
   const v=cell?.value;
   if(v==null)return '';
+  if(v instanceof Date && !Number.isNaN(v.getTime())){
+    const y=v.getFullYear();
+    const m=String(v.getMonth()+1).padStart(2,'0');
+    const d=String(v.getDate()).padStart(2,'0');
+    return `${y}-${m}-${d}`;
+  }
   if(typeof v==='object'){
     if(v.text!=null)return String(v.text);
-    if(v.result!=null)return String(v.result);
+    if(v.result!=null){
+      if(v.result instanceof Date && !Number.isNaN(v.result.getTime())){
+        const y=v.result.getFullYear();
+        const m=String(v.result.getMonth()+1).padStart(2,'0');
+        const d=String(v.result.getDate()).padStart(2,'0');
+        return `${y}-${m}-${d}`;
+      }
+      return String(v.result);
+    }
     if(v.richText)return v.richText.map(x=>x.text||'').join('');
     if(v.hyperlink&&v.text)return String(v.text);
   }

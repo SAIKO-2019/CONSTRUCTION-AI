@@ -1052,3 +1052,14 @@ This patch changes the tracker percentages to the exact cells requested by the u
 - 10-second live sync remains active.
 - Hidden rows/columns remain excluded through the exact-gid XLSX reader.
 - Run `v25.8-projected-cumulative-series.sql` once in Supabase.
+
+
+## v25.9 — Projected Date Parsing Fix
+- Fixes the popup: `time zone displacement out of range`.
+- Google Sheet / Excel serial dates are converted safely to real calendar dates.
+- ExcelJS Date objects are serialized as `YYYY-MM-DD`.
+- Absurd or invalid years are rejected before writing to Supabase.
+- Projected cumulative accomplishment parsing remains based on `PROJECTED ACCUMULATIVE ACCOMPLISHMENT %AGE`.
+- Actual remains based on each scope's `STATUS`.
+- 10-second live sync remains active.
+- No SQL required beyond the v25.8 projected cumulative series migration.

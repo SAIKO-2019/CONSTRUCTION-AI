@@ -1,5 +1,5 @@
 {
-  "version": "25.8",
-  "label": "SAIKO Construction AI v25.8",
-  "message": "Actual now uses the exact STATUS percentage per scope; Projected uses the PROJECTED ACCUMULATIVE ACCOMPLISHMENT %AGE series."
+  "version": "25.9",
+  "label": "SAIKO Construction AI v25.9",
+  "message": "Fixes Google Sheet/Excel date parsing that caused timezone displacement out-of-range errors in Projected sync."
 }

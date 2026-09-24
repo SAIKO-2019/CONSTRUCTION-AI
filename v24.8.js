@@ -77,17 +77,77 @@
   }
 
   function parseDate(v){
-    if(!v)return null;
-    const s=clean(v);
-    const d=new Date(s);
-    if(!Number.isNaN(d.getTime()))return d.toISOString().slice(0,10);
-    const m=s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})$/);
+    if(v==null||v==='')return null;
+
+    // Excel/Google Sheets serial date (e.g. 46200).
+    // 1899-12-30 matches Excel's serial-date system including its historical leap-year quirk.
+    if(typeof v==='number' && Number.isFinite(v)){
+      if(v>20000 && v<80000){
+        const ms=Date.UTC(1899,11,30)+Math.round(v*86400000);
+        const d=new Date(ms);
+        if(!Number.isNaN(d.getTime())){
+          const y=d.getUTCFullYear();
+          if(y>=2000 && y<=2100)return d.toISOString().slice(0,10);
+        }
+      }
+      return null;
+    }
+
+    // ExcelJS date values can arrive as Date objects.
+    if(v instanceof Date){
+      if(Number.isNaN(v.getTime()))return null;
+      const y=v.getFullYear();
+      if(y<2000||y>2100)return null;
+      const mm=String(v.getMonth()+1).padStart(2,'0');
+      const dd=String(v.getDate()).padStart(2,'0');
+      return `${y}-${mm}-${dd}`;
+    }
+
+    let s=clean(v);
+    if(!s)return null;
+
+    // Numeric serial exported as text.
+    if(/^\d+(\.\d+)?$/.test(s)){
+      const serial=Number(s);
+      if(serial>20000 && serial<80000){
+        const ms=Date.UTC(1899,11,30)+Math.round(serial*86400000);
+        const d=new Date(ms);
+        if(!Number.isNaN(d.getTime())){
+          const y=d.getUTCFullYear();
+          if(y>=2000 && y<=2100)return d.toISOString().slice(0,10);
+        }
+      }
+    }
+
+    // ISO yyyy-mm-dd / yyyy/mm/dd
+    let m=s.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/);
+    if(m){
+      const y=Number(m[1]),mo=Number(m[2]),day=Number(m[3]);
+      if(y>=2000&&y<=2100&&mo>=1&&mo<=12&&day>=1&&day<=31){
+        return `${String(y).padStart(4,'0')}-${String(mo).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+      }
+      return null;
+    }
+
+    // US-style m/d/yyyy or m-d-yyyy as commonly exported by Sheets.
+    m=s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})$/);
     if(m){
       let y=Number(m[3]);if(y<100)y+=2000;
-      const d2=new Date(y,Number(m[1])-1,Number(m[2]));
-      if(!Number.isNaN(d2.getTime()))return d2.toISOString().slice(0,10);
+      const mo=Number(m[1]),day=Number(m[2]);
+      if(y>=2000&&y<=2100&&mo>=1&&mo<=12&&day>=1&&day<=31){
+        return `${String(y).padStart(4,'0')}-${String(mo).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+      }
+      return null;
     }
-    return null;
+
+    // Month-name dates such as "September 4, 2026".
+    const d=new Date(s);
+    if(Number.isNaN(d.getTime()))return null;
+    const y=d.getFullYear();
+    if(y<2000||y>2100)return null;
+    const mm=String(d.getMonth()+1).padStart(2,'0');
+    const dd=String(d.getDate()).padStart(2,'0');
+    return `${y}-${mm}-${dd}`;
   }
 
 
@@ -339,7 +399,7 @@
       const d=parseDate((rows[dateRow]||[])[c]);
       const raw=(rows[targetRow]||[])[c];
       const pctValue=n(raw);
-      if(!d)continue;
+      if(!d || !/^20\d{2}-\d{2}-\d{2}$/.test(d))continue;
       if(raw==null || clean(raw)==='')continue;
       points.push({progress_date:d,cumulative_percent:Math.max(0,Math.min(100,pctValue))});
     }
