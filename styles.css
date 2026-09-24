@@ -825,3 +825,11 @@ html[data-edit-mode="on"] .inline-editable:hover{
 }
 .inline-saving{opacity:.65;cursor:wait!important}
 @media(max-width:900px){.edit-mode-btn{display:none}}
+
+
+/* =========================================================
+   v16 stable controls — no global pointer-event forcing
+   ========================================================= */
+button{touch-action:manipulation}
+.dialog-head button,.dialog-actions button,.profile-actions button,.topbar button{position:relative;z-index:2}
+.settings-section.feature-card::after,.brand::after,.kpi::after{pointer-events:none!important}

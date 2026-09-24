@@ -267,3 +267,11 @@ Hotfix v15.1: fixed Team Activity modal button clicks and removed the horizontal
 - Startup database refreshes now run only after authentication.
 - If a real database query fails after login, the app now identifies the exact table/error instead of telling you to rerun the whole setup.
 - No SQL migration is required.
+
+
+## v16 Stable Controls
+- Removes the stacked v15.2–v15.7 button wrappers that were repeatedly attaching handlers to Settings/Team/Close/Logout controls.
+- Removes the expensive page-wide MutationObserver/button rescanning layer that could make the interface feel laggy after opening Settings.
+- Keeps login, themes, online presence, active-status privacy, collaboration, edit mode, and database refresh protection.
+- Settings/online refresh is now lightweight and runs only when needed.
+- No SQL migration is required.
