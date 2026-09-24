@@ -181,7 +181,7 @@
 
     $('bProject').value=b.project_id||'';
     $('bType').value=b.billing_type||'Client Billing';
-    $('bRecordType').value=b.variation_no?'VO':'Billing';
+    $('bRecordType').value=b.billing_category==='Downpayment'?'Downpayment':(b.variation_no?'VO':(b.billing_category||'Billing'));
     if(typeof updateRecordTypeUI==='function')updateRecordTypeUI();
     $('bNo').value=b.variation_no||b.billing_no||'';
     $('bGross').value=Number(b.gross_amount||0);
@@ -217,9 +217,10 @@
 
     const values={
       project_id:$('bProject').value,
-      billing_no:$('bRecordType').value==='Billing' ? $('bNo').value.trim() : null,
+      billing_no:$('bRecordType').value!=='VO' ? $('bNo').value.trim() : null,
       variation_no:$('bRecordType').value==='VO' ? $('bNo').value.trim() : null,
       billing_type:type,
+      billing_category:$('bRecordType').value||'Billing',
       transaction_side:type==='Client Billing'?'receivable':'payable',
       accomplishment_percent:Number($('bAccomplishment').value||0),
       gross_amount:c.gross,

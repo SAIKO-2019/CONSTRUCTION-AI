@@ -56,21 +56,21 @@ async function refreshAll(){
   ];
   const failures=[];
 
-  for(const [cacheKey,table] of loads){
-    try{
-      cache[cacheKey]=await q(table);
-    }catch(e){
+  // v24.4: independent reads run in parallel instead of one-by-one.
+  // This materially shortens login/refresh time without changing the data model.
+  const jobs=[...loads,['boq','boq_items']];
+  const results=await Promise.allSettled(jobs.map(([,table])=>q(table)));
+  results.forEach((result,i)=>{
+    const [cacheKey,table]=jobs[i];
+    if(result.status==='fulfilled'){
+      cache[cacheKey]=result.value||[];
+    }else{
+      const e=result.reason;
       console.warn(`Database read failed: ${table}`,e);
       failures.push(`${table}: ${e?.message||e}`);
       if(!Array.isArray(cache[cacheKey])) cache[cacheKey]=[];
     }
-  }
-
-  try{cache.boq=await q('boq_items')}
-  catch(e){
-    console.warn('Database read failed: boq_items',e);
-    cache.boq=[];
-  }
+  });
 
   if(failures.length){
     const first=failures[0];

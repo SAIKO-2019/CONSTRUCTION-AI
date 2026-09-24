@@ -63,8 +63,14 @@
       updated_at:new Date().toISOString()
     };
 
-    const {error}=await sb.from('quotation_projects').update(values).eq('id',q.id);
+    const {data:updatedRows,error}=await sb.from('quotation_projects').update(values).eq('id',q.id).select();
     if(error)throw error;
+
+    // Update only the quotation cache entry locally. Do not refresh Projects,
+    // Billing, Schedule, Inventory, etc. just because a Google Sheet changed.
+    const updated=updatedRows?.[0]||{...q,...values};
+    const idx=(cache.quotationProjects||[]).findIndex(x=>String(x.id)===String(q.id));
+    if(idx>=0) cache.quotationProjects[idx]={...(cache.quotationProjects[idx]||{}),...updated};
 
     try{
       await sb.from('activity_log').insert({
@@ -110,12 +116,15 @@
       }
 
       if(updates>0){
-        await refreshAll();
-        if(typeof renderPending==='function')renderPending();
-        if(typeof window.renderQuotationSummary==='function')window.renderQuotationSummary();
-        if(typeof window.renderQuotationSummaryMirror==='function')window.renderQuotationSummaryMirror();
-        if(typeof window.refreshQuotationAwardFolders==='function')window.refreshQuotationAwardFolders();
-        if(typeof toast==='function')toast(`${updates} quotation project${updates===1?'':'s'} updated from Google Sheets.`);
+        // Only repaint quotation UI when the user is actually viewing it.
+        const quotationOpen=document.querySelector('#quotation.view.active-view');
+        if(quotationOpen){
+          if(typeof renderPending==='function')renderPending();
+          if(typeof window.renderQuotationSummary==='function')window.renderQuotationSummary();
+          if(typeof window.renderQuotationSummaryMirror==='function')window.renderQuotationSummaryMirror();
+          if(typeof window.refreshQuotationAwardFolders==='function')window.refreshQuotationAwardFolders();
+          if(typeof toast==='function')toast(`${updates} quotation project${updates===1?'':'s'} updated from Google Sheets.`);
+        }
       }
     }finally{
       syncing=false;

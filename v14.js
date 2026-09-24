@@ -84,6 +84,9 @@ function updateRecordTypeUI(){
   if(type==='VO'){
     label.childNodes[0].nodeValue='Variation Order No. ';
     $('bNo').placeholder='VO-01';
+  }else if(type==='Downpayment'){
+    label.childNodes[0].nodeValue='Downpayment Ref. ';
+    $('bNo').placeholder='DP-01';
   }else{
     label.childNodes[0].nodeValue='Billing No. ';
     $('bNo').placeholder='Billing No. 3';

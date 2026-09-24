@@ -848,3 +848,22 @@ No MutationObserver or page-wide repeated scan is used.
 - Hidden from the Subcon folder to reduce clutter: KPI cards, commercial settings block, and the billing records table.
 - The **Setup** button remains available on every linked card.
 - GenCon view remains unchanged.
+
+
+## v24.4 — Performance Boost
+- Supabase tables now load in parallel instead of sequentially during refresh/login.
+- Google Sheet auto-sync no longer calls a full-app `refreshAll()` every 30 seconds. It updates only the affected quotation cache and repaints quotation UI only when For Quotation is open.
+- Removed redundant v24.2/v24.3 runtime wrappers that caused repeated Billing renders.
+- Clean Subcon view is now handled directly by the Billing renderer.
+- Folder animation no longer restarts on every background render.
+- No MutationObserver, no new recurring timer, no extra database polling.
+- No new SQL required if v24.2 backfill was already run.
+
+
+## v24.5 — Downpayment + Summary-Only Dashboard
+- Adds **Downpayment** as a dedicated GenCon record type beside Billing and VO.
+- Downpayment records remain part of GenCon receivables/collections and are included in overall financial computations.
+- Dashboard financial area is now a single compact **per-project summary table** instead of detailed financial cards.
+- Per project it shows Contract Amount, Downpayment, Regular Billed, Collected, Client Outstanding, Subcon Available, and Subcon Paid.
+- Detailed billing and subcontract settings remain in Billing & Payments only.
+- Run `v24.5-downpayment-category.sql` once in Supabase.

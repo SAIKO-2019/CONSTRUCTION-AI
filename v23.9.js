@@ -21,12 +21,7 @@
     btn.addEventListener('click',()=>setTimeout(applyBillingPartyTheme,20));
   });
 
-  // Keep theme after re-render / refresh without observing the whole page.
-  const oldRenderBilling=renderBilling;
-  renderBilling=function(){
-    oldRenderBilling();
-    applyBillingPartyTheme();
-  };
-
+  // Apply once on load; folder-click handlers above handle future transitions.
+  // Avoid wrapping renderBilling, so background data refreshes do not restart animations.
   setTimeout(applyBillingPartyTheme,250);
 })();

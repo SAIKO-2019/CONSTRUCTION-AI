@@ -64,7 +64,20 @@
     const rows=party==='subcon'?sub:gen;
     const t=totals(rows);
 
-    if($('subconCommercialSettings'))$('subconCommercialSettings').style.display=party==='subcon'?'':'none';
+    const tablePanel=$('billingRows')?.closest('.panel');
+    if(party==='subcon'){
+      // Clean Subcon folder: linked GenCon→Subcon cards only.
+      if($('subconCommercialSettings'))$('subconCommercialSettings').style.display='none';
+      if($('billingKPIs'))$('billingKPIs').style.display='none';
+      if(tablePanel)tablePanel.style.display='none';
+      if($('addBillingBtn'))$('addBillingBtn').style.display='none';
+      return;
+    }
+
+    if($('billingKPIs'))$('billingKPIs').style.display='grid';
+    if(tablePanel)tablePanel.style.display='';
+    if($('addBillingBtn'))$('addBillingBtn').style.display='';
+    if($('subconCommercialSettings'))$('subconCommercialSettings').style.display='none';
 
     $('billingKPIs').innerHTML=(party==='gencon'
       ? [
@@ -86,7 +99,7 @@
       <td>${esc(proj(b.project_id)?.project_name||'—')}</td>
       <td>${esc(b.billing_type||'Client Billing')}${b.billing_type==='Subcontractor Billing'&&b.subcontractor_name?`<br><small>${esc(b.subcontractor_name)}</small>`:''}</td>
       <td>
-        <strong>${b.variation_no?`VO: ${esc(b.variation_no)}`:`Billing: ${esc(b.billing_no||'—')}`}</strong>
+        <strong>${b.billing_category==='Downpayment'?`Downpayment: ${esc(b.billing_no||'DP')}`:(b.variation_no?`VO: ${esc(b.variation_no)}`:`Billing: ${esc(b.billing_no||'—')}`)}</strong>
         ${b.billing_type==='Subcontractor Billing'
           ? `<br><small>Issued: ${money(b.issued_amount||0)}${b.issued_date?` · ${esc(b.issued_date)}`:''}<br>Balance: ${money(b.subcontract_balance||0)}</small>`
           : ''}

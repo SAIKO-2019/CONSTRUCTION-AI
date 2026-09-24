@@ -38,7 +38,7 @@
         <div class="linked-subcon-main">
           <div>
             <small>${esc(proj(b.project_id)?.project_name||'Project')}</small>
-            <strong>${b.variation_no?`VO ${esc(b.variation_no)}`:`Billing ${esc(b.billing_no||'—')}`}</strong>
+            <strong>${b.billing_category==='Downpayment'?`Downpayment ${esc(b.billing_no||'')}`:(b.variation_no?`VO ${esc(b.variation_no)}`:`Billing ${esc(b.billing_no||'—')}`)}</strong>
             <span class="linked-subcon-status">${has?'Has Subcon':'No Subcon'}</span>
           </div>
           <button type="button" class="secondary-btn compact-btn" onclick="openLinkedSubcon('${b.id}')">Setup</button>
@@ -74,7 +74,7 @@
     const b=(cache.billings||[]).find(x=>String(x.id)===String(id));
     if(!b)return alert('GenCon billing not found.');
     $('linkedSubconBillingId').value=b.id;
-    $('linkedSubconBillingLabel').value=b.variation_no?`VO ${b.variation_no}`:`Billing ${b.billing_no||'—'}`;
+    $('linkedSubconBillingLabel').value=b.billing_category==='Downpayment'?`Downpayment ${b.billing_no||''}`:(b.variation_no?`VO ${b.variation_no}`:`Billing ${b.billing_no||'—'}`);
     $('linkedHasSubcon').value=b.has_subcon?'true':'false';
     $('linkedCollected').value=num(b.received_amount);
     $('linkedTotalDeductions').value=num(b.subcon_total_deductions);
