@@ -297,6 +297,8 @@
           projected_profit:Number(data.presentProfit||0),
           scope_breakdown:Array.isArray(data.scopeBreakdown)?data.scopeBreakdown:[],
           summary_breakdown:Array.isArray(data.summaryBreakdown)?data.summaryBreakdown:[],
+          summary_headers:Array.isArray(data.summaryHeaders)?data.summaryHeaders:[],
+          summary_table:Array.isArray(data.summaryTable)?data.summaryTable:[],
           summary_sheet_name:data.summarySheetName||null,
           created_by:currentUser.id,
           updated_at:new Date().toISOString()
@@ -346,6 +348,8 @@
         projected_profit:Number(data.presentProfit||0),
         scope_breakdown:Array.isArray(data.scopeBreakdown)?data.scopeBreakdown:[],
         summary_breakdown:Array.isArray(data.summaryBreakdown)?data.summaryBreakdown:[],
+        summary_headers:Array.isArray(data.summaryHeaders)?data.summaryHeaders:[],
+        summary_table:Array.isArray(data.summaryTable)?data.summaryTable:[],
         summary_sheet_name:data.summarySheetName||q.summary_sheet_name||null,
         updated_at:new Date().toISOString()
       };

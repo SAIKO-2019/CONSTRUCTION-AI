@@ -1259,3 +1259,117 @@ html[data-theme="executive"] .quotation-delete-btn{
   .quotation-reminder-popup{transition:opacity .15s linear;transform:none}
   .quotation-reminder-progress i{animation:none!important}
 }
+
+
+/* =========================================================
+   v20.9 edit button placement + summary fixes
+   ========================================================= */
+.quotation-card-head{align-items:flex-start}
+.quotation-card-head-actions{display:flex;align-items:center;gap:8px;margin-left:auto;flex:0 0 auto}
+.quotation-project-card .quotation-card-edit-btn{
+  position:static!important;
+  width:auto!important;height:30px!important;
+  padding:0 10px!important;
+  border-radius:9px!important;
+  display:inline-flex!important;align-items:center!important;gap:5px!important;
+  border:1px solid var(--line)!important;background:var(--surface)!important;color:var(--text)!important;
+  font-size:10px!important;font-weight:850!important;cursor:pointer!important;z-index:3!important;
+}
+.quotation-project-card .quotation-card-edit-btn span{font-size:10px}
+.quotation-project-card .quotation-card-edit-btn:hover{background:var(--surface-soft)!important;transform:none!important}
+
+
+/* =========================================================
+   v21 full Summary mirror — lightweight table
+   ========================================================= */
+.quotation-summary-mirror-panel{margin-bottom:16px}
+.summary-mirror-scroll{
+  overflow:auto;
+  max-height:620px;
+  border-top:1px solid var(--line);
+}
+.summary-mirror-table{
+  width:max-content;
+  min-width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  font-size:11px;
+  background:var(--surface);
+}
+.summary-mirror-table th,
+.summary-mirror-table td{
+  padding:8px 10px;
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  white-space:nowrap;
+  min-width:88px;
+  max-width:360px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.summary-mirror-table th{
+  position:sticky;
+  top:0;
+  z-index:2;
+  background:var(--surface-soft);
+  color:var(--muted);
+  font-size:9px;
+  letter-spacing:.07em;
+  font-weight:900;
+}
+.summary-mirror-table td:first-child,
+.summary-mirror-table th:first-child{position:sticky;left:0;z-index:1;background:var(--surface)}
+.summary-mirror-table th:first-child{z-index:3;background:var(--surface-soft)}
+.summary-mirror-table .summary-number-cell{text-align:right;font-variant-numeric:tabular-nums}
+.summary-mirror-table .summary-percent-cell{text-align:right;font-weight:800;font-variant-numeric:tabular-nums}
+.summary-mirror-empty{text-align:center!important;color:var(--muted);padding:28px!important}
+
+
+/* =========================================================
+   v21.1 required-patch notice
+   ========================================================= */
+.patch-required-dialog{
+  border:0;
+  padding:0;
+  background:transparent;
+  max-width:none;
+}
+.patch-required-dialog::backdrop{
+  background:rgba(15,23,42,.42);
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
+  animation:patchBackdropIn .22s ease both;
+}
+.patch-required-card{
+  width:min(520px,calc(100vw - 32px));
+  display:grid;
+  grid-template-columns:52px minmax(0,1fr);
+  gap:14px;
+  align-items:start;
+  padding:22px;
+  animation:patchCardIn .24s ease both;
+}
+.patch-required-icon{
+  width:48px;height:48px;border-radius:15px;
+  display:grid;place-items:center;
+  font-size:25px;font-weight:900;
+  background:var(--surface-soft);
+  border:1px solid var(--line);
+}
+.patch-required-copy small{
+  font-size:9px;font-weight:900;letter-spacing:.11em;color:var(--muted)
+}
+.patch-required-copy h2{margin:4px 0 8px}
+.patch-required-copy p{margin:0;color:var(--text);font-size:12px;line-height:1.55}
+.patch-required-copy .patch-required-note{margin-top:9px;color:var(--muted);font-size:10px}
+.patch-required-actions{
+  grid-column:1/-1;
+  margin-top:4px;
+}
+.patch-required-actions .primary-btn{width:100%}
+.patch-required-actions .primary-btn:disabled{opacity:.65;cursor:wait}
+@keyframes patchBackdropIn{from{opacity:0}to{opacity:1}}
+@keyframes patchCardIn{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){
+  .patch-required-dialog::backdrop,.patch-required-card{animation:none}
+}

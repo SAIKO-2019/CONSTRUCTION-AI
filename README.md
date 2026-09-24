@@ -457,3 +457,43 @@ Run `v20.6-summary-reader.sql` once in Supabase SQL Editor.
 - Adds a “Test Cute Reminder” button inside the notification dialog.
 - Keeps only one 60-second reminder timer and does not add MutationObservers or page-wide repeated scans.
 - No SQL migration required.
+
+
+## v20.9 Full Summary Fix + Visible Edit Button
+- Fixed the Summary reader for layouts where column A contains section letters (A/B/C/D...) and column B contains the actual scope/description.
+- Major headings now require an exact heading match or a full label ending in `WORKS`; child rows like `Structural Cast in Place`, `Storm and Sanitary Drainage`, and `Auxiliary Supply Accessories` are no longer misclassified as major scopes.
+- Every amount-bearing description under each scope is preserved.
+- Explicit `Sub-total` rows remain authoritative for major-scope amount and percentage.
+- The Edit button is now visibly placed in the upper-right area of each quotation project card beside the status badge.
+- No new SQL migration is required beyond v20.6.
+
+
+## v21 — Full Summary Mirror + Performance Guard
+- Saves the complete visible data from the Google Sheet `SUMMARY` tab, not only recognized scope rows.
+- Preserves every populated row and column in the Summary range.
+- This means Amount, Price per sqm, Weighted Percentage, descriptions, sub-totals, and additional populated columns are displayed just as they appear in the source Summary sheet.
+- The existing pie chart still uses the parsed major scopes/subtotals.
+- Adds a separate `Summary Sheet Data` table for the exact visible Summary content.
+- Performance: v21 adds no MutationObserver, no interval, and does not wrap the main renderer. It uses one delegated click handler plus short one-shot renders after project selection or Sheet refresh.
+- Existing v20.9 Edit buttons and v20.8 notification controls are preserved.
+- Run `v21-full-summary-mirror.sql` once in Supabase.
+
+
+## v21.1 — Required Patch Notice for All Logged-in Accounts
+- Adds `patch-version.json` as the deployment version manifest.
+- Every open browser checks it with one tiny no-cache request every 5 minutes and whenever the tab becomes visible again.
+- When the deployed patch version differs from the currently loaded app version, a blocking **New Patch Required** notice appears.
+- User clicks **Refresh & Login Again**. The app signs out the current Supabase session, refreshes the site, returns to Login, and requires manual login.
+- No MutationObserver and no page-wide scan are used. Only one 5-minute timer and one visibility listener are added.
+- The patch dialog has one direct button handler, so it does not stack handlers with existing controls.
+
+### IMPORTANT FOR FUTURE PATCHES
+For every new release, update BOTH:
+1. `patch-version.json` -> `version`
+2. `CURRENT_PATCH` in `patch-watch.js`
+
+Example: when releasing v21.2, change both values from `21.1` to `21.2`. Existing v21.1 sessions will then detect v21.2 and require refresh/login again.
+
+The first deployment of v21.1 cannot notify browsers that are still running older builds which did not yet contain the patch watcher. Starting with v21.1, future patches are automatically detected.
+
+No SQL migration required for v21.1.

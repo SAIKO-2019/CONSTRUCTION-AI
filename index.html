@@ -271,6 +271,19 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
             </div>
           </div>
 
+          <div class="panel quotation-summary-mirror-panel">
+            <div class="panel-head">
+              <div>
+                <h2>Summary Sheet Data</h2>
+                <p class="muted">Complete visible data copied from the linked Google Sheet SUMMARY tab, including scope, descriptions, amounts, price per sqm, weighted percentage, and any other populated columns.</p>
+              </div>
+              <span id="quotationSummaryMirrorBadge" class="status-pill neutral">SUMMARY</span>
+            </div>
+            <div class="summary-mirror-scroll">
+              <table id="quotationSummaryMirrorTable" class="summary-mirror-table"></table>
+            </div>
+          </div>
+
           <div class="panel quotation-summary-panel">
             <div class="panel-head">
               <div>
@@ -625,5 +638,7 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
   </dialog>
 
   <script src="v20.7.js?v=2071"></script>
+  <script src="v21.js?v=2102"></script>
+  <script src="patch-watch.js?v=2111"></script>
 </body>
 </html>
