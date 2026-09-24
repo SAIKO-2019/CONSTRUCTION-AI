@@ -1,5 +1,5 @@
 {
-  "version": "23.0",
-  "label": "SAIKO Construction AI v23.0",
-  "message": "A new software/database patch is required. Projects now include a Subcontract Dependency category. Log in again with reCAPTCHA."
+  "version": "23.3",
+  "label": "SAIKO Construction AI v23.3",
+  "message": "A new system patch is required. Subcontract markup/deductions are now maintained in Billing, while Dashboard shows summary totals only."
 }

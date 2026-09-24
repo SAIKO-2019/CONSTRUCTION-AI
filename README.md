@@ -732,3 +732,26 @@ No MutationObserver or page-wide repeated scan is used.
 - Existing projects default to **Independent** after migration and can be edited anytime.
 - Requires running `v23.0-project-subcon-category.sql` once in Supabase SQL Editor.
 - The SQL migration also bumps the global system release gate when available, so logged-in users are required to refresh/re-login for the database change.
+
+
+## v23.2 — Editable Billing + Subcontract Issued Details + Stay on Page
+- Adds **Edit** beside each billing record.
+- Existing billing details can be changed without creating a duplicate.
+- Payment history is protected during Edit; use Receive Payment / Add Payment for payment entries.
+- Subcontractor Billing now has:
+  - Subcontractor / Payee
+  - Issued / Contract Amount
+  - Date Issued
+  - automatic remaining Subcontract Balance
+- Billing table shows issued amount/date and subcontractor name.
+- The app remembers the last active module/page and scroll position.
+- After refresh, patch re-login, or reopening the site, it returns to the last module instead of always jumping back to Dashboard.
+- Run `v23.2-billing-edit-subcon-details.sql` once in Supabase.
+
+
+## v23.3 — Subcontract Summary on Dashboard, Details in Billing
+- Dashboard shows **summary only** per subcontract-dependent contract/project: Total Subcon Allocation, Issued, Billed, Paid, and Remaining.
+- Markup %, optional deductions, and deduction notes are **not shown as editable fields on Dashboard**.
+- Those commercial settings live in **Billing & Payments**, under the selected Project Folder.
+- Issued amount/date/payee remain in Subcontractor Billing records from v23.2.
+- Run `v23.3-subcon-commercial-settings.sql` once in Supabase.

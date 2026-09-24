@@ -1718,3 +1718,10 @@ dialog:not(.patch-required-dialog) .dialog-card{
   background:var(--surface-soft);
 }
 .project-subcon-badge.dependent{font-weight:800}
+
+
+/* v23.3 subcontract commercial controls */
+.subcon-commercial-settings{margin-top:14px}
+.compact-form-grid{margin-top:8px}
+.compact-summary{margin-top:12px}
+.compact-summary>div{min-width:150px}

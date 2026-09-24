@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SAIKO Construction AI</title>
   <link rel="stylesheet" href="styles.css?v=2201" />
-    <script src="patch-gate.js?v=2301"></script>
+    <script src="patch-gate.js?v=2332"></script>
 <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
 </head>
 <body>
@@ -87,6 +87,12 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
           <div class="panel"><div class="panel-head"><h2>Today / Next Agenda</h2><button class="text-btn" data-go="schedule">Open Tracker</button></div><div id="agendaList" class="list-stack"></div></div>
         </div>
         <div class="panel"><div class="panel-head"><h2>Billing Snapshot</h2><button class="text-btn" data-go="billing">Open Billing</button></div><div id="billingSnapshot" class="summary-cards"></div></div>
+        <div class="panel">
+          <div class="panel-head"><h2>Subcontractor Summary</h2><button class="text-btn" data-go="billing">Open Billing</button></div>
+          <div class="table-wrap"><table><thead><tr>
+            <th>Contract / Project</th><th>Total Subcon Allocation</th><th>Issued</th><th>Billed</th><th>Paid</th><th>Remaining</th>
+          </tr></thead><tbody id="dashSubconSummaryRows"><tr><td colspan="6" class="empty">No subcontract-dependent projects yet.</td></tr></tbody></table></div>
+        </div>
       
         <div class="panel"><div class="panel-head"><h2>Ongoing Projects — Schedule Health</h2><button class="link-btn" data-jump="schedule">Open Schedule Tracker</button></div><div id="ongoingScheduleDashboard" class="ongoing-schedule-grid"></div></div>
         <div class="panel"><div class="panel-head"><h2>For Quotation Snapshot</h2><button class="link-btn" data-jump="quotation">Open For Quotation</button></div><div id="quotationDashboardSnapshot" class="kpi-grid inset"></div></div>
@@ -106,6 +112,18 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
         <div class="page-head"><div><small>FINANCIAL CONTROL</small><h1>Billing & Payments</h1><p>Per-project billings, labor/equipment/subcontractor payments, retention, recoupment, dates, and accomplishment.</p></div><button id="addBillingBtn" class="primary-btn">+ Add Billing</button></div>
         <div class="toolbar panel compact-toolbar"><label>Project Folder<select id="billingProjectFilter"></select></label><span class="muted">Client billings are receivables. Labor, Equipment and Subcontractor records are treated as project costs.</span></div>
         <div id="billingKPIs" class="kpi-grid"></div>
+        <div class="panel subcon-commercial-settings" id="subconCommercialSettings">
+          <div class="panel-head">
+            <div><h2>Subcontract Commercial Settings</h2><span class="muted">Per selected contract/project. Optional fields are used for the subcontract summary calculations.</span></div>
+            <button id="saveSubconCommercialBtn" class="secondary-btn" type="button">Save Settings</button>
+          </div>
+          <div class="form-grid compact-form-grid">
+            <label>Markup %<input id="billingSubconMarkup" type="number" min="0" step="0.01" value="0" placeholder="e.g. 20"></label>
+            <label>Other Deductions <span class="muted">(optional)</span><input id="billingSubconDeductions" type="number" min="0" step="0.01" value="0" placeholder="0.00"></label>
+            <label class="span-2">Deduction Notes <span class="muted">(optional)</span><input id="billingSubconDeductionNotes" placeholder="e.g. backcharge, permit, coordination fee"></label>
+          </div>
+          <div id="billingSubconCommercialSummary" class="summary-cards compact-summary"></div>
+        </div>
         <div class="panel"><div class="bulk-actions"><label class="select-all-wrap"><input id="billingSelectAll" type="checkbox"> Select all</label><span id="billingSelectedCount" class="selection-count">0 selected</span><button id="deleteSelectedBillingBtn" class="danger-btn" disabled>Delete Selected</button><button id="clearBillingSelectionBtn" class="secondary-btn">Clear Selection</button></div><div class="table-wrap"><table><thead><tr><th class="check-col"></th><th>Project</th><th>Type</th><th>Billing / VO</th><th>Accomp. %</th><th>Gross</th><th>Retention</th><th>Recoupment</th><th>Net Due</th><th>Received / Paid</th><th>Outstanding</th><th>Request</th><th>Paid</th><th>Input By</th><th>Status</th><th>Action</th></tr></thead><tbody id="billingRows"></tbody></table></div></div>
       </section>
 
@@ -406,7 +424,7 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
             </select>
           </label></div><div class="dialog-actions"><button type="button" class="secondary-btn" data-close="projectDialog">Cancel</button><button id="projectSaveBtn" class="primary-btn" type="submit">Save Project</button></div></form></dialog>
 
-  <dialog id="billingDialog"><form id="billingForm" class="dialog-card wide"><div class="dialog-head"><h2>Billing / Payment Record</h2><button type="button" data-close="billingDialog">×</button></div>
+  <dialog id="billingDialog"><form id="billingForm" class="dialog-card wide"><div class="dialog-head"><h2 id="billingDialogTitle">Billing / Payment Record</h2><button type="button" data-close="billingDialog">×</button></div>
   <div class="form-grid">
     <label>Project<select id="bProject" required></select></label>
     <label>Billing Type<select id="bType"><option>Client Billing</option><option>Subcontractor Billing</option></select></label>
@@ -414,7 +432,10 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     <label id="bRecordNoLabel">Billing No.<input id="bNo" required placeholder="Billing No. 3"></label>
     <input id="bVariation" type="hidden">
     <label>Gross Billing Amount<input id="bGross" type="number" min="0" step="0.01" required></label>
-    <label>Accomplishment %<input id="bAccomplishment" type="number" min="0" max="100" step="0.01" value="0"></label><label>Issued / Contract Amount<input id="bIssuedAmount" type="number" min="0" step="0.01" placeholder="For subcontractor billing"></label>
+    <label>Accomplishment %<input id="bAccomplishment" type="number" min="0" max="100" step="0.01" value="0"></label>
+    <label id="bSubcontractorNameField">Subcontractor / Payee<input id="bSubcontractorName" placeholder="e.g. ABC Electrical Works"></label>
+    <label id="bIssuedAmountField">Issued / Contract Amount<input id="bIssuedAmount" type="number" min="0" step="0.01" placeholder="Total subcontract issued amount"></label>
+    <label id="bIssuedDateField">Date Issued<input id="bIssuedDate" type="date"></label>
     <label class="check-field"><input id="bUseRetention" type="checkbox"> Apply Retention</label>
     <label>Retention %<input id="bRetention" type="number" min="0" max="100" step="0.01" value="5"></label>
     <label class="check-field"><input id="bUseRecoupment" type="checkbox"> Apply Recoupment</label>
@@ -426,7 +447,7 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
   </div>
   <div id="billingRuleNote" class="smart-note"></div>
   <div id="billingCalc" class="calc-box"></div>
-  <div class="dialog-actions"><button type="button" class="secondary-btn" data-close="billingDialog">Cancel</button><button class="primary-btn" type="submit">Save Billing</button></div>
+  <div class="dialog-actions"><button type="button" class="secondary-btn" data-close="billingDialog">Cancel</button><button id="billingSaveBtn" class="primary-btn" type="submit">Save Billing</button></div>
 </form></dialog>
 
   <dialog id="progressDialog"><form id="progressForm" class="dialog-card"><div class="dialog-head"><h2>Activity Progress</h2><button type="button" data-close="progressDialog">×</button></div><label>Activity / BOQ Scope<input id="aActivity" list="boqActivityList" required><datalist id="boqActivityList"></datalist></label><label>Weight %<input id="aWeight" type="number" min="0" max="100" step="0.01" required></label><label>Actual Accomplishment %<input id="aActual" type="number" min="0" max="100" step="0.01" required></label><div id="progressCostHint" class="smart-note"></div><div class="dialog-actions"><button type="button" class="secondary-btn" data-close="progressDialog">Cancel</button><button class="primary-btn" type="submit">Save Progress</button></div></form></dialog>
@@ -670,7 +691,7 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
 
   <script src="v20.7.js?v=2071"></script>
   <script src="v21.js?v=2131"></script>
-  <script src="patch-watch.js?v=2301"></script>
+  <script src="patch-watch.js?v=2332"></script>
   <script src="v21.3.js?v=2131"></script>
   <script src="v21.4.js?v=2141"></script>
   <script src="v21.5.js?v=2151"></script>
@@ -678,5 +699,7 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
   <script src="v22.6.js?v=2281"></script>
   <script src="v22.9.js?v=2291"></script>
   <script src="v23.0.js?v=2301"></script>
+  <script src="v23.2.js?v=2321"></script>
+  <script src="v23.3.js?v=2332"></script>
 </body>
 </html>
