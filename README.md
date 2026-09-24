@@ -275,3 +275,9 @@ Hotfix v15.1: fixed Team Activity modal button clicks and removed the horizontal
 - Keeps login, themes, online presence, active-status privacy, collaboration, edit mode, and database refresh protection.
 - Settings/online refresh is now lightweight and runs only when needed.
 - No SQL migration is required.
+
+
+## v16.1 Password Toggle Fix
+- Restores the login password show/hide eye button after the v16 stability cleanup.
+- Uses one lightweight click handler only; no additional observers or button wrappers.
+- No SQL migration required.

@@ -159,6 +159,22 @@
     };
   }
 
+
+
+  // Password visibility toggle — lightweight and independent.
+  const togglePassword=$('togglePasswordBtn');
+  const loginPassword=$('loginPassword');
+  if(togglePassword && loginPassword){
+    togglePassword.onclick=()=>{
+      const hidden=loginPassword.type==='password';
+      loginPassword.type=hidden?'text':'password';
+      togglePassword.textContent=hidden?'🙈':'👁';
+      togglePassword.setAttribute('aria-label',hidden?'Hide password':'Show password');
+      togglePassword.title=hidden?'Hide password':'Show password';
+      loginPassword.focus();
+    };
+  }
+
   // Lightweight periodic presence refresh only; no DOM-wide scanning.
   setTimeout(()=>refreshTopPresence().catch(()=>{}),900);
   setInterval(()=>{
