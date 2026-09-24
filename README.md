@@ -1000,3 +1000,33 @@ No MutationObserver or page-wide repeated scan is used.
 - Actual block detection is more tolerant of merged scope headings and alternate `OVERALL ... STATUS` labels.
 - Existing 10-second live sync and bulk action fixes remain.
 - No SQL required.
+
+
+## v25.7 — Exact POC KAWIT Reader
+This patch is based on the uploaded `POC KAWIT CAVITE.xlsx` structure.
+
+### Actual Progress
+- Supports the side-by-side blocks in `SUMMARY ACCOMPLISHMENT`.
+- Detects every local `DESCRIPTION | TOTAL | ... | STATUS` block independently.
+- Reads only the `OVERALL ACCOMPLISHMENT STATUS` row for each scope.
+- Correctly handles:
+  - Ceiling Works
+  - Cabinetry Works
+  - Wall Finishing Works
+  - Flooring Works
+  - Electrical Works
+  - Plumbing Works
+  - Glass Works
+  - General Requirements
+- Ground Floor / Second Floor / Third Floor rows are not imported as separate Actual scopes.
+- Compact `scope of works` helper list is available as fallback.
+
+### Projected / Schedule
+- Reads only real timeline activity rows from `WORK ITEM DESCRIPTION / START DATE / END DATE / TOTAL AMOUNT`.
+- Floor labels and projected summary rows are ignored as activities.
+- Hidden rows/columns remain excluded by the exact-gid visible reader.
+
+### Dashboard
+- Keeps automatic scope normalization/matching for the common Projected-vs-Actual S-Curve.
+- 10-second live sync remains active.
+- No SQL required.

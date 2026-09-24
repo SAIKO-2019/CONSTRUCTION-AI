@@ -1,5 +1,5 @@
 {
-  "version": "25.6",
-  "label": "SAIKO Construction AI v25.6",
-  "message": "Fixes Actual Progress selected-tab detection and visible-only Google Sheet parsing by resolving the exact gid tab before reading hidden-row metadata."
+  "version": "25.7",
+  "label": "SAIKO Construction AI v25.7",
+  "message": "Exact POC workbook reader: Actual Progress now reads one OVERALL STATUS per side-by-side scope block, and Projected uses only real timeline activities."
 }

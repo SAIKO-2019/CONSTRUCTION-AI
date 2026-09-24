@@ -22,7 +22,8 @@
     if(/\b(tile|tiling|flooring|floor finish|spc|vinyl|epoxy)\b/.test(s))return 'FLOORING WORKS';
     if(/\b(electrical|lighting|light|outlet|wiring|wire|panel board|panelboard)\b/.test(s))return 'ELECTRICAL WORKS';
     if(/\b(plumbing|sanitary|water line|sewer|sewage|drain|fixture)\b/.test(s))return 'PLUMBING WORKS';
-    if(/\b(glass|glazing|window|windows|aluminum)\b/.test(s))return 'GLASS WORKS';
+    if(/\b(glass|glazing)\b/.test(s))return 'GLASS WORKS';
+    if(/\b(window|windows|aluminum)\b/.test(s))return 'DOORS & WINDOWS';
     if(/\b(door|doors)\b/.test(s))return 'DOORS & WINDOWS';
     if(/\b(general requirement|mobilization|demobilization|temporary facility|permit|safety)\b/.test(s))return 'GENERAL REQUIREMENTS';
 

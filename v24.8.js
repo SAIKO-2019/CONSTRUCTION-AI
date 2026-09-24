@@ -152,7 +152,7 @@
 
       // Skip floor/section labels and total/summary rows.
       if(/^\d+(st|nd|rd|th)\s*floor$/i.test(activity))continue;
-      if(/\b(total projected cost|projected accomplishment|projected accumulative|grand total|subtotal|total)\b/i.test(activity))continue;
+      if(/\b(total projected cost|projected accomplishment|projected accumulative|running accomplishment|grand total|subtotal|total|billing last time|without recoupment|remaining)\b/i.test(activity))continue;
 
       const start=parseDate(row[best.start]);
       const end=parseDate(row[best.end]);
@@ -177,107 +177,129 @@
     }));
   }
 
+  // v25.7 — Exact POC summary reader.
+  // Supports multiple side-by-side blocks on the same rows, e.g.:
+  // G:L = Ceiling/Cabinetry/Wall/Flooring
+  // N:S = Electrical/Plumbing/Glass/General Requirements
+  // Each block is detected from its own DESCRIPTION header cell.
   function parseScopeSummaryBlocks(rows,kind){
     const hh=x=>clean(x).toLowerCase()
       .replace(/[^a-z0-9%]+/g,' ')
       .replace(/\s+/g,' ')
       .trim();
 
+    if(kind!=='actual') return [];
+
     const out=[];
+    const seen=new Set();
 
-    for(let i=0;i<rows.length;i++){
-      const hdr=(rows[i]||[]).map(hh);
-      const descCol=hdr.findIndex(h=>h==='description'||h.includes('description'));
-      const totalCol=hdr.findIndex(h=>h==='total');
-      if(descCol<0 || totalCol<0) continue;
+    for(let r=0;r<rows.length;r++){
+      const row=rows[r]||[];
 
-      let valueCol=-1;
-      if(kind==='actual'){
-        valueCol=hdr.findIndex(h=>h==='status' || h.includes('status') || h.includes('actual') || h.includes('accomplishment'));
-      }else{
-        valueCol=hdr.findIndex(h=>
-          h.includes('projected') ||
-          h.includes('planned') ||
-          h==='status' ||
-          h.includes('status')
-        );
-      }
-      if(valueCol<0) continue;
+      // There can be more than one DESCRIPTION header on the same row.
+      for(let descCol=0;descCol<row.length;descCol++){
+        const h=hh(row[descCol]);
+        if(!(h==='description'||h.includes('description'))) continue;
 
-      // Find the scope heading immediately above the table header.
-      // Merged headings may land in any visible column after XLSX export.
-      let scope='';
-      for(let r=i-1;r>=Math.max(0,i-8);r--){
-        const vals=(rows[r]||[]).map(clean).filter(Boolean);
-        if(!vals.length)continue;
-
-        const candidates=vals.filter(x=>
-          /[A-Za-z]/.test(x) &&
-          !/%/.test(x) &&
-          !/^\d+([.,]\d+)?$/.test(x) &&
-          !/description|total distribution|distribution percentage|status|projected|planned|actual|accomplishment|balanced|equivalent percentage/i.test(x)
-        );
-
-        // Prefer a construction-like section title ending in WORK/WORKS,
-        // otherwise use the longest text cell from the row.
-        const explicit=candidates.find(x=>/\bworks?\b/i.test(x));
-        const cand=explicit || candidates.sort((a,b)=>b.length-a.length)[0];
-        if(cand){
-          scope=cand;
-          break;
+        // Find TOTAL and STATUS only inside this local block, not across the whole row.
+        let totalCol=-1,statusCol=-1;
+        for(let c=descCol+1;c<Math.min(row.length,descCol+7);c++){
+          const hc=hh(row[c]);
+          if(totalCol<0 && hc==='total') totalCol=c;
+          if(statusCol<0 && (hc==='status'||hc.includes('actual')||hc.includes('accomplishment'))) statusCol=c;
         }
-      }
-      if(!scope)continue;
+        if(totalCol<0 || statusCol<0) continue;
 
-      // Read the OVERALL summary row only.
-      let overall=null;
-      for(let r=i+1;r<Math.min(rows.length,i+30);r++){
-        const row=rows[r]||[];
-        const d=hh(row[descCol]);
-
-        if(r>i+1 && (d==='description' || d.includes('description'))) break;
-
-        if(
-          /overall.*(accomplishment|status|percentage|progress)/i.test(clean(row[descCol])) ||
-          /(overall|total)\s*status/i.test(clean(row[descCol])) ||
-          /total.*(accomplishment|status|progress)/i.test(clean(row[descCol]))
-        ){
-          overall=row;
-          break;
+        // Scope title is normally directly above this DESCRIPTION block.
+        let scope='';
+        for(let rr=r-1;rr>=Math.max(0,r-4);rr--){
+          const candidates=[];
+          for(let c=Math.max(0,descCol-1);c<=Math.min((rows[rr]||[]).length-1,descCol+2);c++){
+            const val=clean((rows[rr]||[])[c]);
+            if(!val)continue;
+            if(/description|total|distribution|status|balanced|equivalent|accomplishment/i.test(val))continue;
+            if(/%/.test(val))continue;
+            candidates.push(val);
+          }
+          const explicit=candidates.find(x=>/\bworks?\b/i.test(x));
+          const cand=explicit || candidates.sort((a,b)=>b.length-a.length)[0];
+          if(cand){scope=cand;break;}
         }
-      }
-      if(!overall) continue;
+        if(!scope)continue;
 
-      const total=Math.max(0,n(overall[totalCol]));
-      const value=Math.max(0,n(overall[valueCol]));
-      if(total<=0 && value<=0) continue;
+        // Find the OVERALL row for THIS description column only.
+        let overall=null;
+        for(let rr=r+1;rr<Math.min(rows.length,r+12);rr++){
+          const d=clean((rows[rr]||[])[descCol]);
+          if(!d)continue;
 
-      if(kind==='actual'){
-        const scopePercent=total>0 ? Math.max(0,Math.min(100,value/total*100)) : 0;
+          // Stop if a new block header starts in this same column.
+          if(rr>r+1 && /^description$/i.test(d))break;
+
+          if(
+            /overall.*(accomplishment|status|percentage|progress)/i.test(d) ||
+            /overall\s*status/i.test(d) ||
+            /total.*(accomplishment|status|progress)/i.test(d)
+          ){
+            overall=rows[rr]||[];
+            break;
+          }
+        }
+        if(!overall)continue;
+
+        const total=Math.max(0,n(overall[totalCol]));
+        const status=Math.max(0,n(overall[statusCol]));
+        if(total<=0 && status<=0)continue;
+
+        const key=norm(scope);
+        if(seen.has(key))continue;
+        seen.add(key);
+
+        // Store the visible STATUS contribution exactly.
+        // Use TOTAL as the scope weight and back-compute completion %,
+        // so weight * actual_percent / 100 = STATUS contribution.
+        const actualPercent=total>0 ? Math.max(0,Math.min(100,status/total*100)) : 0;
+
         out.push({
           activity:scope,
           weight:total,
-          actual_percent:scopePercent,
-          source_summary_value:value,
-          summary_only:true
-        });
-      }else{
-        out.push({
-          activity:scope,
-          weight:value,
-          source_summary_value:value,
+          actual_percent:actualPercent,
+          source_summary_value:status,
           summary_only:true
         });
       }
     }
 
-    const seen=new Set();
-    return out.filter(item=>{
-      const key=norm(item.activity)||item.activity.toLowerCase();
-      if(seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
+    return out;
+  }
+
+
+  function parsePocActualHelperList(rows){
+    const out=[];
+    for(let r=0;r<rows.length;r++){
+      const row=rows[r]||[];
+      for(let c=0;c<row.length-1;c++){
+        const a=clean(row[c]).toLowerCase();
+        if(a==='scope of works' || a==='scope of work'){
+          for(let rr=r+1;rr<Math.min(rows.length,r+15);rr++){
+            const name=clean((rows[rr]||[])[c]);
+            const value=n((rows[rr]||[])[c+1]);
+            if(!name)continue;
+            if(/total accomp/i.test(name))break;
+            if(value<=0)continue;
+            out.push({
+              activity:name,
+              weight:value,
+              actual_percent:100,
+              source_summary_value:value,
+              summary_only:true
+            });
+          }
+          return out;
+        }
+      }
+    }
+    return out;
   }
 
   function parseTrackerRows(rows,kind){
@@ -286,9 +308,15 @@
       if(timeline.length)return timeline;
     }
 
-    // Prefer the user's section/block summary layout.
-    const scopeBlocks=parseScopeSummaryBlocks(rows,kind);
-    if(scopeBlocks.length) return scopeBlocks;
+    if(kind==='actual'){
+      // First choice: exact side-by-side OVERALL STATUS blocks.
+      const scopeBlocks=parseScopeSummaryBlocks(rows,kind);
+      if(scopeBlocks.length)return scopeBlocks;
+
+      // Second choice: compact 'scope of works' helper list if present.
+      const helperList=parsePocActualHelperList(rows);
+      if(helperList.length)return helperList;
+    }
 
     const h=detectHeader(rows,kind);
     if(!h)throw new Error(kind==='schedule'
