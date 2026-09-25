@@ -3,7 +3,7 @@
   const $=id=>document.getElementById(id);
   const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[m]));
   const initials=name=>String(name||'U').trim().split(/\s+/).slice(0,2).map(x=>x[0]?.toUpperCase()||'').join('')||'U';
-  const themeOrder=['light','dark','midnight','pastel','cute','summer','glass','executive'];
+  const themeOrder=['light','dark','midnight','pastel','cute','summer','ocean','forest','sunset','lavender','glass','executive'];
   let editMode=false;
   let presenceBusy=false;
 

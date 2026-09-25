@@ -2359,3 +2359,87 @@ dialog:not(.patch-required-dialog) .dialog-card{
 #actualSheetStatus{
   font-weight:700;
 }
+
+
+/* =========================================================
+   v27.0 workday reminder animation variants
+   ========================================================= */
+.quotation-reminder-popup[data-reminder-type="pending"] .quotation-reminder-icon{
+  animation:v270Bell 1.1s ease-in-out infinite;
+}
+.quotation-reminder-popup[data-reminder-type="break"] .quotation-reminder-icon{
+  animation:v270Coffee 1.8s ease-in-out infinite;
+}
+.quotation-reminder-popup[data-reminder-type="lunch"] .quotation-reminder-icon{
+  animation:v270Lunch 1.6s ease-in-out infinite;
+}
+.quotation-reminder-popup[data-reminder-type="home"] .quotation-reminder-icon{
+  animation:v270Home 1.5s ease-in-out infinite;
+}
+.quotation-reminder-popup[data-reminder-type="break"]{border-color:rgba(20,184,166,.30)}
+.quotation-reminder-popup[data-reminder-type="lunch"]{border-color:rgba(245,158,11,.34)}
+.quotation-reminder-popup[data-reminder-type="home"]{border-color:rgba(139,92,246,.32)}
+.quotation-special-copy{
+  margin-top:4px;
+  font-size:10px;
+  line-height:1.55;
+  color:var(--muted);
+}
+@keyframes v270Bell{
+  0%,100%{transform:rotate(0)}
+  20%{transform:rotate(-12deg)}
+  40%{transform:rotate(12deg)}
+  60%{transform:rotate(-7deg)}
+  80%{transform:rotate(7deg)}
+}
+@keyframes v270Coffee{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-5px) rotate(-4deg)}
+}
+@keyframes v270Lunch{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.12) rotate(3deg)}
+}
+@keyframes v270Home{
+  0%{transform:translateX(-4px);opacity:.75}
+  50%{transform:translateX(5px);opacity:1}
+  100%{transform:translateX(-4px);opacity:.75}
+}
+
+/* =========================================================
+   v27.0 additional themes
+   ========================================================= */
+html[data-theme="ocean"]{
+  --bg:#eef8fc;--line:#cce3ee;--text:#123746;--muted:#5e7f8c;--heading:#0a2c3b;
+  --surface:#fbfeff;--surface-soft:#edf8fc;--topbar:#f8fdff;--navy:#0b526b;--navy2:#0e7a95;--blue:#1597c5;
+}
+html[data-theme="forest"]{
+  --bg:#f1f7f2;--line:#d3e3d6;--text:#1d3b2b;--muted:#67806f;--heading:#143222;
+  --surface:#fcfefc;--surface-soft:#f1f7f2;--topbar:#fbfefb;--navy:#1f5a3c;--navy2:#2d7a50;--blue:#2f8f5b;
+}
+html[data-theme="sunset"]{
+  --bg:#fff6f0;--line:#f1dacd;--text:#553529;--muted:#9a7564;--heading:#452a21;
+  --surface:#fffdfb;--surface-soft:#fff3eb;--topbar:#fffaf6;--navy:#a44e37;--navy2:#cf6f49;--blue:#e0784e;
+}
+html[data-theme="lavender"]{
+  --bg:#f7f4fc;--line:#e2d8f0;--text:#433957;--muted:#83758f;--heading:#352c47;
+  --surface:#fffefe;--surface-soft:#f5effb;--topbar:#fcf9ff;--navy:#62518b;--navy2:#8571b0;--blue:#8267c7;
+}
+html[data-theme="ocean"] .brand-mark,
+html[data-theme="forest"] .brand-mark,
+html[data-theme="sunset"] .brand-mark,
+html[data-theme="lavender"] .brand-mark{color:#fff}
+html[data-theme="ocean"] .panel,html[data-theme="ocean"] .kpi{box-shadow:0 14px 38px rgba(21,151,197,.08)}
+html[data-theme="forest"] .panel,html[data-theme="forest"] .kpi{box-shadow:0 14px 38px rgba(47,143,91,.07)}
+html[data-theme="sunset"] .panel,html[data-theme="sunset"] .kpi{box-shadow:0 14px 38px rgba(224,120,78,.08)}
+html[data-theme="lavender"] .panel,html[data-theme="lavender"] .kpi{box-shadow:0 14px 38px rgba(130,103,199,.08)}
+
+.sw-ocean{background:linear-gradient(135deg,#0b526b 0 34%,#e7f7fc 34% 68%,#1597c5 68%)}
+.sw-forest{background:linear-gradient(135deg,#1f5a3c 0 34%,#eef7f0 34% 68%,#66a97e 68%)}
+.sw-sunset{background:linear-gradient(135deg,#a44e37 0 34%,#fff0e7 34% 68%,#f0a26f 68%)}
+.sw-lavender{background:linear-gradient(135deg,#62518b 0 34%,#f4edfb 34% 68%,#a58add 68%)}
+
+/* 12 themes */
+.appearance-card .theme-preview-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+@media(max-width:1180px){.appearance-card .theme-preview-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media(max-width:760px){.appearance-card .theme-preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}

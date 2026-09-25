@@ -2,7 +2,7 @@
 // One timer only, no MutationObserver, no repeated global rescans.
 (function(){
   const $=id=>document.getElementById(id);
-  const REMINDER_HOURS=[8,10,12,14,16]; // 8AM, 10AM, 12PM, 2PM, 4PM
+  const REMINDER_HOURS=[8,9,10,11,12,13,14,15,16,17]; // hourly pending reminders, 8AM–5PM
   const STORAGE_KEY='saiko_quotation_deadline_notifications_v208';
   const POPUP_LIFETIME=30000;
   let popupTimer=null;
@@ -48,10 +48,24 @@
     const d=new Date();
     return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   }
+  function isSunday(){return new Date().getDay()===0}
   function slotForNow(){
-    const h=new Date().getHours();
-    const eligible=REMINDER_HOURS.filter(x=>h>=x);
-    return eligible.length?eligible[eligible.length-1]:null;
+    if(isSunday())return null;
+    const now=new Date(),h=now.getHours(),m=now.getMinutes();
+    if(!REMINDER_HOURS.includes(h))return null;
+    // Give exact 9AM / 12NN / 3PM work-break popups a few minutes of priority.
+    if([9,12,15].includes(h) && m<5)return null;
+    return h;
+  }
+
+  function specialReminderNow(){
+    if(isSunday())return null;
+    const d=new Date(),h=d.getHours(),m=d.getMinutes();
+    if(h===9 && m<=4)return {key:'break-am',type:'break',icon:'☕',title:'Morning Break',body:'Quick break time. Stretch, hydrate, then back to work.'};
+    if(h===12 && m<=4)return {key:'lunch',type:'lunch',icon:'🍱',title:'Lunch Break',body:'12:00 noon — lunch time. Recharge before the afternoon work.'};
+    if(h===15 && m<=4)return {key:'break-pm',type:'break',icon:'☕',title:'Afternoon Break',body:'3:00 PM break time. Take a short reset before the final work block.'};
+    if(h===16 && m>=45 && m<=49)return {key:'home',type:'home',icon:'🏠',title:'Ready to Go Home',body:'4:45 PM — wrap up, save your work, and prepare for end of day.'};
+    return null;
   }
 
   function ensurePopup(){
@@ -91,6 +105,9 @@
 
   function showPopup(rows){
     const popup=ensurePopup();
+    popup.dataset.reminderType='pending';
+    const icon=popup.querySelector('.quotation-reminder-icon');
+    if(icon)icon.textContent='🔔';
     if(popupTimer){clearTimeout(popupTimer);popupTimer=null}
 
     const urgent=rows.filter(q=>{
@@ -128,6 +145,48 @@
     }
 
     popupTimer=setTimeout(hidePopup,POPUP_LIFETIME);
+  }
+
+  function showSpecialReminder(rem){
+    const popup=ensurePopup();
+    if(popupTimer){clearTimeout(popupTimer);popupTimer=null}
+
+    popup.dataset.reminderType=rem.type;
+    const icon=popup.querySelector('.quotation-reminder-icon');
+    if(icon)icon.textContent=rem.icon;
+
+    $('quotationReminderTitle').textContent=rem.title;
+    $('quotationReminderBody').innerHTML=`<div class="quotation-special-copy">${esc(rem.body)}</div>`;
+
+    popup.setAttribute('aria-hidden','false');
+    popup.classList.remove('is-leaving');
+    void popup.offsetWidth;
+    popup.classList.add('is-visible');
+
+    const bar=popup.querySelector('.quotation-reminder-progress i');
+    if(bar){
+      bar.style.animation='none';
+      void bar.offsetWidth;
+      bar.style.animation=`quotationReminderCountdown ${POPUP_LIFETIME}ms linear forwards`;
+    }
+    popupTimer=setTimeout(hidePopup,POPUP_LIFETIME);
+  }
+
+  function maybeSpecialReminder(){
+    const rem=specialReminderNow();
+    if(!rem)return false;
+    const log=getLog();
+    const key=`${dayKey()}-${rem.key}`;
+    if(log[key])return false;
+
+    showSpecialReminder(rem);
+    playCuteChime();
+    if('Notification' in window && Notification.permission==='granted'){
+      try{new Notification(`SAIKO — ${rem.title}`,{body:rem.body,tag:`workday-${key}`})}catch(_){}
+    }
+    log[key]=new Date().toISOString();
+    saveLog(Object.fromEntries(Object.entries(log).slice(-60)));
+    return true;
   }
 
   function getAudioContext(){
@@ -201,6 +260,10 @@
   async function maybeNotify(){
     if(!currentUser)return;
     renderNotificationUI();
+    if(isSunday())return;
+
+    // One existing minute timer drives both special workday reminders and pending notices.
+    if(maybeSpecialReminder())return;
 
     const hour=slotForNow();
     if(hour===null)return;

@@ -1,5 +1,5 @@
 {
-  "version": "26.9",
-  "label": "SAIKO Construction AI v26.9",
-  "message": "Actual STATUS pie now matches the true scope total; saved Actual links/data continue across patches and every live sync auto-saves without delete-all/reinsert."
+  "version": "27.0",
+  "label": "SAIKO Construction AI v27.0",
+  "message": "Actual KPI, scope table and pie now share one exact STATUS source; saved links continue live-syncing. Pending reminders are hourly Mon-Sat with break/lunch/go-home animations, plus four new themes."
 }

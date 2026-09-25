@@ -1255,3 +1255,33 @@ Run `v26.8-projected-pdf-plan.sql` once in Supabase.
 - On reload/patch, the saved snapshot is restored first, then the saved link is refreshed automatically.
 - Existing 10-second live sync remains; no new recurring timer or MutationObserver.
 - Run `v26.9-actual-continuity-autosave.sql` once.
+
+
+## v27.0 — Exact Actual STATUS + Workday Reminders + Themes
+### Actual tracker
+- KPI, Scope Status table and pie chart now use one exact parsed source.
+- Parser anchors each block to the explicit scope title (`CEILING WORKS`, `GENERAL REQUIREMENTS`, etc.) and reads that block's `OVERALL ACCOMPLISHMENT STATUS -> STATUS`.
+- Detail rows such as Ground Floor / Third Floor are never treated as top-level scopes.
+- Re-pasting / saving the Actual GSheet link causes a fresh read, then the new source is normalized.
+- Existing saved link remains attached to the project and continues through patches.
+- Existing 10-second live sync remains.
+- Current top-level scope rows are upserted in place; only stale non-canonical current-state rows are selectively removed.
+- Historical Actual curve points are preserved.
+
+### Reminders (Monday–Saturday)
+- Pending quotation reminders: every hour from 8:00 AM through 5:00 PM.
+- Morning break: 9:00 AM.
+- Lunch break: 12:00 noon.
+- Afternoon break: 3:00 PM.
+- Ready to go home: 4:45 PM.
+- No reminders on Sunday.
+- Each reminder type has its own popup animation.
+- Reuses the existing one-minute reminder timer; no new recurring timer was added.
+
+### New themes
+- Ocean Breeze
+- Forest Calm
+- Sunset Warm
+- Lavender Mist
+
+Run `v27.0-actual-scope-normalization.sql` once.
