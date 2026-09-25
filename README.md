@@ -1505,3 +1505,30 @@ The sidebar mark is `CM`, with a high-contrast logo treatment that stays readabl
 Actual clear operations use the same shared Supabase tables already watched by Realtime, so other open accounts reconcile the change automatically.
 
 Run `v28.2-ui-brand-clear-release.sql` once after deployment is Ready to broadcast the release gate.
+
+
+## v28.3 — Readable Palette Themes
+
+Existing theme preference values are preserved, but their palettes were rebuilt from the supplied color references:
+
+- **Sand & Sage** (`pastel`)
+- **Chai Vanilla** (`summer`)
+- **Navy Teal** (`ocean`)
+- **Matcha Almond** (`forest`)
+- **Carob Chai** (`sunset`)
+- **Earth Neutral** (`lavender`)
+
+Because the existing `lavender` preference is now Earth Neutral, accounts currently using the difficult purple theme automatically receive the more readable neutral palette after the patch.
+
+### Readability corrections
+- Fixed white text on white Home buttons.
+- Explicit high-contrast Home Hero and Project Pulse text.
+- Dark-enough sidebar backgrounds with white navigation text.
+- Theme-safe logo treatment.
+- Stronger table/header contrast.
+- Theme-safe inputs, selects, placeholders and sheet mirrors.
+- Larger small labels in the Home and Dashboard v28 UI.
+- Positive/negative values remain semantically readable.
+- No new timer and no MutationObserver.
+
+Run `v28.3-readable-theme-release.sql` once after Vercel is Ready.

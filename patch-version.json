@@ -1,5 +1,5 @@
 {
-  "version": "28.2",
-  "label": "Construction Monitoring v28.2",
-  "message": "Adds per-project Actual Clear Data, improves readability and logo contrast across every theme, and changes visible product branding to Construction Monitoring."
+  "version": "28.3",
+  "label": "Construction Monitoring v28.3",
+  "message": "Rebuilds the theme palette using Earth, Matcha/Almond, Chai/Vanilla and Navy/Teal combinations, with hard contrast/readability rules across Home, Dashboard, tables, controls and branding."
 }

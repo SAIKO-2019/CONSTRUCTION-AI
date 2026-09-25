@@ -3145,3 +3145,399 @@ html[data-theme="executive"] .negative{color:#fca5a5!important}
   font-size:6px!important;
   white-space:nowrap;
 }
+
+
+/* =========================================================
+   CONSTRUCTION MONITORING v28.3
+   READABLE PALETTE SYSTEM
+   Inspired by supplied:
+   - Sand / beige / sage / olive neutrals
+   - Matcha #809671, Almond #E5E0D8, Pistache #B3B792,
+     Chai #D2AB80, Carob #725C3A, Vanilla #E5D2B8
+   - Navy #2F4156, Teal #567C8D, Sky Blue #C8D9E6,
+     Beige #F5EFEB, White #FFFFFF
+   ========================================================= */
+
+/* Existing saved theme values are reused intentionally:
+   pastel   = Sand & Sage
+   summer   = Chai Vanilla
+   ocean    = Navy Teal
+   forest   = Matcha Almond
+   sunset   = Carob Chai
+   lavender = Earth Neutral
+*/
+
+/* ---------- Sand & Sage ---------- */
+html[data-theme="pastel"]{
+  --bg:#F3F0E8;
+  --line:#D4CEC1;
+  --text:#302F2A;
+  --muted:#68685F;
+  --heading:#20211D;
+  --surface:#FFFDF8;
+  --surface-soft:#E7E8DF;
+  --topbar:#FCFAF5;
+  --navy:#566052;
+  --navy2:#3F4A42;
+  --blue:#7A866F;
+  --v28-accent:#7A866F;
+  --v28-accent-2:#566052;
+  --v28-soft:#E7E8DF;
+  --v28-card:#FFFDF8;
+  --v28-line:#D4CEC1;
+  --v28-ink:#20211D;
+  --v28-muted:#68685F;
+}
+
+/* ---------- Chai Vanilla ---------- */
+html[data-theme="summer"]{
+  --bg:#F7EFE5;
+  --line:#DDC9AF;
+  --text:#3A3026;
+  --muted:#746554;
+  --heading:#2B241D;
+  --surface:#FFF9F1;
+  --surface-soft:#E5D2B8;
+  --topbar:#FFF8EF;
+  --navy:#725C3A;
+  --navy2:#5D4A2F;
+  --blue:#B78458;
+  --v28-accent:#B78458;
+  --v28-accent-2:#725C3A;
+  --v28-soft:#E5D2B8;
+  --v28-card:#FFF9F1;
+  --v28-line:#DDC9AF;
+  --v28-ink:#2B241D;
+  --v28-muted:#746554;
+}
+
+/* ---------- Navy Teal ---------- */
+html[data-theme="ocean"]{
+  --bg:#F5EFEB;
+  --line:#B9CBD6;
+  --text:#263746;
+  --muted:#607381;
+  --heading:#1F2F3D;
+  --surface:#FFFFFF;
+  --surface-soft:#C8D9E6;
+  --topbar:#FFFFFF;
+  --navy:#2F4156;
+  --navy2:#263748;
+  --blue:#567C8D;
+  --v28-accent:#567C8D;
+  --v28-accent-2:#2F4156;
+  --v28-soft:#E4EDF3;
+  --v28-card:#FFFFFF;
+  --v28-line:#B9CBD6;
+  --v28-ink:#1F2F3D;
+  --v28-muted:#607381;
+}
+
+/* ---------- Matcha Almond ---------- */
+html[data-theme="forest"]{
+  --bg:#F2EFE7;
+  --line:#CDD0BE;
+  --text:#31372D;
+  --muted:#66705D;
+  --heading:#252A22;
+  --surface:#FCFAF5;
+  --surface-soft:#E5E0D8;
+  --topbar:#FBF8F2;
+  --navy:#56614C;
+  --navy2:#3E493A;
+  --blue:#809671;
+  --v28-accent:#809671;
+  --v28-accent-2:#725C3A;
+  --v28-soft:#E5E0D8;
+  --v28-card:#FCFAF5;
+  --v28-line:#CDD0BE;
+  --v28-ink:#252A22;
+  --v28-muted:#66705D;
+}
+
+/* ---------- Carob Chai ---------- */
+html[data-theme="sunset"]{
+  --bg:#F5EBDD;
+  --line:#D7BEA1;
+  --text:#392C21;
+  --muted:#765F49;
+  --heading:#2B2118;
+  --surface:#FFF8EF;
+  --surface-soft:#E5D2B8;
+  --topbar:#FFF9F1;
+  --navy:#725C3A;
+  --navy2:#58472F;
+  --blue:#A77B52;
+  --v28-accent:#A77B52;
+  --v28-accent-2:#725C3A;
+  --v28-soft:#E5D2B8;
+  --v28-card:#FFF8EF;
+  --v28-line:#D7BEA1;
+  --v28-ink:#2B2118;
+  --v28-muted:#765F49;
+}
+
+/* ---------- Earth Neutral ----------
+   The user's currently-saved lavender theme also becomes readable
+   immediately without requiring a manual theme reset.
+*/
+html[data-theme="lavender"]{
+  --bg:#F2EFE7;
+  --line:#D2C9BA;
+  --text:#302E29;
+  --muted:#69655C;
+  --heading:#201F1B;
+  --surface:#FFFCF6;
+  --surface-soft:#E5E1D8;
+  --topbar:#FCFAF5;
+  --navy:#5D6658;
+  --navy2:#444D43;
+  --blue:#8B7A5A;
+  --v28-accent:#8B7A5A;
+  --v28-accent-2:#5D6658;
+  --v28-soft:#E5E1D8;
+  --v28-card:#FFFCF6;
+  --v28-line:#D2C9BA;
+  --v28-ink:#201F1B;
+  --v28-muted:#69655C;
+}
+
+/* Theme preview swatches */
+.sw-pastel{background:linear-gradient(135deg,#E1D2BC 0 33%,#687464 33% 66%,#F4EFE6 66%)!important}
+.sw-summer{background:linear-gradient(135deg,#D2AB80 0 33%,#E5D2B8 33% 66%,#725C3A 66%)!important}
+.sw-ocean{background:linear-gradient(135deg,#2F4156 0 33%,#567C8D 33% 66%,#C8D9E6 66%)!important}
+.sw-forest{background:linear-gradient(135deg,#809671 0 33%,#E5E0D8 33% 66%,#B3B792 66%)!important}
+.sw-sunset{background:linear-gradient(135deg,#725C3A 0 33%,#D2AB80 33% 66%,#E5D2B8 66%)!important}
+.sw-lavender{background:linear-gradient(135deg,#D8C8AD 0 33%,#6B725F 33% 66%,#F1ECE1 66%)!important}
+
+/* ---------- Hard readability rules ---------- */
+
+/* Main foreground hierarchy */
+html[data-theme] body,
+html[data-theme] .main,
+html[data-theme] .view,
+html[data-theme] .panel,
+html[data-theme] .kpi,
+html[data-theme] .dialog-card,
+html[data-theme] .folder-card,
+html[data-theme] .report-page{
+  color:var(--text)!important;
+}
+
+html[data-theme] h1,
+html[data-theme] h2,
+html[data-theme] h3,
+html[data-theme] h4,
+html[data-theme] strong{
+  color:var(--heading,var(--text))!important;
+}
+
+/* Sidebar is intentionally dark enough in every palette. */
+html[data-theme] .sidebar{
+  color:#FFFFFF!important;
+  background:linear-gradient(180deg,var(--navy),var(--navy2))!important;
+}
+html[data-theme] .sidebar nav button,
+html[data-theme] .sidebar-user strong,
+html[data-theme] .sidebar-user span{
+  color:rgba(255,255,255,.92)!important;
+}
+html[data-theme] .sidebar nav button{
+  font-size:12px!important;
+  font-weight:650!important;
+}
+html[data-theme] .sidebar nav button.active,
+html[data-theme] .sidebar nav button:hover{
+  color:#FFFFFF!important;
+  background:rgba(255,255,255,.15)!important;
+}
+html[data-theme] .sidebar .brand strong{
+  color:#FFFFFF!important;
+  opacity:1!important;
+}
+html[data-theme] .sidebar .brand>div>span{
+  color:rgba(255,255,255,.76)!important;
+  opacity:1!important;
+}
+
+/* Cards / toolbar / controls */
+html[data-theme] .topbar,
+html[data-theme] .panel,
+html[data-theme] .kpi,
+html[data-theme] .dialog-card,
+html[data-theme] input,
+html[data-theme] select,
+html[data-theme] textarea{
+  background-color:var(--surface)!important;
+  border-color:var(--line)!important;
+}
+html[data-theme] input,
+html[data-theme] select,
+html[data-theme] textarea{
+  color:var(--text)!important;
+}
+html[data-theme] input::placeholder,
+html[data-theme] textarea::placeholder{
+  color:var(--muted)!important;
+  opacity:.9!important;
+}
+html[data-theme] .muted,
+html[data-theme] small,
+html[data-theme] .kpi span,
+html[data-theme] .selection-count,
+html[data-theme] .tracker-sync-status{
+  color:var(--muted)!important;
+}
+
+/* Tables stay legible */
+html[data-theme] table,
+html[data-theme] td{
+  color:var(--text)!important;
+  background:var(--surface)!important;
+}
+html[data-theme] th{
+  color:var(--heading,var(--text))!important;
+  background:var(--surface-soft)!important;
+  font-weight:800!important;
+}
+html[data-theme] tbody tr:hover{
+  background:var(--surface-soft)!important;
+}
+
+/* Buttons: remove the white-on-white bug from the current Home screen. */
+html[data-theme] .primary-btn{
+  background:var(--blue)!important;
+  border-color:var(--blue)!important;
+  color:#FFFFFF!important;
+}
+html[data-theme] .secondary-btn{
+  background:var(--surface)!important;
+  border-color:var(--line)!important;
+  color:var(--heading,var(--text))!important;
+}
+html[data-theme] .text-btn{
+  color:var(--blue)!important;
+}
+html[data-theme] .v28-home-hero .primary-btn{
+  background:#FFFFFF!important;
+  border-color:#FFFFFF!important;
+  color:#1F2933!important;
+}
+html[data-theme] .v28-home-hero .secondary-btn{
+  background:rgba(255,255,255,.10)!important;
+  border-color:rgba(255,255,255,.28)!important;
+  color:#FFFFFF!important;
+}
+
+/* Home hero / pulse always have explicit high contrast. */
+html[data-theme] .v28-home-hero h1,
+html[data-theme] .v28-home-hero h2,
+html[data-theme] .v28-home-hero h3,
+html[data-theme] .v28-home-hero strong,
+html[data-theme] .v281-home-selected-card strong,
+html[data-theme] .v281-home-pulse h2,
+html[data-theme] .v281-home-pulse h3,
+html[data-theme] .v281-home-pulse strong{
+  color:#FFFFFF!important;
+  opacity:1!important;
+}
+html[data-theme] .v28-home-hero p,
+html[data-theme] .v28-home-hero small,
+html[data-theme] .v28-home-hero span,
+html[data-theme] .v281-home-pulse .muted,
+html[data-theme] .v281-home-pulse span{
+  color:rgba(255,255,255,.80)!important;
+  opacity:1!important;
+}
+
+/* Theme-safe Home backgrounds from palette variables. */
+html[data-theme] .v28-home-hero{
+  background:
+    linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px),
+    linear-gradient(135deg,var(--navy2),var(--blue))!important;
+}
+html[data-theme] .v281-home-pulse{
+  background:linear-gradient(145deg,var(--navy2),var(--navy))!important;
+  border-color:rgba(255,255,255,.16)!important;
+}
+
+/* Improve tiny v28 labels that were hard to read on large desktop screens. */
+.v28-home-kpi span,
+.v28-home-project-row small,
+.v28-feed-item span,
+.v28-project-toolbar small,
+.v28-project-toolbar p,
+.v28-metric-card span,
+.v28-metric-card small,
+.v28-finance-cell span,
+.v28-scope-row span,
+.v28-scope-row strong,
+.v281-home-selected-card>span,
+.v281-home-selected-card>small,
+.v281-hero-metrics span,
+.v281-pulse-kpis span,
+.v281-attention-row span,
+.v281-all-clear span{
+  font-size:10px!important;
+  line-height:1.45!important;
+}
+.v28-home-project-row h3,
+.v281-attention-row strong,
+.v28-feed-item strong{
+  font-size:11px!important;
+  line-height:1.35!important;
+}
+.v281-pulse-head strong{
+  font-size:13px!important;
+}
+.v28-home-kpi strong{
+  font-size:22px!important;
+}
+
+/* Badge/status readability */
+html[data-theme] .smart-badge,
+html[data-theme] .actual-scope-condition,
+html[data-theme] .subcon-clean-pill,
+html[data-theme] .project-health,
+html[data-theme] .v28-project-status{
+  font-weight:850!important;
+}
+
+/* Positive/negative remains semantic and readable */
+html[data-theme] .positive{color:#176B43!important}
+html[data-theme] .negative{color:#B4232D!important}
+html[data-theme="dark"] .positive,
+html[data-theme="midnight"] .positive,
+html[data-theme="executive"] .positive{color:#86EFAC!important}
+html[data-theme="dark"] .negative,
+html[data-theme="midnight"] .negative,
+html[data-theme="executive"] .negative{color:#FCA5A5!important}
+
+/* Inputs and selected project must never fade into the topbar. */
+html[data-theme] .workspace-project select,
+html[data-theme] .topbar input{
+  color:var(--heading,var(--text))!important;
+  background:var(--surface)!important;
+  border-color:var(--line)!important;
+  font-weight:650!important;
+}
+
+/* File/sheet mirror */
+html[data-theme] .sheet-mirror-table td{
+  color:var(--text)!important;
+  background:var(--surface)!important;
+}
+html[data-theme] .sheet-mirror-table thead th,
+html[data-theme] .sheet-row-number,
+html[data-theme] .sheet-corner{
+  color:var(--heading,var(--text))!important;
+  background:var(--surface-soft)!important;
+}
+
+/* Ensure Construction Monitoring CM logo remains visible */
+html[data-theme] .sidebar .brand-mark{
+  background:#FFFFFF!important;
+  color:var(--navy)!important;
+  border:1px solid rgba(255,255,255,.88)!important;
+}
