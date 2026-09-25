@@ -1,5 +1,5 @@
 {
-  "version": "26.3",
-  "label": "SAIKO Construction AI v26.3",
-  "message": "Projected now uses Excel file upload; Actual remains Google Sheet live sync. The system automatically computes S-Curve, variance, slippage status and methodology guidance."
+  "version": "26.5",
+  "label": "SAIKO Construction AI v26.5",
+  "message": "Actual now tracks scopes using the linked GSheet TOTAL/STATUS format; Subcon folders use one clean standardized billing table across every project."
 }

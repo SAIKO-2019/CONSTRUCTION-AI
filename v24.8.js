@@ -814,7 +814,7 @@
     if($('actualSheetStatus'))$('actualSheetStatus').textContent=ap?.actual_progress_sheet_link?'Live link saved':'Not linked';
   }
 
-  $('saveScheduleSheetLinkBtn').onclick=async()=>{
+  if($('saveScheduleSheetLinkBtn')) $('saveScheduleSheetLinkBtn').onclick=async()=>{
     const p=selectedProject('scheduleProject');if(!p)return alert('Select a project first.');
     try{
       await saveProjectLink(p,'schedule_sheet_link',$('scheduleSheetLink').value.trim());
@@ -822,7 +822,7 @@
       toast('Schedule link saved. Click Sync Now when ready.');
     }catch(e){alert(e.message)}
   };
-  $('saveActualSheetLinkBtn').onclick=async()=>{
+  if($('saveActualSheetLinkBtn')) $('saveActualSheetLinkBtn').onclick=async()=>{
     const p=selectedProject('progressProject');if(!p)return alert('Select a project first.');
     try{
       await saveProjectLink(p,'actual_progress_sheet_link',$('actualSheetLink').value.trim());
@@ -830,11 +830,11 @@
       toast('Actual Progress link saved. Click Sync Now when ready.');
     }catch(e){alert(e.message)}
   };
-  $('syncScheduleSheetBtn').onclick=async()=>{const p=selectedProject('scheduleProject');if(!p)return alert('Select a project.');try{await syncSchedule(p);renderSchedule();renderProgress();renderDashboard()}catch(e){alert(e.message)}};
-  $('syncActualSheetBtn').onclick=async()=>{const p=selectedProject('progressProject');if(!p)return alert('Select a project.');try{await syncActual(p);renderProgress();renderSchedule();renderDashboard()}catch(e){alert(e.message)}};
+  if($('syncScheduleSheetBtn')) $('syncScheduleSheetBtn').onclick=async()=>{const p=selectedProject('scheduleProject');if(!p)return alert('Select a project.');try{await syncSchedule(p);renderSchedule();renderProgress();renderDashboard()}catch(e){alert(e.message)}};
+  if($('syncActualSheetBtn')) $('syncActualSheetBtn').onclick=async()=>{const p=selectedProject('progressProject');if(!p)return alert('Select a project.');try{await syncActual(p);renderProgress();renderSchedule();renderDashboard()}catch(e){alert(e.message)}};
 
-  $('scheduleProject').addEventListener('change',()=>updateTrackerLinkUI());
-  $('progressProject').addEventListener('change',()=>updateTrackerLinkUI());
+  if($('scheduleProject')) $('scheduleProject').addEventListener('change',()=>updateTrackerLinkUI());
+  if($('progressProject')) $('progressProject').addEventListener('change',()=>updateTrackerLinkUI());
   setTimeout(updateTrackerLinkUI,400);
 
   // v25.1 exposes only the small sync helpers needed by the live-sync controller.
