@@ -1,5 +1,5 @@
 {
-  "version": "27.1",
-  "label": "SAIKO Construction AI v27.1",
-  "message": "Fixed Projected schedule is uploaded once; the full Daily Accomplishment curve is stored by date and Planned vs Actual updates automatically each day."
+  "version": "27.2",
+  "label": "SAIKO Construction AI v27.2",
+  "message": "Actual S-Curve is now aligned to the fixed Projected project start date, beginning at 0% and continuing with saved daily live-sync STATUS history."
 }

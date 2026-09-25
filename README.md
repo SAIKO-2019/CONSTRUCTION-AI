@@ -1306,3 +1306,15 @@ Behavior:
   - Planned line = full fixed daily Projected curve
   - Actual line = Actual STATUS history from live sync
 - No new SQL required if v26.8 tables already exist.
+
+
+## v27.2 — Actual Aligned to Projected Start
+- The fixed Projected schedule defines the project S-Curve start date.
+- Actual is aligned to that same start date.
+- If there is no real Actual record on project start, the system creates only a **0.00% project-start baseline**.
+- It does **not** invent fake historical daily Actual values between project start and the first real saved Actual point.
+- After that, each day's Actual STATUS is saved by the existing 10-second live sync and the Actual curve grows naturally over time.
+- Existing Actual history is preserved.
+- Dashboard Planned vs Actual cards now always use the same start date and horizontal date axis.
+- Re-uploading a fixed Projected baseline realigns the synthetic Actual start baseline to the new Projected start without deleting real Actual history.
+- No new SQL required.
