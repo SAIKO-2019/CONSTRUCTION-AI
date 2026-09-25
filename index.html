@@ -7,8 +7,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SAIKO Construction AI</title>
-  <link rel="stylesheet" href="styles.css?v=2671" />
-    <script src="patch-gate.js?v=2671"></script>
+  <link rel="stylesheet" href="styles.css?v=2691" />
+    <script src="patch-gate.js?v=2691"></script>
 <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
 </head>
 <body>
@@ -83,13 +83,24 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </header>
 
       <section id="dashboard" class="view active-view">
-        <div class="page-head"><div><small>CONSTRUCTION MANAGEMENT</small><h1>Dashboard</h1><p>Live overview of projects, billing, schedule, progress, and files.</p>
+        <div class="page-head"><div><small>CONSTRUCTION MANAGEMENT</small><h1>Dashboard</h1><p>Clean project overview with Planned vs Actual progress and per-project S-Curves.</p>
         <div id="dashboardQuotationRemarks" class="dashboard-quotation-remarks">
           <strong>For Quotation:</strong>
           <span>Quotation projects are tracked separately before award. Once classified/awarded, the related project can be monitored here under Projects, Billing, Progress, and Budget.</span>
           <button type="button" class="text-btn" data-go="quotation">Open For Quotation</button>
         </div></div></div>
         <div id="kpiGrid" class="kpi-grid"></div>
+        <div class="panel dashboard-project-curves-panel">
+          <div class="panel-head">
+            <div>
+              <h2>Project Progress — Planned vs Actual</h2>
+              <span class="muted">One compact progress card and S-Curve per project.</span>
+            </div>
+          </div>
+          <div id="dashboardProjectCurves" class="project-curve-grid">
+            <div class="empty">No project progress data yet.</div>
+          </div>
+        </div>
         <div class="dashboard-grid">
           <div class="panel"><div class="panel-head"><h2>Schedule vs Actual Summary</h2><button class="text-btn" data-go="projects">Manage</button></div><div class="table-wrap"><table><thead><tr><th>Project</th><th>Status</th><th>Actual</th><th>Planned</th><th>Variance</th></tr></thead><tbody id="dashProjects"></tbody></table></div></div>
           <div class="panel"><div class="panel-head"><h2>Today / Next Agenda</h2><button class="text-btn" data-go="schedule">Open Tracker</button></div><div id="agendaList" class="list-stack"></div></div>
@@ -231,16 +242,16 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
           <div>
             <small>PLANNING</small>
             <h1>Projected</h1>
-            <p>Upload the Projected Excel file. The visible sheet data is mirrored as view-only, then the system computes the planned S-Curve and project status internally.</p>
+            <p>Upload the Planned/Projected file. PDF is supported and is read using the same scope / TOTAL / STATUS format as the Actual tracker.</p>
           </div>
         </div>
 
         <div class="toolbar panel projected-upload-toolbar">
           <label>Project<select id="scheduleProject"></select></label>
-          <label class="file-label grow">Projected Excel File
-            <input id="projectedFileUpload" type="file" accept=".xlsx,.xls,.xlsm">
+          <label class="file-label grow">Projected File (PDF / Excel)
+            <input id="projectedFileUpload" type="file" accept=".pdf,application/pdf,.xlsx,.xls,.xlsm">
           </label>
-          <button id="uploadProjectedFileBtn" class="primary-btn" type="button">Upload Projected</button>
+          <button id="uploadProjectedFileBtn" class="primary-btn" type="button">Upload Planned</button>
           <span id="projectedFileStatus" class="tracker-sync-status">No uploaded file</span>
         </div>
 
@@ -257,16 +268,32 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
           </div>
         </div>
 
+        <div class="panel projected-pdf-scope-panel">
+          <div class="panel-head">
+            <div>
+              <h2>Planned Scope Status</h2>
+              <span class="muted">Uses the same Scope / Total / Status / Balance format as the Actual tracker.</span>
+            </div>
+            <span id="projectedPdfScopeBadge" class="smart-badge">PLANNED</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Scope</th><th>Total %</th><th>Planned Status %</th><th>Balance %</th></tr></thead>
+              <tbody id="projectedPdfScopeRows"><tr><td colspan="4" class="empty">Upload the Planned PDF.</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
         <div class="panel tracker-sheet-mirror-panel">
           <div class="panel-head">
             <div>
-              <h2>Projected File — View Only</h2>
+              <h2>Planned / Projected File — View Only</h2>
               <span class="muted">Shows the visible data from the uploaded Projected sheet. Hidden rows and columns are excluded.</span>
             </div>
             <span id="scheduleMirrorStatus" class="smart-badge">FILE</span>
           </div>
           <div id="scheduleSheetMirror" class="sheet-mirror-wrap">
-            <div class="empty">Upload a Projected Excel file.</div>
+            <div class="empty">Upload a Planned PDF or Excel file.</div>
           </div>
         </div>
       </section>
@@ -276,7 +303,7 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
           <div>
             <small>SITE ACCOMPLISHMENT</small>
             <h1>Actual</h1>
-            <p>Link the Actual Google Sheet for live sync. The visible sheet data is mirrored as view-only and STATUS is used as the actual accomplishment basis.</p>
+            <p>The saved Actual Google Sheet link continues across updates. Visible data live-syncs every 10 seconds, auto-saves, and STATUS remains the accomplishment basis.</p>
           </div>
         </div>
 
@@ -712,15 +739,17 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
   </div><div class="dialog-actions"><button type="button" class="secondary-btn" data-close="inventoryDialog">Cancel</button><button class="primary-btn" type="submit">Save Entry</button></div></form></dialog>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+  <script>if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";}</script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=2671"></script>
-  <script src="v13.js?v=2671"></script>
-  <script src="v14.js?v=2671"></script>
-  <script src="v14.2.js?v=2671"></script>
-  <script src="v14.3.js?v=2671"></script>
-  <script src="v14.4.js?v=2671"></script>
-  <script src="v14.5.js?v=2671"></script>
+  <script src="app.js?v=2691"></script>
+  <script src="v13.js?v=2691"></script>
+  <script src="v14.js?v=2691"></script>
+  <script src="v14.2.js?v=2691"></script>
+  <script src="v14.3.js?v=2691"></script>
+  <script src="v14.4.js?v=2691"></script>
+  <script src="v14.5.js?v=2691"></script>
 
   <dialog id="settingsDialog" class="settings-dialog-shell">
     <form id="settingsForm" class="dialog-card wide settings-dialog-card">
@@ -835,13 +864,13 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </div>
   </dialog>
 
-  <script src="v14.7.js?v=2671"></script>
-  <script src="v14.8.js?v=2671"></script>
-  <script src="v15.9.js?v=2671"></script>
-  <script src="v17-core.js?v=2671"></script>
-  <script src="v18.js?v=2671"></script>
-  <script src="v19.js?v=2671"></script>
-  <script src="v20.js?v=2671"></script>
+  <script src="v14.7.js?v=2691"></script>
+  <script src="v14.8.js?v=2691"></script>
+  <script src="v15.9.js?v=2691"></script>
+  <script src="v17-core.js?v=2691"></script>
+  <script src="v18.js?v=2691"></script>
+  <script src="v19.js?v=2691"></script>
+  <script src="v20.js?v=2691"></script>
 
   <dialog id="quotationNotifDialog">
     <div class="dialog-card quotation-notif-dialog">
@@ -864,9 +893,9 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </div>
   </dialog>
 
-  <script src="v20.3.js?v=2671"></script>
-  <script src="v20.5.js?v=2671"></script>
-  <script src="v20.6.js?v=2671"></script>
+  <script src="v20.3.js?v=2691"></script>
+  <script src="v20.5.js?v=2691"></script>
+  <script src="v20.6.js?v=2691"></script>
 
   <dialog id="editQuotationDialog">
     <form id="editQuotationForm" class="dialog-card quotation-edit-dialog">
@@ -889,25 +918,25 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </form>
   </dialog>
 
-  <script src="v20.7.js?v=2671"></script>
-  <script src="v21.js?v=2671"></script>
-  <script src="patch-watch.js?v=2671"></script>
-  <script src="v21.3.js?v=2671"></script>
-  <script src="v21.4.js?v=2671"></script>
-  <script src="v21.5.js?v=2671"></script>
-  <script src="v21.6.js?v=2671"></script>
-  <script src="v22.6.js?v=2671"></script>
-  <script src="v22.9.js?v=2671"></script>
-  <script src="v23.0.js?v=2671"></script>
-  <script src="v23.2.js?v=2671"></script>
-  <script src="v23.3.js?v=2671"></script>
-  <script src="v23.4.js?v=2671"></script>
-  <script src="v23.5.js?v=2671"></script>
-  <script src="v23.6.js?v=2671"></script>
-  <script src="v23.7.js?v=2671"></script>
-  <script src="v23.8.js?v=2671"></script>
-  <script src="v23.9.js?v=2671"></script>
-  <script src="v24.0.js?v=2671"></script>
+  <script src="v20.7.js?v=2691"></script>
+  <script src="v21.js?v=2691"></script>
+  <script src="patch-watch.js?v=2691"></script>
+  <script src="v21.3.js?v=2691"></script>
+  <script src="v21.4.js?v=2691"></script>
+  <script src="v21.5.js?v=2691"></script>
+  <script src="v21.6.js?v=2691"></script>
+  <script src="v22.6.js?v=2691"></script>
+  <script src="v22.9.js?v=2691"></script>
+  <script src="v23.0.js?v=2691"></script>
+  <script src="v23.2.js?v=2691"></script>
+  <script src="v23.3.js?v=2691"></script>
+  <script src="v23.4.js?v=2691"></script>
+  <script src="v23.5.js?v=2691"></script>
+  <script src="v23.6.js?v=2691"></script>
+  <script src="v23.7.js?v=2691"></script>
+  <script src="v23.8.js?v=2691"></script>
+  <script src="v23.9.js?v=2691"></script>
+  <script src="v24.0.js?v=2691"></script>
 
   <dialog id="linkedSubconDialog">
     <form id="linkedSubconForm" class="dialog-card wide">
@@ -934,23 +963,24 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </form>
   </dialog>
 
-  <script src="v24.1.js?v=2671"></script>
-  <script src="v24.4.js?v=2671"></script>
-  <script src="v24.5.js?v=2671"></script>
-  <script src="v24.6.js?v=2671"></script>
-  <script src="v24.7.js?v=2671"></script>
-  <script src="v24.8.js?v=2671"></script>
-  <script src="v25.0.js?v=2671"></script>
-  <script src="v25.1.js?v=2671"></script>
-  <script src="v25.4.js?v=2671"></script>
-  <script src="v25.5.js?v=2671"></script>
-  <script src="v25.8.js?v=2671"></script>
-  <script src="v26.0.js?v=2671"></script>
-  <script src="v26.1.js?v=2671"></script>
-  <script src="v26.2.js?v=2671"></script>
-  <script src="v26.3.js?v=2671"></script>
-  <script src="v26.4.js?v=2671"></script>
-  <script src="v26.5.js?v=2671"></script>
-  <script src="v26.7.js?v=2671"></script>
+  <script src="v24.1.js?v=2691"></script>
+  <script src="v24.4.js?v=2691"></script>
+  <script src="v24.5.js?v=2691"></script>
+  <script src="v24.6.js?v=2691"></script>
+  <script src="v24.7.js?v=2691"></script>
+  <script src="v24.8.js?v=2691"></script>
+  <script src="v25.0.js?v=2691"></script>
+  <script src="v25.1.js?v=2691"></script>
+  <script src="v25.4.js?v=2691"></script>
+  <script src="v25.5.js?v=2691"></script>
+  <script src="v25.8.js?v=2691"></script>
+  <script src="v26.0.js?v=2691"></script>
+  <script src="v26.1.js?v=2691"></script>
+  <script src="v26.2.js?v=2691"></script>
+  <script src="v26.3.js?v=2691"></script>
+  <script src="v26.4.js?v=2691"></script>
+  <script src="v26.5.js?v=2691"></script>
+  <script src="v26.8.js?v=2691"></script>
+  <script src="v26.9.js?v=2691"></script>
 </body>
 </html>

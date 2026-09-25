@@ -1,5 +1,5 @@
 {
-  "version": "26.7",
-  "label": "SAIKO Construction AI v26.7",
-  "message": "Actual S-Curve removed from Actual tracker and replaced with a live pie chart of scope STATUS percentages."
+  "version": "26.9",
+  "label": "SAIKO Construction AI v26.9",
+  "message": "Actual STATUS pie now matches the true scope total; saved Actual links/data continue across patches and every live sync auto-saves without delete-all/reinsert."
 }

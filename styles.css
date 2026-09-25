@@ -2271,3 +2271,91 @@ dialog:not(.patch-required-dialog) .dialog-card{
   .actual-status-pie-wrap{min-height:240px}
   .actual-status-pie{width:210px;height:210px}
 }
+
+
+/* v26.8 Planned PDF tracker */
+.projected-pdf-scope-panel{margin-top:14px}
+
+/* v26.8 clean Dashboard: keep KPI, per-project curves, financial summary */
+#dashboard > .dashboard-grid,
+#dashboard > .scope-compare-panel,
+#dashboard > .matched-scurve-panel,
+#dashboard > .panel:not(.dashboard-financial-summary-panel):not(.dashboard-project-curves-panel),
+#dashboard > .dashboard-quotation-remarks{
+  display:none!important;
+}
+#dashboard > .dashboard-project-curves-panel,
+#dashboard > .dashboard-financial-summary-panel{
+  display:block!important;
+}
+.dashboard-project-curves-panel{margin-top:14px}
+.project-curve-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.project-curve-card{
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:12px;
+  background:var(--surface);
+  min-width:0;
+}
+.project-curve-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:9px;
+}
+.project-curve-head h3{margin:0;font-size:12px}
+.project-curve-head small{display:block;margin-top:3px;font-size:8px;color:var(--muted)}
+.project-health{
+  display:inline-flex;
+  padding:4px 7px;
+  border-radius:999px;
+  font-size:8px;
+  font-weight:800;
+}
+.project-health.track{background:rgba(34,197,94,.12);color:#15803d}
+.project-health.ahead{background:rgba(37,99,235,.12);color:#1d4ed8}
+.project-health.behind{background:rgba(239,68,68,.12);color:#b91c1c}
+.project-health.neutral{background:rgba(100,116,139,.10);color:#64748b}
+.project-curve-kpis{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+  margin-bottom:8px;
+}
+.project-curve-kpis>div{
+  padding:7px 8px;
+  border-radius:8px;
+  background:var(--surface-soft);
+  border:1px solid var(--line);
+}
+.project-curve-kpis span{display:block;font-size:8px;color:var(--muted);margin-bottom:2px}
+.project-curve-kpis strong{font-size:10px}
+.project-mini-scurve{
+  width:100%;
+  height:150px;
+  display:block;
+  margin-top:2px;
+}
+.project-curve-legend{
+  display:flex;
+  gap:12px;
+  justify-content:flex-end;
+  font-size:8px;
+  color:var(--muted);
+}
+.project-curve-legend span{display:inline-flex;align-items:center;gap:5px}
+.project-curve-legend i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.project-curve-legend .planned-dot{background:#2563eb}
+.project-curve-legend .actual-dot{background:#16a34a}
+@media(max-width:900px){.project-curve-grid{grid-template-columns:1fr}}
+
+
+/* v26.9 Actual continuity */
+#actualSheetStatus{
+  font-weight:700;
+}

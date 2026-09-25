@@ -708,6 +708,17 @@
     const raw=await readSheet(p.actual_progress_sheet_link);
     window.trackerSheetViews=window.trackerSheetViews||{schedule:{},actual:{}};
     window.trackerSheetViews.actual[String(p.id)]=raw;
+
+    // v26.9: persist the visible Actual source snapshot automatically.
+    // This lets a saved project continue after refresh/patch without re-linking.
+    const snapshot=await sb.from('actual_sheet_snapshots').upsert([{
+      project_id:p.id,
+      source_link:p.actual_progress_sheet_link,
+      visible_rows:raw,
+      saved_at:new Date().toISOString()
+    }],{onConflict:'project_id'}).select();
+    if(snapshot.error)throw snapshot.error;
+
     const parsed=parseTrackerRows(raw,'actual').map(x=>({
       activity:x.activity,
       weight:Math.max(0,n(x.weight)),
@@ -731,10 +742,8 @@
     if(hist.error)throw hist.error;
     cache.actualSeries=(cache.actualSeries||[]).filter(x=>!(String(x.project_id)===String(p.id)&&String(x.progress_date).slice(0,10)===actualSnapshotDate)).concat(hist.data||[histRow]);
 
-    const del=await sb.from('actual_progress').delete().eq('project_id',p.id);
-    if(del.error)throw del.error;
-    // Upsert is intentionally used even after cleanup as a second guard against
-    // duplicate activity keys from unusual Google Sheet layouts.
+    // v26.9: do NOT delete all Actual rows on every sync.
+    // Existing scope rows keep their identity and are updated in place.
     const ins=await sb.from('actual_progress').upsert(parsed,{onConflict:'project_id,activity'}).select();
     if(ins.error)throw ins.error;
     cache.progress=(cache.progress||[]).filter(x=>String(x.project_id)!==String(p.id)).concat(ins.data||parsed);

@@ -1214,3 +1214,44 @@ Run `v26.1-projected-scope-series.sql` once in Supabase.
 - The pie refreshes automatically through the existing 10-second Actual GSheet live sync.
 - No extra timer or MutationObserver added.
 - No new SQL required.
+
+
+## v26.8 — Planned PDF + Clean Per-Project Dashboard S-Curves
+### Projected / Planned
+- Accepts **PDF** and Excel.
+- PDF is parsed using the same top-level `Scope / TOTAL / STATUS / BALANCE` format used by Actual.
+- The Planned Scope Status table displays the parsed scopes.
+- The PDF source is also shown as a view-only extracted text mirror.
+- Each PDF upload stores one Planned progress point using the detected document date; if no date is found, the upload date is used.
+- Planned scope percentages are persisted per project/date.
+
+### Actual
+- Remains Google Sheet based with 10-second live sync.
+- STATUS remains the Actual accomplishment basis.
+- Existing Actual STATUS pie chart remains.
+
+### Dashboard
+- Removed the cluttered legacy schedule/agenda/scope/subcon panels from the main view.
+- Keeps the KPI summary and Project Financial Summary.
+- Adds **one compact Planned vs Actual S-Curve card per ongoing project**.
+- Each project card shows Planned, Actual, Variance, and Ahead / On Track / Slippage.
+- Planned and Actual curves use their saved date histories.
+
+Run `v26.8-projected-pdf-plan.sql` once in Supabase.
+
+
+## v26.9 — Actual Continuity + Auto-Save
+- Fixes the Actual pie chart so it uses only the eight validated top-level scope STATUS values.
+- The pie center now matches the Actual Accomplishment KPI.
+- Removes accidental detail-row slices such as `THIRD FLOOR`.
+- Zero-value scopes remain listed in the legend; Remaining completes the chart to 100%.
+- The saved Actual Google Sheet link remains attached to the project through patches/reloads.
+- Every successful Actual live sync automatically saves:
+  - current visible linked-sheet rows
+  - current scope STATUS values
+  - date-based Actual history point
+  - last sync timestamp
+- Actual scope rows are now **upserted in place**. The live sync no longer deletes all project Actual rows and reinserts them each cycle.
+- On reload/patch, the saved snapshot is restored first, then the saved link is refreshed automatically.
+- Existing 10-second live sync remains; no new recurring timer or MutationObserver.
+- Run `v26.9-actual-continuity-autosave.sql` once.
