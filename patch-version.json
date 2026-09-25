@@ -1,5 +1,5 @@
 {
-  "version": "27.4",
-  "label": "SAIKO Construction AI v27.4",
-  "message": "Actual S-Curve is now strictly date-driven: it stops at the latest saved Actual day, never extends to plan finish, and advances automatically through the existing 10-second live sync."
+  "version": "28.0",
+  "label": "SAIKO Construction AI v28.0",
+  "message": "New scrollable Home, theme-adaptive per-project control dashboard, editable profile page and redesigned login \u2014 all without adding background polling."
 }

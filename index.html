@@ -7,13 +7,35 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SAIKO Construction AI</title>
-  <link rel="stylesheet" href="styles.css?v=2741" />
-    <script src="patch-gate.js?v=2741"></script>
+  <link rel="stylesheet" href="styles.css?v=2801" />
+    <script src="patch-gate.js?v=2801"></script>
 <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
 </head>
 <body>
   <div id="loginGate" class="auth-overlay">
-    <div class="auth-card">
+    <div class="auth-card v28-auth-card">
+      <div class="v28-login-visual" aria-hidden="true">
+        <div class="v28-login-orbit orbit-a"></div>
+        <div class="v28-login-orbit orbit-b"></div>
+        <div class="v28-login-copy">
+          <span class="v28-login-kicker">SAIKO BUILDERS INC.</span>
+          <h2>Your construction workspace,<br>all in one place.</h2>
+          <p>Projects, billing, schedules, live accomplishment, files, team activity and AI guidance.</p>
+        </div>
+        <div class="v28-login-people">
+          <span class="v28-person p1">JK</span>
+          <span class="v28-person p2">AB</span>
+          <span class="v28-person p3">QS</span>
+          <span class="v28-person p4">CE</span>
+          <span class="v28-person p5">PM</span>
+        </div>
+        <div class="v28-login-shared">
+          <div class="v28-login-stack"><span>JK</span><span>AB</span><span>CE</span><span>+8</span></div>
+          <strong>One shared workspace.</strong>
+          <small>Work together without losing project context.</small>
+        </div>
+      </div>
+      <div class="v28-auth-form-side">
       <div class="brand-lockup"><div class="brand-mark">S</div><div><strong>SAIKO</strong><span>CONSTRUCTION AI</span></div></div>
       <div class="auth-tabs"><button id="showLoginBtn" class="active">Sign in</button><button id="showSignupBtn">Sign up</button></div>
       <div id="loginPane">
@@ -39,6 +61,7 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
         </form>
         <div id="signupError" class="form-msg"></div>
       </div>
+      </div>
     </div>
   </div>
 
@@ -46,7 +69,8 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     <aside class="sidebar">
       <div class="brand"><div class="brand-mark">S</div><div><strong>SAIKO</strong><span>BUILDERS INC. · ULTRA</span></div><span class="ultra-pulse" title="Ultra UI active"></span></div>
       <nav id="sideNav">
-        <button data-view="dashboard" class="active">▦ Dashboard</button>
+        <button data-view="home" class="active">⌂ Home</button>
+        <button data-view="dashboard">▦ Dashboard</button>
         <button data-view="projects">▣ Projects</button>
         <button data-view="billing">₱ Billing & Payments</button>
         <button data-view="schedule">◫ Projected</button>
@@ -58,6 +82,7 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
         <button data-view="files">▤ Project Files</button>
         <button data-view="templates">▧ Templates</button>
         <button data-view="assistant">✦ Construction AI</button>
+        <button data-view="profile">◉ Profile</button>
         <button data-view="users" class="admin-only">⚙ User Management</button>
       </nav>
       <div class="sidebar-user">
@@ -82,13 +107,139 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
         </button><button id="quickThemeBtn" class="quick-theme-btn" type="button" title="Quick theme switch">◐</button><div class="mini-avatar">U</div>
     </header>
 
-      <section id="dashboard" class="view active-view">
+
+      <section id="home" class="view active-view">
+        <div class="v28-home-shell">
+          <div class="v28-home-hero panel">
+            <div class="v28-home-hero-copy">
+              <small>SAIKO WORKSPACE</small>
+              <h1 id="v28HomeGreeting">Welcome back</h1>
+              <p>Everything important today — projects, live progress, billing, quotations and team activity.</p>
+              <div class="v28-home-actions">
+                <button type="button" class="primary-btn" data-v28-view="dashboard">Open Dashboard</button>
+                <button type="button" class="secondary-btn" data-v28-view="projects">Projects</button>
+                <button type="button" class="secondary-btn" data-v28-view="quotation">For Quotation</button>
+              </div>
+            </div>
+            <div class="v28-home-orbit">
+              <div class="v28-home-ring ring-one"></div>
+              <div class="v28-home-ring ring-two"></div>
+              <div class="v28-home-logo">S</div>
+            </div>
+          </div>
+
+          <div id="v28HomeKpis" class="v28-home-kpis"></div>
+
+          <div class="v28-home-grid">
+            <section class="panel v28-home-projects">
+              <div class="panel-head"><div><h2>Projects</h2><span class="muted">Select a project and jump straight into its workspace.</span></div><button class="text-btn" type="button" data-v28-view="projects">Manage</button></div>
+              <div id="v28HomeProjects" class="v28-home-project-list"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head"><div><h2>Recent Activity</h2><span class="muted">Latest shared workspace actions.</span></div></div>
+              <div id="v28HomeActivity" class="v28-home-feed"></div>
+            </section>
+          </div>
+
+          <div class="v28-home-grid">
+            <section class="panel">
+              <div class="panel-head"><div><h2>For Quotation</h2><span class="muted">Pending opportunities and deadlines.</span></div><button class="text-btn" type="button" data-v28-view="quotation">Open</button></div>
+              <div id="v28HomeQuotation" class="v28-home-feed"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head"><div><h2>Quick Workspace</h2><span class="muted">Frequently used modules.</span></div></div>
+              <div class="v28-quick-grid">
+                <button type="button" data-v28-view="billing"><strong>₱</strong><span>Billing</span></button>
+                <button type="button" data-v28-view="schedule"><strong>◫</strong><span>Projected</span></button>
+                <button type="button" data-v28-view="progress"><strong>◩</strong><span>Actual</span></button>
+                <button type="button" data-v28-view="files"><strong>▤</strong><span>Files</span></button>
+                <button type="button" data-v28-view="reports"><strong>▣</strong><span>Reports</span></button>
+                <button type="button" data-v28-view="assistant"><strong>✦</strong><span>AI</span></button>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section id="dashboard" class="view">
         <div class="page-head"><div><small>CONSTRUCTION MANAGEMENT</small><h1>Dashboard</h1><p>Clean project overview with Planned vs Actual progress and per-project S-Curves.</p>
         <div id="dashboardQuotationRemarks" class="dashboard-quotation-remarks">
           <strong>For Quotation:</strong>
           <span>Quotation projects are tracked separately before award. Once classified/awarded, the related project can be monitored here under Projects, Billing, Progress, and Budget.</span>
           <button type="button" class="text-btn" data-go="quotation">Open For Quotation</button>
         </div></div></div>
+        <div id="v28Dashboard" class="v28-project-dashboard">
+          <div class="v28-project-toolbar panel">
+            <div>
+              <small>PROJECT CONTROL PANEL</small>
+              <h1 id="v28DashProjectName">Project Dashboard</h1>
+              <p id="v28DashProjectMeta">Choose a project from Project Folder.</p>
+            </div>
+            <div id="v28DashStatus" class="v28-project-status">NO DATA</div>
+          </div>
+
+          <div class="v28-dashboard-layout">
+            <section class="panel v28-project-visual">
+              <div class="v28-project-visual-copy">
+                <span class="v28-eyebrow">LIVE PROJECT</span>
+                <h2 id="v28ProjectHeroTitle">—</h2>
+                <p id="v28ProjectHeroScope">Project information will appear here.</p>
+              </div>
+              <div class="v28-progress-orbit">
+                <div id="v28ActualGauge" class="v28-progress-gauge">
+                  <div><strong id="v28ActualGaugeValue">0%</strong><span>Actual</span></div>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel v28-metric-card">
+              <span>Planned @ Actual Date</span>
+              <strong id="v28PlannedKpi">0.00%</strong>
+              <small id="v28PlanDateKpi">No planned data</small>
+            </section>
+
+            <section class="panel v28-metric-card">
+              <span>Actual Accomplishment</span>
+              <strong id="v28ActualKpi">0.00%</strong>
+              <small id="v28ActualDateKpi">No actual data</small>
+            </section>
+
+            <section class="panel v28-metric-card">
+              <span>Variance</span>
+              <strong id="v28VarianceKpi">0.00%</strong>
+              <small id="v28VarianceStatus">Waiting for data</small>
+            </section>
+
+            <section class="panel v28-scurve-card">
+              <div class="panel-head"><div><h2>Planned vs Actual S-Curve</h2><span class="muted">Same calendar axis. Actual stops at its latest saved date.</span></div></div>
+              <div id="v28ProjectSCurve" class="v28-scurve"></div>
+            </section>
+
+            <section class="panel v28-finance-card">
+              <div class="panel-head"><div><h2>Financial Snapshot</h2><span class="muted">Current project billing position.</span></div></div>
+              <div id="v28FinanceSnapshot" class="v28-finance-grid"></div>
+            </section>
+
+            <section class="panel v28-status-card">
+              <div class="panel-head"><div><h2>Scope Status</h2><span class="muted">Actual STATUS by scope.</span></div></div>
+              <div id="v28ScopeBars" class="v28-scope-bars"></div>
+            </section>
+
+            <section class="panel v28-actions-card">
+              <div class="panel-head"><div><h2>Project Workspace</h2><span class="muted">Open the selected project's modules.</span></div></div>
+              <div class="v28-quick-grid v28-project-quick">
+                <button type="button" data-v28-view="billing"><strong>₱</strong><span>Billing</span></button>
+                <button type="button" data-v28-view="schedule"><strong>◫</strong><span>Projected</span></button>
+                <button type="button" data-v28-view="progress"><strong>◩</strong><span>Actual</span></button>
+                <button type="button" data-v28-view="inventory"><strong>▥</strong><span>Inventory</span></button>
+                <button type="button" data-v28-view="files"><strong>▤</strong><span>Files</span></button>
+                <button type="button" data-v28-view="reports"><strong>▣</strong><span>Reports</span></button>
+              </div>
+            </section>
+          </div>
+        </div>
         <div id="kpiGrid" class="kpi-grid"></div>
         <div class="panel dashboard-project-curves-panel">
           <div class="panel-head">
@@ -743,13 +894,85 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
   <script>if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";}</script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=2741"></script>
-  <script src="v13.js?v=2741"></script>
-  <script src="v14.js?v=2741"></script>
-  <script src="v14.2.js?v=2741"></script>
-  <script src="v14.3.js?v=2741"></script>
-  <script src="v14.4.js?v=2741"></script>
-  <script src="v14.5.js?v=2741"></script>
+  <script src="app.js?v=2801"></script>
+  <script src="v13.js?v=2801"></script>
+  <script src="v14.js?v=2801"></script>
+  <script src="v14.2.js?v=2801"></script>
+  <script src="v14.3.js?v=2801"></script>
+  <script src="v14.4.js?v=2801"></script>
+  <script src="v14.5.js?v=2801"></script>
+
+
+      <section id="profile" class="view">
+        <div class="v28-profile-page">
+          <div id="v28ProfileCover" class="v28-profile-cover">
+            <div class="v28-profile-cover-shape shape-a"></div>
+            <div class="v28-profile-cover-shape shape-b"></div>
+          </div>
+
+          <div class="v28-profile-header">
+            <div id="v28ProfileAvatar" class="v28-profile-avatar">U</div>
+            <div class="v28-profile-heading">
+              <h1 id="v28ProfileName">User</h1>
+              <p id="v28ProfileHeadline">Construction Team</p>
+              <span id="v28ProfileRole" class="v28-profile-role">Editor</span>
+            </div>
+            <div class="v28-profile-header-actions">
+              <button id="v28EditProfileBtn" type="button" class="primary-btn">Edit Profile</button>
+              <button id="v28OpenSettingsBtn" type="button" class="secondary-btn">Appearance & Settings</button>
+            </div>
+          </div>
+
+          <div class="v28-profile-grid">
+            <section class="panel">
+              <div class="panel-head"><h2>About</h2></div>
+              <p id="v28ProfileBio" class="v28-profile-bio">Add a short profile bio.</p>
+              <div id="v28ProfileDetails" class="v28-profile-details"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head"><h2>Workspace</h2></div>
+              <div id="v28ProfileStats" class="v28-profile-stats"></div>
+            </section>
+          </div>
+
+          <section class="panel v28-profile-activity-card">
+            <div class="panel-head"><div><h2>Recent Activity</h2><span class="muted">Your workspace activity and shared updates.</span></div></div>
+            <div id="v28ProfileActivity" class="v28-home-feed"></div>
+          </section>
+        </div>
+      </section>
+
+      <dialog id="v28ProfileDialog" class="settings-dialog-shell">
+        <form id="v28ProfileForm" class="dialog-card wide v28-profile-edit-dialog">
+          <div class="dialog-head">
+            <div><h2>Edit Profile</h2><p class="muted">Profile-style personal workspace information.</p></div>
+            <button type="button" data-v28-close="v28ProfileDialog">×</button>
+          </div>
+          <div class="v28-profile-edit-grid">
+            <label>Display name<input id="v28ProfileDisplayName" type="text" required></label>
+            <label>Headline / Position<input id="v28ProfileTitle" type="text" placeholder="Quantity Surveyor"></label>
+            <label>Department<input id="v28ProfileDepartment" type="text" placeholder="Quantity Surveying"></label>
+            <label>Phone<input id="v28ProfilePhone" type="text" placeholder="+63 ..."></label>
+            <label>Location<input id="v28ProfileLocation" type="text" placeholder="Pampanga, Philippines"></label>
+            <label>Avatar image URL<input id="v28ProfileAvatarUrl" type="url" placeholder="https://..."></label>
+            <label class="v28-wide-field">Bio<textarea id="v28ProfileBioInput" rows="4" placeholder="Write something about your work..."></textarea></label>
+            <label>Cover style
+              <select id="v28ProfileCoverStyle">
+                <option value="theme">Theme Accent</option>
+                <option value="minimal">Minimal</option>
+                <option value="grid">Technical Grid</option>
+                <option value="sunrise">Sunrise</option>
+              </select>
+            </label>
+          </div>
+          <div class="dialog-actions">
+            <button type="button" class="secondary-btn" data-v28-close="v28ProfileDialog">Cancel</button>
+            <button class="primary-btn" type="submit">Save Profile</button>
+          </div>
+        </form>
+      </dialog>
+
 
   <dialog id="settingsDialog" class="settings-dialog-shell">
     <form id="settingsForm" class="dialog-card wide settings-dialog-card">
@@ -872,13 +1095,13 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </div>
   </dialog>
 
-  <script src="v14.7.js?v=2741"></script>
-  <script src="v14.8.js?v=2741"></script>
-  <script src="v15.9.js?v=2741"></script>
-  <script src="v17-core.js?v=2741"></script>
-  <script src="v18.js?v=2741"></script>
-  <script src="v19.js?v=2741"></script>
-  <script src="v20.js?v=2741"></script>
+  <script src="v14.7.js?v=2801"></script>
+  <script src="v14.8.js?v=2801"></script>
+  <script src="v15.9.js?v=2801"></script>
+  <script src="v17-core.js?v=2801"></script>
+  <script src="v18.js?v=2801"></script>
+  <script src="v19.js?v=2801"></script>
+  <script src="v20.js?v=2801"></script>
 
   <dialog id="quotationNotifDialog">
     <div class="dialog-card quotation-notif-dialog">
@@ -905,9 +1128,9 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </div>
   </dialog>
 
-  <script src="v20.3.js?v=2741"></script>
-  <script src="v20.5.js?v=2741"></script>
-  <script src="v20.6.js?v=2741"></script>
+  <script src="v20.3.js?v=2801"></script>
+  <script src="v20.5.js?v=2801"></script>
+  <script src="v20.6.js?v=2801"></script>
 
   <dialog id="editQuotationDialog">
     <form id="editQuotationForm" class="dialog-card quotation-edit-dialog">
@@ -930,25 +1153,25 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </form>
   </dialog>
 
-  <script src="v20.7.js?v=2741"></script>
-  <script src="v21.js?v=2741"></script>
-  <script src="patch-watch.js?v=2741"></script>
-  <script src="v21.3.js?v=2741"></script>
-  <script src="v21.4.js?v=2741"></script>
-  <script src="v21.5.js?v=2741"></script>
-  <script src="v21.6.js?v=2741"></script>
-  <script src="v22.6.js?v=2741"></script>
-  <script src="v22.9.js?v=2741"></script>
-  <script src="v23.0.js?v=2741"></script>
-  <script src="v23.2.js?v=2741"></script>
-  <script src="v23.3.js?v=2741"></script>
-  <script src="v23.4.js?v=2741"></script>
-  <script src="v23.5.js?v=2741"></script>
-  <script src="v23.6.js?v=2741"></script>
-  <script src="v23.7.js?v=2741"></script>
-  <script src="v23.8.js?v=2741"></script>
-  <script src="v23.9.js?v=2741"></script>
-  <script src="v24.0.js?v=2741"></script>
+  <script src="v20.7.js?v=2801"></script>
+  <script src="v21.js?v=2801"></script>
+  <script src="patch-watch.js?v=2801"></script>
+  <script src="v21.3.js?v=2801"></script>
+  <script src="v21.4.js?v=2801"></script>
+  <script src="v21.5.js?v=2801"></script>
+  <script src="v21.6.js?v=2801"></script>
+  <script src="v22.6.js?v=2801"></script>
+  <script src="v22.9.js?v=2801"></script>
+  <script src="v23.0.js?v=2801"></script>
+  <script src="v23.2.js?v=2801"></script>
+  <script src="v23.3.js?v=2801"></script>
+  <script src="v23.4.js?v=2801"></script>
+  <script src="v23.5.js?v=2801"></script>
+  <script src="v23.6.js?v=2801"></script>
+  <script src="v23.7.js?v=2801"></script>
+  <script src="v23.8.js?v=2801"></script>
+  <script src="v23.9.js?v=2801"></script>
+  <script src="v24.0.js?v=2801"></script>
 
   <dialog id="linkedSubconDialog">
     <form id="linkedSubconForm" class="dialog-card wide">
@@ -975,29 +1198,31 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </form>
   </dialog>
 
-  <script src="v24.1.js?v=2741"></script>
-  <script src="v24.4.js?v=2741"></script>
-  <script src="v24.5.js?v=2741"></script>
-  <script src="v24.6.js?v=2741"></script>
-  <script src="v24.7.js?v=2741"></script>
-  <script src="v24.8.js?v=2741"></script>
-  <script src="v25.0.js?v=2741"></script>
-  <script src="v25.1.js?v=2741"></script>
-  <script src="v25.4.js?v=2741"></script>
-  <script src="v25.5.js?v=2741"></script>
-  <script src="v25.8.js?v=2741"></script>
-  <script src="v26.0.js?v=2741"></script>
-  <script src="v26.1.js?v=2741"></script>
-  <script src="v26.2.js?v=2741"></script>
-  <script src="v26.3.js?v=2741"></script>
-  <script src="v26.4.js?v=2741"></script>
-  <script src="v26.5.js?v=2741"></script>
-  <script src="v26.8.js?v=2741"></script>
-  <script src="v26.9.js?v=2741"></script>
-  <script src="v27.0.js?v=2741"></script>
-  <script src="v27.1.js?v=2741"></script>
-  <script src="v27.2.js?v=2741"></script>
-  <script src="v27.3.js?v=2741"></script>
-  <script src="v27.4.js?v=2741"></script>
+  <script src="v24.1.js?v=2801"></script>
+  <script src="v24.4.js?v=2801"></script>
+  <script src="v24.5.js?v=2801"></script>
+  <script src="v24.6.js?v=2801"></script>
+  <script src="v24.7.js?v=2801"></script>
+  <script src="v24.8.js?v=2801"></script>
+  <script src="v25.0.js?v=2801"></script>
+  <script src="v25.1.js?v=2801"></script>
+  <script src="v25.4.js?v=2801"></script>
+  <script src="v25.5.js?v=2801"></script>
+  <script src="v25.8.js?v=2801"></script>
+  <script src="v26.0.js?v=2801"></script>
+  <script src="v26.1.js?v=2801"></script>
+  <script src="v26.2.js?v=2801"></script>
+  <script src="v26.3.js?v=2801"></script>
+  <script src="v26.4.js?v=2801"></script>
+  <script src="v26.5.js?v=2801"></script>
+  <script src="v26.8.js?v=2801"></script>
+  <script src="v26.9.js?v=2801"></script>
+  <script src="v27.0.js?v=2801"></script>
+  <script src="v27.1.js?v=2801"></script>
+  <script src="v27.2.js?v=2801"></script>
+  <script src="v27.3.js?v=2801"></script>
+  <script src="v27.4.js?v=2801"></script>
+  <script src="v27.5.js?v=2801"></script>
+  <script src="v28.0.js?v=2801"></script>
 </body>
 </html>

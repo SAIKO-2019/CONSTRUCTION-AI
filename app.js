@@ -66,7 +66,13 @@ async function refreshAll(){
 
   // v24.4: independent reads run in parallel instead of one-by-one.
   // This materially shortens login/refresh time without changing the data model.
-  const jobs=[...loads,['boq','boq_items']];
+  const jobs=[
+    ...loads,
+    ['boq','boq_items'],
+    ['projectedSeries','projected_progress_series'],
+    ['actualSeries','actual_progress_series'],
+    ['projectedScopeSeries','projected_scope_series']
+  ];
   const results=await Promise.allSettled(jobs.map(([,table])=>q(table)));
   results.forEach((result,i)=>{
     const [cacheKey,table]=jobs[i];

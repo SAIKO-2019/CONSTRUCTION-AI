@@ -4,7 +4,7 @@
 // 2) explicit database release bumps from migrations
 // Normal For Quotation Google Sheet data changes NEVER trigger logout/reCAPTCHA.
 (function(){
-  const CURRENT_PATCH='27.4';
+  const CURRENT_PATCH='28.0';
   const CHECK_EVERY_MS=10*1000;
   const APP_DEPLOY_KEY='saiko_seen_deployment';
   const DB_RELEASE_KEY='saiko_seen_db_release';
@@ -83,6 +83,15 @@
       });
       if(!r.ok)return;
       const info=await r.json();
+
+      // v27.5: server release is authoritative across ALL accounts/browsers.
+      // If an older client is still running, require refresh immediately.
+      const serverRelease=String(info?.appRelease||'').trim();
+      if(serverRelease && serverRelease!==CURRENT_PATCH){
+        showRequired(`A newer SAIKO Construction AI release (${serverRelease}) is live. Refresh and log in again.`);
+        return;
+      }
+
       const deployment=String(info?.deployment||'').trim();
       if(!deployment)return;
 

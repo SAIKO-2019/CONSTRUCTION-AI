@@ -1353,3 +1353,71 @@ No new SQL required.
 - On the next calendar day, the first successful live sync creates that day's Actual point automatically.
 - Visual smoothing remains presentation-only; no fake daily Actual percentages are written.
 - No new SQL required.
+
+
+## v27.5 — Cross-Account Patch + Shared Data Sync
+### Patch propagation
+- `/api/system-version` now reports the same current release as the web build.
+- Patch watcher compares the server release against the running JavaScript release.
+- `v27.5-cross-account-realtime.sql` bumps the global database release, so already-open signed-in accounts receive the Refresh/Login Again gate.
+
+### Shared project information
+- Every account now loads:
+  - `projected_progress_series`
+  - `actual_progress_series`
+  - `projected_scope_series`
+  during normal login/refresh.
+- This fixes S-Curve data appearing only in the account that uploaded/synced it.
+
+### Cross-account live updates
+- Supabase Realtime watches the shared project, billing, schedule, Actual and Projected tables.
+- A save/sync/upload from one account triggers a small debounced database refresh on the other open accounts.
+- No extra polling interval is added.
+- Returning to the tab or reconnecting also reconciles the latest shared state.
+
+Run `v27.5-cross-account-realtime.sql` once in Supabase after the deployment is Ready.
+
+
+## v28.0 — Home + Project Control Dashboard + Editable Profile + Login UI
+
+### Login
+- Existing Supabase Auth, reCAPTCHA, remember-me, sign-in and sign-up logic are preserved.
+- New split layout inspired by modern collaborative workspace UIs.
+- Theme-accent visual side with stacked team avatars and shared-workspace card.
+
+### Home
+- New scrollable Home page.
+- Welcome hero, project overview, KPIs, recent activity, quotation snapshot and quick module shortcuts.
+- Clicking a project sets the Project Folder and opens its Dashboard.
+
+### Dashboard
+- New per-project control-panel layout.
+- Theme-adaptive; colors automatically follow the selected user theme.
+- Large project visual/accomplishment gauge.
+- Planned, Actual and Variance KPIs.
+- Planned vs Actual S-Curve.
+- Financial snapshot.
+- Scope STATUS bars.
+- Project module shortcuts.
+- Existing underlying project/billing/progress data logic remains intact.
+
+### Profile
+- New FB-style profile page with cover, avatar, name, headline, role, About, workspace stats and recent activity.
+- Editable:
+  - Display name
+  - Headline / position
+  - Department
+  - Phone
+  - Location
+  - Avatar URL
+  - Bio
+  - Cover style
+- Extended profile data is stored in Supabase Auth user metadata.
+- Existing `user_preferences` remains the source for theme/density/reminders/active status.
+
+### Performance
+- No MutationObserver.
+- No new recurring timer.
+- Rendering occurs only on navigation, project change, normal refresh/realtime refresh, or profile save.
+
+Run `v28.0-ui-release.sql` once after the deployment is Ready so already-open accounts receive the release gate.
