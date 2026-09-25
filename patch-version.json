@@ -1,5 +1,5 @@
 {
-  "version": "27.2",
-  "label": "SAIKO Construction AI v27.2",
-  "message": "Actual S-Curve is now aligned to the fixed Projected project start date, beginning at 0% and continuing with saved daily live-sync STATUS history."
+  "version": "27.4",
+  "label": "SAIKO Construction AI v27.4",
+  "message": "Actual S-Curve is now strictly date-driven: it stops at the latest saved Actual day, never extends to plan finish, and advances automatically through the existing 10-second live sync."
 }

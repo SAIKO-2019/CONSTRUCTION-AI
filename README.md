@@ -1318,3 +1318,38 @@ Behavior:
 - Dashboard Planned vs Actual cards now always use the same start date and horizontal date axis.
 - Re-uploading a fixed Projected baseline realigns the synthetic Actual start baseline to the new Projected start without deleting real Actual history.
 - No new SQL required.
+
+
+## v27.3 — Smooth Actual Curve + Planned-Only Projected Page
+### Dashboard S-Curve
+- Actual no longer appears as a flat horizontal line followed by a vertical jump.
+- The green Actual line is now visually smoothed between **real saved STATUS points**.
+- If only the project-start 0% baseline and the current Actual point exist, the display uses a gentle S-shaped interpolation.
+- No synthetic Actual percentages are written to the database; the smoothing is presentation-only.
+- As real daily Actual points accumulate through live sync, the smooth curve follows those real points.
+
+### Projected page
+- Removed Actual KPI/variance/status from Projected.
+- Removed the green Actual marker from the Projected chart.
+- Projected page now shows Planned-only:
+  - Projected Today
+  - Remaining Plan
+  - Plan Start
+  - Plan Finish
+  - blue Projected S-Curve
+- Source rows explicitly labeled `ACTUAL` are excluded from the Projected view-only mirror.
+- Planned vs Actual comparison remains on the Dashboard only.
+
+No new SQL required.
+
+
+## v27.4 — Date-Driven Actual Curve
+- Planned remains the full fixed Projected schedule from project start to plan finish.
+- Actual uses the same calendar axis but stops at the **latest saved Actual date**.
+- Actual never runs horizontally to the Projected end date.
+- Planned comparison is evaluated at the exact latest Actual date.
+- A Today marker is shown while today falls inside the project schedule.
+- Existing 10-second Actual live sync automatically creates/updates today's STATUS point.
+- On the next calendar day, the first successful live sync creates that day's Actual point automatically.
+- Visual smoothing remains presentation-only; no fake daily Actual percentages are written.
+- No new SQL required.

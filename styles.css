@@ -2453,3 +2453,9 @@ html[data-theme="lavender"] .panel,html[data-theme="lavender"] .kpi{box-shadow:0
 
 /* v27.2 aligned Projected/Actual curve */
 .project-curve-head small{line-height:1.35}
+
+
+/* v27.3 smooth actual curve */
+.project-mini-scurve path{
+  vector-effect:non-scaling-stroke;
+}
