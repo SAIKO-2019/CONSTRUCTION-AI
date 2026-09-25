@@ -1133,3 +1133,73 @@ Run `v26.1-projected-scope-series.sql` once in Supabase.
 - The 10-second live sync remains active.
 - `Sync Now` still forces an immediate refresh.
 - No new SQL is required beyond v26.0/v26.1 migrations already used for calculations.
+
+
+## v26.3 — Projected File + Actual Live Link
+- Sidebar labels are now **Projected** and **Actual**.
+- **Projected**
+  - no Google Sheet link
+  - upload Excel file (`.xlsx/.xls/.xlsm`)
+  - auto-detects `REVISE TIMELINE` / Projected sheet
+  - hidden Excel rows/columns are excluded from the view-only mirror
+  - reads `PROJECTED ACCUMULATIVE ACCOMPLISHMENT %AGE`
+  - persists the visible Projected sheet snapshot per project
+  - automatically computes the Projected S-Curve
+- **Actual**
+  - remains linked to Google Sheets
+  - 10-second live sync remains active
+  - visible-only mirror
+  - hidden rows/columns excluded
+  - STATUS remains the Actual accomplishment basis
+- System computes:
+  - Projected %
+  - Actual %
+  - Variance
+  - On Track / Ahead / Slippage
+  - methodology / recovery-plan suggestions
+- Run `v26.3-projected-file-snapshot.sql` once.
+
+
+## v26.4 — Actual Live Fix
+- Fixes a JavaScript startup error introduced when the old Projected Google Sheet controls were removed in v26.3.
+- **Save Link** on Actual now saves the Google Sheet link and immediately syncs it.
+- **Sync Now** works even when the link is only pasted; it saves and syncs in one action.
+- Actual view shows **all visible rows and columns** from the linked Google Sheet tab.
+- Hidden rows/columns remain excluded by the server reader.
+- Actual Accomplishment result is based strictly on the parsed top-level **STATUS** values.
+- Actual page KPI shows:
+  - Actual Accomplishment
+  - Remaining
+  - Scopes Read
+  - Basis = STATUS
+- Existing 10-second Actual live sync remains.
+- Projected remains Excel-file upload based.
+- No new SQL required beyond v26.3.
+
+
+## v26.5 — Actual Scope Status + Clean Subcon Folder
+### Actual
+- Linked Actual Google Sheet remains the live source with 10-second sync.
+- The tracker reads the same top-level scope format shown in the source sheet.
+- `Actual Scope Status` displays: Scope, Total %, STATUS %, Balance %.
+- STATUS is the accomplishment basis.
+- The full visible linked sheet remains below as a view-only source mirror.
+- Hidden rows and columns remain excluded.
+
+### Subcon Billing
+- Every project's Subcon folder now uses the same compact table format.
+- Project-level Subcon Contract Amount and Scope are shown once at the top.
+- Each billing uses the same columns:
+  Billing, Subcon, GenCon Collected, Deductions, Retention, Recoupment, Available, Setup.
+- No extra timers or MutationObservers.
+- No new SQL required beyond the existing v26.3 migration.
+
+
+## v26.6 — Actual Live S-Curve
+- Actual Google Sheet remains on the existing **10-second live sync**.
+- Every successful Actual sync stores/updates one accomplishment point by date.
+- The Actual page now has its own **Actual S-Curve**.
+- The curve uses the cumulative total of parsed top-level `STATUS` percentages.
+- As new dates are synced, the Actual curve builds automatically.
+- No new timer or MutationObserver was added; it reuses the existing live-sync render cycle.
+- Run `v26.6-actual-scurve-history.sql` once if the `actual_progress_series` table was not already created by v26.0.

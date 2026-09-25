@@ -2177,3 +2177,8 @@ dialog:not(.patch-required-dialog) .dialog-card{
 .subcon-clean-pill.yes{background:rgba(217,119,6,.12);color:#b45309}
 .subcon-clean-pill.no{background:rgba(100,116,139,.10);color:#64748b}
 @media(max-width:700px){.subcon-clean-summary{grid-template-columns:1fr}}
+
+
+/* v26.6 Actual live S-Curve */
+.actual-scurve-panel{margin-top:14px}
+.actual-scurve-panel .chart-box{min-height:290px}

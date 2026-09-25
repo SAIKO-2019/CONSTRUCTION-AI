@@ -1,5 +1,5 @@
 {
-  "version": "26.5",
-  "label": "SAIKO Construction AI v26.5",
-  "message": "Actual now tracks scopes using the linked GSheet TOTAL/STATUS format; Subcon folders use one clean standardized billing table across every project."
+  "version": "26.6",
+  "label": "SAIKO Construction AI v26.6",
+  "message": "Actual now builds its own S-Curve automatically from the 10-second live-synced STATUS history."
 }
