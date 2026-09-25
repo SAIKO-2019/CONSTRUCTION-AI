@@ -1,5 +1,5 @@
 {
-  "version": "26.6",
-  "label": "SAIKO Construction AI v26.6",
-  "message": "Actual now builds its own S-Curve automatically from the 10-second live-synced STATUS history."
+  "version": "26.7",
+  "label": "SAIKO Construction AI v26.7",
+  "message": "Actual S-Curve removed from Actual tracker and replaced with a live pie chart of scope STATUS percentages."
 }

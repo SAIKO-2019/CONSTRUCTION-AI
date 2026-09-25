@@ -1203,3 +1203,14 @@ Run `v26.1-projected-scope-series.sql` once in Supabase.
 - As new dates are synced, the Actual curve builds automatically.
 - No new timer or MutationObserver was added; it reuses the existing live-sync render cycle.
 - Run `v26.6-actual-scurve-history.sql` once if the `actual_progress_series` table was not already created by v26.0.
+
+
+## v26.7 — Actual STATUS Pie Chart
+- Removed the standalone Actual S-Curve from the Actual tracker.
+- Added a live donut/pie chart using each top-level scope's `STATUS` percentage.
+- The center shows total Actual accomplishment.
+- Each scope is shown as its own slice.
+- Remaining project percentage is included as a neutral slice up to 100%.
+- The pie refreshes automatically through the existing 10-second Actual GSheet live sync.
+- No extra timer or MutationObserver added.
+- No new SQL required.
