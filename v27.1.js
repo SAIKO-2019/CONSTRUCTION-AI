@@ -79,7 +79,12 @@
         row.push(value??'');
         if(clean(value)!=='')any=true;
       }
-      if(any)rows.push(row);
+      if(any){
+        // v27.3: Projected page must remain Planned-only.
+        // Do not show source rows explicitly labeled ACTUAL.
+        const isActualRow=row.some(v=>norm(v)==='ACTUAL');
+        if(!isActualRow)rows.push(row);
+      }
     }
     return rows;
   }
