@@ -1421,3 +1421,47 @@ Run `v27.5-cross-account-realtime.sql` once in Supabase after the deployment is 
 - Rendering occurs only on navigation, project change, normal refresh/realtime refresh, or profile save.
 
 Run `v28.0-ui-release.sql` once after the deployment is Ready so already-open accounts receive the release gate.
+
+
+## v28.1 — Dark Login + Functional Home + Planned Delete + Wider Realtime
+
+### Login
+- Reworked to a compact dark split-card style closer to the supplied reference.
+- Construction visual panel on the left, auth form on the right.
+- Existing Supabase Auth, sign-in/sign-up, remember-me, show password and reCAPTCHA remain functional.
+- Sign-in form is opened directly when login is required.
+
+### Projected
+- Added **Delete File** per selected project.
+- Delete removes only:
+  - uploaded Planned snapshot
+  - Projected daily curve
+  - Projected scope series
+  - generated schedule rows
+  - synthetic project-start Actual baseline
+- Real Actual progress and Actual history are preserved.
+- Projected page is finally enforced as **Planned-only**. Actual is shown only on Dashboard.
+
+### Home
+- Stronger theme-adaptive control-center style.
+- Hero now shows the selected project's Planned / Actual / Variance.
+- Project Pulse includes a useful mini Planned-vs-Actual chart.
+- Attention Center shows:
+  - projects with slippage
+  - outstanding billing items
+  - pending quotations
+- Today's Workfront shows schedule activities active today for the selected project.
+- Existing project list, recent activity, quotation list and quick module buttons remain.
+
+### Cross-account live updates
+Realtime shared-state refresh now also includes:
+- Project files
+- BOQ
+- Inventory + inventory columns
+- Quotations
+- Activity log
+along with Projects, Billing, Schedule, Actual and Projected series.
+
+No extra polling timer and no MutationObserver were added.
+
+Run `v28.1-ui-sync-release.sql` once after Vercel is Ready.

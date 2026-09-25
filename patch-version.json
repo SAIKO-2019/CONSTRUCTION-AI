@@ -1,5 +1,5 @@
 {
-  "version": "28.0",
-  "label": "SAIKO Construction AI v28.0",
-  "message": "New scrollable Home, theme-adaptive per-project control dashboard, editable profile page and redesigned login \u2014 all without adding background polling."
+  "version": "28.1",
+  "label": "SAIKO Construction AI v28.1",
+  "message": "Dark split login, stronger functional Home control center, per-project Planned file delete, Planned-only Projected page, and wider cross-account Realtime updates."
 }

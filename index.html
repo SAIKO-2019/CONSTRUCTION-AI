@@ -7,32 +7,27 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>SAIKO Construction AI</title>
-  <link rel="stylesheet" href="styles.css?v=2801" />
-    <script src="patch-gate.js?v=2801"></script>
+  <link rel="stylesheet" href="styles.css?v=2811" />
+    <script src="patch-gate.js?v=2811"></script>
 <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
 </head>
 <body>
   <div id="loginGate" class="auth-overlay">
     <div class="auth-card v28-auth-card">
-      <div class="v28-login-visual" aria-hidden="true">
-        <div class="v28-login-orbit orbit-a"></div>
-        <div class="v28-login-orbit orbit-b"></div>
-        <div class="v28-login-copy">
-          <span class="v28-login-kicker">SAIKO BUILDERS INC.</span>
-          <h2>Your construction workspace,<br>all in one place.</h2>
-          <p>Projects, billing, schedules, live accomplishment, files, team activity and AI guidance.</p>
+      <div class="v28-login-visual v281-login-visual" aria-hidden="true">
+        <div class="v281-login-brand">SAIKO</div>
+        <div class="v281-site-art">
+          <div class="v281-site-moon"></div>
+          <div class="v281-building b1"></div>
+          <div class="v281-building b2"></div>
+          <div class="v281-building b3"></div>
+          <div class="v281-crane"><i></i><b></b></div>
+          <div class="v281-ground"></div>
         </div>
-        <div class="v28-login-people">
-          <span class="v28-person p1">JK</span>
-          <span class="v28-person p2">AB</span>
-          <span class="v28-person p3">QS</span>
-          <span class="v28-person p4">CE</span>
-          <span class="v28-person p5">PM</span>
-        </div>
-        <div class="v28-login-shared">
-          <div class="v28-login-stack"><span>JK</span><span>AB</span><span>CE</span><span>+8</span></div>
-          <strong>One shared workspace.</strong>
-          <small>Work together without losing project context.</small>
+        <div class="v281-login-copy">
+          <h2>Plan. Track. Deliver.</h2>
+          <p>One construction workspace for projects, billing, schedules, progress and team coordination.</p>
+          <div class="v281-login-dots"><i></i><i class="active"></i><i></i></div>
         </div>
       </div>
       <div class="v28-auth-form-side">
@@ -121,14 +116,43 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
                 <button type="button" class="secondary-btn" data-v28-view="quotation">For Quotation</button>
               </div>
             </div>
-            <div class="v28-home-orbit">
-              <div class="v28-home-ring ring-one"></div>
-              <div class="v28-home-ring ring-two"></div>
-              <div class="v28-home-logo">S</div>
+            <div class="v28-home-orbit v281-home-selected-card">
+              <span>SELECTED PROJECT</span>
+              <strong id="v281HeroProjectName">—</strong>
+              <small id="v281HeroProjectMeta">Choose a project from Project Folder</small>
+              <div class="v281-hero-metrics">
+                <div><span>Planned</span><strong id="v281HeroPlanned">0.00%</strong></div>
+                <div><span>Actual</span><strong id="v281HeroActual">0.00%</strong></div>
+                <div><span>Variance</span><strong id="v281HeroVariance">0.00%</strong></div>
+              </div>
+              <button type="button" class="v281-hero-open" data-v28-view="dashboard">Open Project Control</button>
             </div>
           </div>
 
           <div id="v28HomeKpis" class="v28-home-kpis"></div>
+
+          <div class="v281-home-control-grid">
+            <section class="panel v281-home-pulse">
+              <div class="panel-head">
+                <div><h2>Project Pulse</h2><span class="muted">Selected project's live Planned vs Actual position.</span></div>
+                <button type="button" class="text-btn" data-v28-view="dashboard">Full Dashboard</button>
+              </div>
+              <div id="v281HomePulse" class="v281-home-pulse-body"></div>
+            </section>
+
+            <section class="panel v281-home-attention">
+              <div class="panel-head"><div><h2>Attention Center</h2><span class="muted">Items that may need action.</span></div></div>
+              <div id="v281HomeAttention" class="v28-home-feed"></div>
+            </section>
+
+            <section class="panel v281-home-workfront">
+              <div class="panel-head">
+                <div><h2>Today's Workfront</h2><span class="muted">Scheduled activities active today for the selected project.</span></div>
+                <button type="button" class="text-btn" data-v28-view="schedule">Projected</button>
+              </div>
+              <div id="v281HomeWorkfront" class="v28-home-feed"></div>
+            </section>
+          </div>
 
           <div class="v28-home-grid">
             <section class="panel v28-home-projects">
@@ -403,6 +427,7 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
             <input id="projectedFileUpload" type="file" accept=".pdf,application/pdf,.xlsx,.xls,.xlsm">
           </label>
           <button id="uploadProjectedFileBtn" class="primary-btn" type="button">Upload Planned</button>
+          <button id="deleteProjectedFileBtn" class="danger-btn" type="button">Delete File</button>
           <span id="projectedFileStatus" class="tracker-sync-status">No uploaded file</span>
         </div>
 
@@ -894,13 +919,13 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
   <script>if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";}</script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=2801"></script>
-  <script src="v13.js?v=2801"></script>
-  <script src="v14.js?v=2801"></script>
-  <script src="v14.2.js?v=2801"></script>
-  <script src="v14.3.js?v=2801"></script>
-  <script src="v14.4.js?v=2801"></script>
-  <script src="v14.5.js?v=2801"></script>
+  <script src="app.js?v=2811"></script>
+  <script src="v13.js?v=2811"></script>
+  <script src="v14.js?v=2811"></script>
+  <script src="v14.2.js?v=2811"></script>
+  <script src="v14.3.js?v=2811"></script>
+  <script src="v14.4.js?v=2811"></script>
+  <script src="v14.5.js?v=2811"></script>
 
 
       <section id="profile" class="view">
@@ -1095,13 +1120,13 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </div>
   </dialog>
 
-  <script src="v14.7.js?v=2801"></script>
-  <script src="v14.8.js?v=2801"></script>
-  <script src="v15.9.js?v=2801"></script>
-  <script src="v17-core.js?v=2801"></script>
-  <script src="v18.js?v=2801"></script>
-  <script src="v19.js?v=2801"></script>
-  <script src="v20.js?v=2801"></script>
+  <script src="v14.7.js?v=2811"></script>
+  <script src="v14.8.js?v=2811"></script>
+  <script src="v15.9.js?v=2811"></script>
+  <script src="v17-core.js?v=2811"></script>
+  <script src="v18.js?v=2811"></script>
+  <script src="v19.js?v=2811"></script>
+  <script src="v20.js?v=2811"></script>
 
   <dialog id="quotationNotifDialog">
     <div class="dialog-card quotation-notif-dialog">
@@ -1128,9 +1153,9 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </div>
   </dialog>
 
-  <script src="v20.3.js?v=2801"></script>
-  <script src="v20.5.js?v=2801"></script>
-  <script src="v20.6.js?v=2801"></script>
+  <script src="v20.3.js?v=2811"></script>
+  <script src="v20.5.js?v=2811"></script>
+  <script src="v20.6.js?v=2811"></script>
 
   <dialog id="editQuotationDialog">
     <form id="editQuotationForm" class="dialog-card quotation-edit-dialog">
@@ -1153,25 +1178,25 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </form>
   </dialog>
 
-  <script src="v20.7.js?v=2801"></script>
-  <script src="v21.js?v=2801"></script>
-  <script src="patch-watch.js?v=2801"></script>
-  <script src="v21.3.js?v=2801"></script>
-  <script src="v21.4.js?v=2801"></script>
-  <script src="v21.5.js?v=2801"></script>
-  <script src="v21.6.js?v=2801"></script>
-  <script src="v22.6.js?v=2801"></script>
-  <script src="v22.9.js?v=2801"></script>
-  <script src="v23.0.js?v=2801"></script>
-  <script src="v23.2.js?v=2801"></script>
-  <script src="v23.3.js?v=2801"></script>
-  <script src="v23.4.js?v=2801"></script>
-  <script src="v23.5.js?v=2801"></script>
-  <script src="v23.6.js?v=2801"></script>
-  <script src="v23.7.js?v=2801"></script>
-  <script src="v23.8.js?v=2801"></script>
-  <script src="v23.9.js?v=2801"></script>
-  <script src="v24.0.js?v=2801"></script>
+  <script src="v20.7.js?v=2811"></script>
+  <script src="v21.js?v=2811"></script>
+  <script src="patch-watch.js?v=2811"></script>
+  <script src="v21.3.js?v=2811"></script>
+  <script src="v21.4.js?v=2811"></script>
+  <script src="v21.5.js?v=2811"></script>
+  <script src="v21.6.js?v=2811"></script>
+  <script src="v22.6.js?v=2811"></script>
+  <script src="v22.9.js?v=2811"></script>
+  <script src="v23.0.js?v=2811"></script>
+  <script src="v23.2.js?v=2811"></script>
+  <script src="v23.3.js?v=2811"></script>
+  <script src="v23.4.js?v=2811"></script>
+  <script src="v23.5.js?v=2811"></script>
+  <script src="v23.6.js?v=2811"></script>
+  <script src="v23.7.js?v=2811"></script>
+  <script src="v23.8.js?v=2811"></script>
+  <script src="v23.9.js?v=2811"></script>
+  <script src="v24.0.js?v=2811"></script>
 
   <dialog id="linkedSubconDialog">
     <form id="linkedSubconForm" class="dialog-card wide">
@@ -1198,31 +1223,32 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </form>
   </dialog>
 
-  <script src="v24.1.js?v=2801"></script>
-  <script src="v24.4.js?v=2801"></script>
-  <script src="v24.5.js?v=2801"></script>
-  <script src="v24.6.js?v=2801"></script>
-  <script src="v24.7.js?v=2801"></script>
-  <script src="v24.8.js?v=2801"></script>
-  <script src="v25.0.js?v=2801"></script>
-  <script src="v25.1.js?v=2801"></script>
-  <script src="v25.4.js?v=2801"></script>
-  <script src="v25.5.js?v=2801"></script>
-  <script src="v25.8.js?v=2801"></script>
-  <script src="v26.0.js?v=2801"></script>
-  <script src="v26.1.js?v=2801"></script>
-  <script src="v26.2.js?v=2801"></script>
-  <script src="v26.3.js?v=2801"></script>
-  <script src="v26.4.js?v=2801"></script>
-  <script src="v26.5.js?v=2801"></script>
-  <script src="v26.8.js?v=2801"></script>
-  <script src="v26.9.js?v=2801"></script>
-  <script src="v27.0.js?v=2801"></script>
-  <script src="v27.1.js?v=2801"></script>
-  <script src="v27.2.js?v=2801"></script>
-  <script src="v27.3.js?v=2801"></script>
-  <script src="v27.4.js?v=2801"></script>
-  <script src="v27.5.js?v=2801"></script>
-  <script src="v28.0.js?v=2801"></script>
+  <script src="v24.1.js?v=2811"></script>
+  <script src="v24.4.js?v=2811"></script>
+  <script src="v24.5.js?v=2811"></script>
+  <script src="v24.6.js?v=2811"></script>
+  <script src="v24.7.js?v=2811"></script>
+  <script src="v24.8.js?v=2811"></script>
+  <script src="v25.0.js?v=2811"></script>
+  <script src="v25.1.js?v=2811"></script>
+  <script src="v25.4.js?v=2811"></script>
+  <script src="v25.5.js?v=2811"></script>
+  <script src="v25.8.js?v=2811"></script>
+  <script src="v26.0.js?v=2811"></script>
+  <script src="v26.1.js?v=2811"></script>
+  <script src="v26.2.js?v=2811"></script>
+  <script src="v26.3.js?v=2811"></script>
+  <script src="v26.4.js?v=2811"></script>
+  <script src="v26.5.js?v=2811"></script>
+  <script src="v26.8.js?v=2811"></script>
+  <script src="v26.9.js?v=2811"></script>
+  <script src="v27.0.js?v=2811"></script>
+  <script src="v27.1.js?v=2811"></script>
+  <script src="v27.2.js?v=2811"></script>
+  <script src="v27.3.js?v=2811"></script>
+  <script src="v27.4.js?v=2811"></script>
+  <script src="v27.5.js?v=2811"></script>
+  <script src="v28.0.js?v=2811"></script>
+  <script src="v28.1.js?v=2811"></script>
 </body>
 </html>
