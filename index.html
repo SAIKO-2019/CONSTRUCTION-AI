@@ -6,16 +6,16 @@
   <meta http-equiv="Expires" content="0">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SAIKO Construction AI</title>
-  <link rel="stylesheet" href="styles.css?v=2811" />
-    <script src="patch-gate.js?v=2811"></script>
+  <title>Construction Monitoring</title>
+  <link rel="stylesheet" href="styles.css?v=2821" />
+    <script src="patch-gate.js?v=2821"></script>
 <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
 </head>
 <body>
   <div id="loginGate" class="auth-overlay">
     <div class="auth-card v28-auth-card">
       <div class="v28-login-visual v281-login-visual" aria-hidden="true">
-        <div class="v281-login-brand">SAIKO</div>
+        <div class="v281-login-brand">CONSTRUCTION MONITORING</div>
         <div class="v281-site-art">
           <div class="v281-site-moon"></div>
           <div class="v281-building b1"></div>
@@ -31,7 +31,7 @@
         </div>
       </div>
       <div class="v28-auth-form-side">
-      <div class="brand-lockup"><div class="brand-mark">S</div><div><strong>SAIKO</strong><span>CONSTRUCTION AI</span></div></div>
+      <div class="brand-lockup"><div class="brand-mark">CM</div><div><strong>CONSTRUCTION MONITORING</strong><span>PROJECT CONTROL SYSTEM</span></div></div>
       <div class="auth-tabs"><button id="showLoginBtn" class="active">Sign in</button><button id="showSignupBtn">Sign up</button></div>
       <div id="loginPane">
         <h1>Welcome back</h1><p>Sign in to manage projects, billing, schedules, files, and AI guidance.</p>
@@ -62,7 +62,7 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
 
   <div class="app-shell">
     <aside class="sidebar">
-      <div class="brand"><div class="brand-mark">S</div><div><strong>SAIKO</strong><span>BUILDERS INC. · ULTRA</span></div><span class="ultra-pulse" title="Ultra UI active"></span></div>
+      <div class="brand"><div class="brand-mark">CM</div><div><strong>CONSTRUCTION</strong><span>MONITORING · LIVE CONTROL</span></div><span class="ultra-pulse" title="Live system active"></span></div>
       <nav id="sideNav">
         <button data-view="home" class="active">⌂ Home</button>
         <button data-view="dashboard">▦ Dashboard</button>
@@ -107,7 +107,7 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
         <div class="v28-home-shell">
           <div class="v28-home-hero panel">
             <div class="v28-home-hero-copy">
-              <small>SAIKO WORKSPACE</small>
+              <small>CONSTRUCTION MONITORING</small>
               <h1 id="v28HomeGreeting">Welcome back</h1>
               <p>Everything important today — projects, live progress, billing, quotations and team activity.</p>
               <div class="v28-home-actions">
@@ -490,7 +490,9 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
           </label>
           <button id="saveActualSheetLinkBtn" class="secondary-btn" type="button">Save Link</button>
           <button id="syncActualSheetBtn" class="primary-btn" type="button">Sync Now</button>
+          <button id="clearActualDataBtn" class="danger-btn" type="button">Clear Data</button>
           <span id="actualSheetStatus" class="tracker-sync-status">Not linked</span>
+          <span class="actual-clear-note">Clear Data removes this project’s Actual sync/history and unlinks the current Google Sheet so wrong data cannot auto-return.</span>
         </div>
 
         <div id="progressSummary" class="kpi-grid"></div>
@@ -919,13 +921,13 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
   <script>if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";}</script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=2811"></script>
-  <script src="v13.js?v=2811"></script>
-  <script src="v14.js?v=2811"></script>
-  <script src="v14.2.js?v=2811"></script>
-  <script src="v14.3.js?v=2811"></script>
-  <script src="v14.4.js?v=2811"></script>
-  <script src="v14.5.js?v=2811"></script>
+  <script src="app.js?v=2821"></script>
+  <script src="v13.js?v=2821"></script>
+  <script src="v14.js?v=2821"></script>
+  <script src="v14.2.js?v=2821"></script>
+  <script src="v14.3.js?v=2821"></script>
+  <script src="v14.4.js?v=2821"></script>
+  <script src="v14.5.js?v=2821"></script>
 
 
       <section id="profile" class="view">
@@ -1120,13 +1122,13 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </div>
   </dialog>
 
-  <script src="v14.7.js?v=2811"></script>
-  <script src="v14.8.js?v=2811"></script>
-  <script src="v15.9.js?v=2811"></script>
-  <script src="v17-core.js?v=2811"></script>
-  <script src="v18.js?v=2811"></script>
-  <script src="v19.js?v=2811"></script>
-  <script src="v20.js?v=2811"></script>
+  <script src="v14.7.js?v=2821"></script>
+  <script src="v14.8.js?v=2821"></script>
+  <script src="v15.9.js?v=2821"></script>
+  <script src="v17-core.js?v=2821"></script>
+  <script src="v18.js?v=2821"></script>
+  <script src="v19.js?v=2821"></script>
+  <script src="v20.js?v=2821"></script>
 
   <dialog id="quotationNotifDialog">
     <div class="dialog-card quotation-notif-dialog">
@@ -1153,9 +1155,9 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </div>
   </dialog>
 
-  <script src="v20.3.js?v=2811"></script>
-  <script src="v20.5.js?v=2811"></script>
-  <script src="v20.6.js?v=2811"></script>
+  <script src="v20.3.js?v=2821"></script>
+  <script src="v20.5.js?v=2821"></script>
+  <script src="v20.6.js?v=2821"></script>
 
   <dialog id="editQuotationDialog">
     <form id="editQuotationForm" class="dialog-card quotation-edit-dialog">
@@ -1178,25 +1180,25 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </form>
   </dialog>
 
-  <script src="v20.7.js?v=2811"></script>
-  <script src="v21.js?v=2811"></script>
-  <script src="patch-watch.js?v=2811"></script>
-  <script src="v21.3.js?v=2811"></script>
-  <script src="v21.4.js?v=2811"></script>
-  <script src="v21.5.js?v=2811"></script>
-  <script src="v21.6.js?v=2811"></script>
-  <script src="v22.6.js?v=2811"></script>
-  <script src="v22.9.js?v=2811"></script>
-  <script src="v23.0.js?v=2811"></script>
-  <script src="v23.2.js?v=2811"></script>
-  <script src="v23.3.js?v=2811"></script>
-  <script src="v23.4.js?v=2811"></script>
-  <script src="v23.5.js?v=2811"></script>
-  <script src="v23.6.js?v=2811"></script>
-  <script src="v23.7.js?v=2811"></script>
-  <script src="v23.8.js?v=2811"></script>
-  <script src="v23.9.js?v=2811"></script>
-  <script src="v24.0.js?v=2811"></script>
+  <script src="v20.7.js?v=2821"></script>
+  <script src="v21.js?v=2821"></script>
+  <script src="patch-watch.js?v=2821"></script>
+  <script src="v21.3.js?v=2821"></script>
+  <script src="v21.4.js?v=2821"></script>
+  <script src="v21.5.js?v=2821"></script>
+  <script src="v21.6.js?v=2821"></script>
+  <script src="v22.6.js?v=2821"></script>
+  <script src="v22.9.js?v=2821"></script>
+  <script src="v23.0.js?v=2821"></script>
+  <script src="v23.2.js?v=2821"></script>
+  <script src="v23.3.js?v=2821"></script>
+  <script src="v23.4.js?v=2821"></script>
+  <script src="v23.5.js?v=2821"></script>
+  <script src="v23.6.js?v=2821"></script>
+  <script src="v23.7.js?v=2821"></script>
+  <script src="v23.8.js?v=2821"></script>
+  <script src="v23.9.js?v=2821"></script>
+  <script src="v24.0.js?v=2821"></script>
 
   <dialog id="linkedSubconDialog">
     <form id="linkedSubconForm" class="dialog-card wide">
@@ -1223,32 +1225,33 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </form>
   </dialog>
 
-  <script src="v24.1.js?v=2811"></script>
-  <script src="v24.4.js?v=2811"></script>
-  <script src="v24.5.js?v=2811"></script>
-  <script src="v24.6.js?v=2811"></script>
-  <script src="v24.7.js?v=2811"></script>
-  <script src="v24.8.js?v=2811"></script>
-  <script src="v25.0.js?v=2811"></script>
-  <script src="v25.1.js?v=2811"></script>
-  <script src="v25.4.js?v=2811"></script>
-  <script src="v25.5.js?v=2811"></script>
-  <script src="v25.8.js?v=2811"></script>
-  <script src="v26.0.js?v=2811"></script>
-  <script src="v26.1.js?v=2811"></script>
-  <script src="v26.2.js?v=2811"></script>
-  <script src="v26.3.js?v=2811"></script>
-  <script src="v26.4.js?v=2811"></script>
-  <script src="v26.5.js?v=2811"></script>
-  <script src="v26.8.js?v=2811"></script>
-  <script src="v26.9.js?v=2811"></script>
-  <script src="v27.0.js?v=2811"></script>
-  <script src="v27.1.js?v=2811"></script>
-  <script src="v27.2.js?v=2811"></script>
-  <script src="v27.3.js?v=2811"></script>
-  <script src="v27.4.js?v=2811"></script>
-  <script src="v27.5.js?v=2811"></script>
-  <script src="v28.0.js?v=2811"></script>
-  <script src="v28.1.js?v=2811"></script>
+  <script src="v24.1.js?v=2821"></script>
+  <script src="v24.4.js?v=2821"></script>
+  <script src="v24.5.js?v=2821"></script>
+  <script src="v24.6.js?v=2821"></script>
+  <script src="v24.7.js?v=2821"></script>
+  <script src="v24.8.js?v=2821"></script>
+  <script src="v25.0.js?v=2821"></script>
+  <script src="v25.1.js?v=2821"></script>
+  <script src="v25.4.js?v=2821"></script>
+  <script src="v25.5.js?v=2821"></script>
+  <script src="v25.8.js?v=2821"></script>
+  <script src="v26.0.js?v=2821"></script>
+  <script src="v26.1.js?v=2821"></script>
+  <script src="v26.2.js?v=2821"></script>
+  <script src="v26.3.js?v=2821"></script>
+  <script src="v26.4.js?v=2821"></script>
+  <script src="v26.5.js?v=2821"></script>
+  <script src="v26.8.js?v=2821"></script>
+  <script src="v26.9.js?v=2821"></script>
+  <script src="v27.0.js?v=2821"></script>
+  <script src="v27.1.js?v=2821"></script>
+  <script src="v27.2.js?v=2821"></script>
+  <script src="v27.3.js?v=2821"></script>
+  <script src="v27.4.js?v=2821"></script>
+  <script src="v27.5.js?v=2821"></script>
+  <script src="v28.0.js?v=2821"></script>
+  <script src="v28.1.js?v=2821"></script>
+  <script src="v28.2.js?v=2821"></script>
 </body>
 </html>

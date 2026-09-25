@@ -1465,3 +1465,43 @@ along with Projects, Billing, Schedule, Actual and Projected series.
 No extra polling timer and no MutationObserver were added.
 
 Run `v28.1-ui-sync-release.sql` once after Vercel is Ready.
+
+
+## v28.2 — Construction Monitoring Brand + Actual Clear Data + Theme Readability
+
+### Actual Clear Data
+A new `Clear Data` button is available on the Actual page per selected project.
+
+When confirmed it removes:
+- Current `actual_progress`
+- Saved Actual daily/history points
+- Saved Actual sheet snapshot
+- Saved Actual Google Sheet link
+
+It **does not** delete:
+- Projected / Planned baseline
+- Billing
+- Project files
+- Inventory
+- BOQ
+- Other project records
+
+The GSheet is intentionally unlinked so the same wrong source cannot immediately live-sync back into the project. A corrected link can then be pasted and synced normally.
+
+### Branding
+Visible product branding is now:
+**CONSTRUCTION MONITORING**
+
+The sidebar mark is `CM`, with a high-contrast logo treatment that stays readable across every theme.
+
+### Theme readability
+- Sidebar brand/logo contrast enforced on all themes.
+- Home/Pulse dark accent areas always use readable white foregrounds.
+- Primary/danger buttons have safe foreground contrast.
+- Inputs, placeholders, tables, sheet mirrors, badges and dropdown options inherit theme-safe text colors.
+- Positive/negative values adapt correctly on dark themes.
+
+### Cross-account behavior
+Actual clear operations use the same shared Supabase tables already watched by Realtime, so other open accounts reconcile the change automatically.
+
+Run `v28.2-ui-brand-clear-release.sql` once after deployment is Ready to broadcast the release gate.

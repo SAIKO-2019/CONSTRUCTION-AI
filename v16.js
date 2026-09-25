@@ -144,7 +144,7 @@
   if(logout){
     logout.onclick=async()=>{
       if(logout.dataset.busy==='1')return;
-      if(!confirm('Log out of SAIKO Construction AI?'))return;
+      if(!confirm('Log out of Construction Monitoring?'))return;
       logout.dataset.busy='1';logout.disabled=true;
       const old=logout.innerHTML;logout.innerHTML='…';
       try{

@@ -26,7 +26,7 @@ $('loginForm').onsubmit=async e=>{e.preventDefault();$('loginError').textContent
 $('signupForm').onsubmit=async e=>{e.preventDefault();const name=$('signupName').value.trim(),email=$('signupEmail').value.trim(),department=$('signupDepartment').value,p1=$('signupPassword').value,p2=$('signupPassword2').value;if(p1!==p2){$('signupError').textContent='Passwords do not match.';return}$('signupError').textContent='Creating account...';const {data,error}=await sb.auth.signUp({email,password:p1,options:{data:{full_name:name,department,role:'editor',status:'active'}}});if(error){$('signupError').textContent=error.message;return}let user=data?.session?.user;if(!user){const r=await sb.auth.signInWithPassword({email,password:p1});if(r.error){$('signupError').textContent='Account created, but Supabase email confirmation is enabled. Confirm the email or disable Confirm email in Authentication → Sign In / Providers → Email.';return}user=r.data.user}$('signupError').classList.add('success');$('signupError').textContent='Account created.';await enter(user)};
 $('forgotPasswordBtn').onclick=async()=>{const email=$('loginEmail').value.trim();if(!email){$('loginError').textContent='Enter your email first.';return}const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin});$('loginError').textContent=error?error.message:'Password reset email sent.'};
 $('logoutBtn').onclick=async()=>{
-  if(!confirm('Log out of SAIKO Construction AI?')) return;
+  if(!confirm('Log out of Construction Monitoring?')) return;
   const btn=$('logoutBtn');
   const oldText=btn.textContent;
   btn.disabled=true;

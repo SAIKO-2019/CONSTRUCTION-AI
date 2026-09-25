@@ -15,7 +15,7 @@
   document.addEventListener('click',e=>{const dlg=e.target.closest?.('dialog');if(dlg&&e.target===dlg&&dlg.open){e.preventDefault();e.stopPropagation();dlg.close();}});
 
   const logout=$('logoutBtn');
-  if(logout){logout.onclick=async e=>{e.preventDefault();if(logout.dataset.busy==='1')return;if(!confirm('Log out of SAIKO Construction AI?'))return;logout.dataset.busy='1';logout.disabled=true;const old=logout.innerHTML;logout.innerHTML='…';try{if(typeof hideMyPresence==='function')await hideMyPresence();const {error}=await sb.auth.signOut();if(error)throw error;location.reload();}catch(err){alert('Logout failed: '+(err?.message||err));logout.disabled=false;logout.dataset.busy='0';logout.innerHTML=old;}};}
+  if(logout){logout.onclick=async e=>{e.preventDefault();if(logout.dataset.busy==='1')return;if(!confirm('Log out of Construction Monitoring?'))return;logout.dataset.busy='1';logout.disabled=true;const old=logout.innerHTML;logout.innerHTML='…';try{if(typeof hideMyPresence==='function')await hideMyPresence();const {error}=await sb.auth.signOut();if(error)throw error;location.reload();}catch(err){alert('Logout failed: '+(err?.message||err));logout.disabled=false;logout.dataset.busy='0';logout.innerHTML=old;}};}
 
   function hardenClicks(){
     document.querySelectorAll('button,a,input,select,textarea,[role="button"],[data-close],[data-go],[data-jump]').forEach(el=>{el.style.pointerEvents='auto';});

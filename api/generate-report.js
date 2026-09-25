@@ -5,7 +5,7 @@ const money = n => `₱${Number(n||0).toLocaleString('en-PH',{minimumFractionDig
 const pct = n => `${Number(n||0).toFixed(2)}%`;
 
 function addHeader(slide, title, subtitle=''){
-  slide.addText('SAIKO BUILDERS INC.',{x:.45,y:.25,w:3.1,h:.3,fontSize:11,bold:true,color:'0F2A44'});
+  slide.addText('CONSTRUCTION MONITORING',{x:.45,y:.25,w:3.1,h:.3,fontSize:11,bold:true,color:'0F2A44'});
   slide.addText(title,{x:.45,y:.62,w:8.6,h:.5,fontSize:24,bold:true,color:'0F2A44'});
   if(subtitle) slide.addText(subtitle,{x:.45,y:1.12,w:8.7,h:.28,fontSize:10,color:'64748B'});
   slide.addShape('line',{x:.45,y:1.48,w:9.1,h:0,line:{color:'D6A94A',width:2}});
@@ -29,8 +29,8 @@ export default async function handler(req,res){
     const p=req.body||{}, d=p.data||{}, project=d.project||{}, meta=p.meta||{};
     const pptx=new pptxgen();
     pptx.layout='LAYOUT_WIDE';
-    pptx.author='SAIKO Builders Inc.';
-    pptx.company='SAIKO Builders Inc.';
+    pptx.author='Construction Monitoring';
+    pptx.company='Construction Monitoring';
     pptx.subject=meta.reportType||'Project Report';
     pptx.title=`${project.project_name||'Project'} - ${meta.reportType||'Report'}`;
     pptx.lang='en-PH';
@@ -42,7 +42,7 @@ export default async function handler(req,res){
     s.addShape('rect',{x:0,y:0,w:13.333,h:7.5,fill:{color:'F8FAFC'},line:{color:'F8FAFC'}});
     s.addShape('rect',{x:0,y:0,w:13.333,h:.18,fill:{color:'D6A94A'},line:{color:'D6A94A'}});
     s.addText('SAIKO',{x:.8,y:1.0,w:2.2,h:.55,fontSize:32,bold:true,color:'0F2A44',charSpacing:4});
-    s.addText('BUILDERS INC.',{x:.82,y:1.6,w:2.1,h:.25,fontSize:10,color:'64748B',charSpacing:2});
+    s.addText('PROJECT CONTROL',{x:.82,y:1.6,w:2.1,h:.25,fontSize:10,color:'64748B',charSpacing:2});
     s.addText(meta.reportType||'PROJECT REPORT',{x:.8,y:2.35,w:5.4,h:.55,fontSize:28,bold:true,color:'0F172A'});
     s.addText(project.project_name||'Project',{x:.8,y:3.03,w:6.5,h:.45,fontSize:20,bold:true,color:'2563EB'});
     s.addText(`${project.client_name||''}\n${project.location||''}`,{x:.8,y:3.55,w:6.3,h:.7,fontSize:12,color:'475569'});

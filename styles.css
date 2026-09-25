@@ -2995,3 +2995,153 @@ html[data-theme="executive"] .v28-auth-card{background:#111820!important}
   .v281-home-pulse{grid-column:auto}
   .v281-home-selected-card{display:none!important}
 }
+
+
+/* =========================================================
+   CONSTRUCTION MONITORING v28.2
+   Cross-theme readability + logo contrast
+   ========================================================= */
+
+/* Sidebar identity must remain readable on every theme. */
+html[data-theme] .sidebar .brand strong{
+  color:#ffffff!important;
+  letter-spacing:.12em;
+  font-weight:900;
+}
+html[data-theme] .sidebar .brand>div>span{
+  color:rgba(255,255,255,.78)!important;
+  letter-spacing:.14em;
+}
+html[data-theme] .sidebar .brand-mark{
+  background:rgba(255,255,255,.94)!important;
+  color:#14263b!important;
+  border:1px solid rgba(255,255,255,.75)!important;
+  box-shadow:0 8px 18px rgba(0,0,0,.10)!important;
+  font-size:11px!important;
+  letter-spacing:-.03em;
+}
+html[data-theme="dark"] .sidebar .brand-mark,
+html[data-theme="midnight"] .sidebar .brand-mark,
+html[data-theme="executive"] .sidebar .brand-mark{
+  background:#f8fafc!important;
+  color:#0f172a!important;
+}
+html[data-theme] .sidebar .ultra-pulse{
+  background:#86efac!important;
+  box-shadow:0 0 0 4px rgba(134,239,172,.12),0 0 14px rgba(134,239,172,.55)!important;
+}
+
+/* Login brand should not disappear into the artwork. */
+.v281-login-brand{
+  color:#ffffff!important;
+  text-shadow:0 2px 12px rgba(0,0,0,.28);
+  font-size:10px!important;
+  max-width:240px;
+  line-height:1.35;
+}
+
+/* Enforce readable foregrounds for common controls on all themes. */
+html[data-theme] .primary-btn,
+html[data-theme] .danger-btn{
+  color:#ffffff!important;
+  font-weight:800;
+}
+html[data-theme] .danger-btn{
+  background:#dc2626!important;
+  border-color:#dc2626!important;
+}
+html[data-theme] .danger-btn:hover{background:#b91c1c!important;border-color:#b91c1c!important}
+html[data-theme] .secondary-btn,
+html[data-theme] .text-btn,
+html[data-theme] .icon-action,
+html[data-theme] .quick-theme-btn,
+html[data-theme] .edit-mode-btn{
+  color:var(--text)!important;
+}
+html[data-theme] .smart-badge,
+html[data-theme] .tracker-sync-status,
+html[data-theme] .scope-condition,
+html[data-theme] .subcon-clean-pill{
+  color:var(--text)!important;
+}
+html[data-theme] .panel,
+html[data-theme] .kpi,
+html[data-theme] .table-wrap,
+html[data-theme] .sheet-mirror-table,
+html[data-theme] .sheet-mirror-table td,
+html[data-theme] .sheet-mirror-table th{
+  color:var(--text)!important;
+}
+html[data-theme] .sheet-mirror-table thead th,
+html[data-theme] .sheet-row-number,
+html[data-theme] .sheet-corner{
+  background:var(--surface-soft)!important;
+  color:var(--muted)!important;
+}
+html[data-theme] input::placeholder,
+html[data-theme] textarea::placeholder{
+  color:color-mix(in srgb,var(--muted) 78%,transparent)!important;
+  opacity:1!important;
+}
+html[data-theme] select option{
+  background:var(--surface)!important;
+  color:var(--text)!important;
+}
+
+/* The v28 Home/Pulse areas intentionally use dark accent backgrounds:
+   force white contrast against the global theme strong/h1 rules. */
+html[data-theme] .v28-home-hero h1,
+html[data-theme] .v28-home-hero h2,
+html[data-theme] .v28-home-hero strong,
+html[data-theme] .v281-home-selected-card strong,
+html[data-theme] .v281-home-pulse h2,
+html[data-theme] .v281-home-pulse strong{
+  color:#ffffff!important;
+}
+html[data-theme] .v28-home-hero p,
+html[data-theme] .v28-home-hero small,
+html[data-theme] .v28-home-hero span,
+html[data-theme] .v281-home-pulse .muted,
+html[data-theme] .v281-home-pulse span{
+  color:rgba(255,255,255,.72)!important;
+}
+
+/* Theme-safe status semantics. */
+html[data-theme] .positive{color:#15803d!important}
+html[data-theme="dark"] .positive,
+html[data-theme="midnight"] .positive,
+html[data-theme="executive"] .positive{color:#86efac!important}
+html[data-theme] .negative{color:#b91c1c!important}
+html[data-theme="dark"] .negative,
+html[data-theme="midnight"] .negative,
+html[data-theme="executive"] .negative{color:#fca5a5!important}
+
+/* Actual toolbar with Clear Data. */
+.tracker-link-toolbar{
+  grid-template-columns:minmax(180px,.65fr) minmax(360px,1.8fr) auto auto auto!important;
+  align-items:end;
+}
+.actual-clear-note{
+  grid-column:2/-1;
+  font-size:8px;
+  line-height:1.45;
+  color:var(--muted)!important;
+}
+#clearActualDataBtn{min-height:38px;white-space:nowrap}
+@media(max-width:980px){
+  .tracker-link-toolbar{grid-template-columns:1fr!important}
+  .actual-clear-note{grid-column:1!important}
+}
+
+/* Main product identity spacing after renaming. */
+.sidebar .brand>div:not(.brand-mark){
+  min-width:0;
+}
+.sidebar .brand strong{
+  font-size:10px!important;
+  white-space:nowrap;
+}
+.sidebar .brand>div>span{
+  font-size:6px!important;
+  white-space:nowrap;
+}
