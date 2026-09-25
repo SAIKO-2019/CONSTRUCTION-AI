@@ -16,6 +16,12 @@
     payments:'payments',
     schedule:'schedule_items',
     progress:'actual_progress',
+    files:'project_files',
+    boq:'boq_items',
+    inventory:'inventory_entries',
+    inventoryColumns:'inventory_columns',
+    quotationProjects:'quotation_projects',
+    activityLog:'activity_log',
     projectedSeries:'projected_progress_series',
     actualSeries:'actual_progress_series',
     projectedScopeSeries:'projected_scope_series'
@@ -36,7 +42,9 @@
 
     const view=activeView();
     try{
-      if(view==='dashboard' && typeof renderDashboard==='function')renderDashboard();
+      if(view==='home' && typeof window.renderSaikoHome==='function')window.renderSaikoHome();
+      else if(view==='profile' && typeof window.renderSaikoProfile==='function')window.renderSaikoProfile();
+      else if(view==='dashboard' && typeof renderDashboard==='function')renderDashboard();
       else if(view==='projects' && typeof renderProjects==='function')renderProjects();
       else if(view==='billing' && typeof renderBilling==='function')renderBilling();
       else if(view==='schedule' && typeof renderSchedule==='function')renderSchedule();
@@ -98,6 +106,12 @@
       'payments',
       'schedule_items',
       'actual_progress',
+      'project_files',
+      'boq_items',
+      'inventory_entries',
+      'inventory_columns',
+      'quotation_projects',
+      'activity_log',
       'projected_progress_series',
       'actual_progress_series',
       'projected_scope_series',
