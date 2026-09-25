@@ -2443,3 +2443,9 @@ html[data-theme="lavender"] .panel,html[data-theme="lavender"] .kpi{box-shadow:0
 .appearance-card .theme-preview-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
 @media(max-width:1180px){.appearance-card .theme-preview-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
 @media(max-width:760px){.appearance-card .theme-preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+
+
+/* v27.1 fixed Projected baseline */
+#projectedFileStatus{
+  font-weight:700;
+}

@@ -1285,3 +1285,24 @@ Run `v26.8-projected-pdf-plan.sql` once in Supabase.
 - Lavender Mist
 
 Run `v27.0-actual-scope-normalization.sql` once.
+
+
+## v27.1 — Fixed Projected Daily Curve
+Designed for the uploaded schedule format containing:
+- `Projected Summary`
+- `Schedule Data`
+- `Daily Accomplishment`
+
+Behavior:
+- Upload the fixed Projected Excel schedule **once**.
+- The system reads every DATE + RUNNING ACCOMPLISHMENT % row from `Daily Accomplishment`.
+- The entire Planned curve is saved in `projected_progress_series`.
+- Each day, the system automatically selects the latest Planned % on or before that date.
+- Sundays do not need their own Projected point; the previous Saturday's cumulative Planned value carries forward until Monday.
+- `Projected Summary` is also parsed for the top-level planned scope STATUS values.
+- Re-uploading a Projected file is treated as an intentional new baseline and replaces only that project's Planned curve.
+- Actual GSheet data/history is not touched.
+- Dashboard Planned vs Actual S-Curve uses:
+  - Planned line = full fixed daily Projected curve
+  - Actual line = Actual STATUS history from live sync
+- No new SQL required if v26.8 tables already exist.

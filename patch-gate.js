@@ -2,7 +2,7 @@
 // Runs before the app initializes. If an existing auth session belongs to an older/unknown patch,
 // clear it immediately so the user must pass the normal Login + reCAPTCHA flow again.
 (function(){
-  const CURRENT_PATCH='27.0';
+  const CURRENT_PATCH='27.1';
   const SEEN_KEY='saiko_patch_seen';
 
   function authSessionKeys(){
