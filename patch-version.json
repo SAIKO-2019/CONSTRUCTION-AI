@@ -1,5 +1,5 @@
 {
-  "version": "28.10",
-  "label": "Construction Monitoring v28.10",
-  "message": "Removes the extra Subcon section, changes Setup to Amount to Issue per billing, adds only the required dated Add Payment workflow, and corrects Melendres Materials by -900."
+  "version": "28.11",
+  "label": "Construction Monitoring v28.11",
+  "message": "Architectural theme backgrounds plus unified live PHP financial control across Billing and Budget Monitoring."
 }
