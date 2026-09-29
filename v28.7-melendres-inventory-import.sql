@@ -1,6 +1,4 @@
--- CONSTRUCTION MONITORING v28.7 — FIXED SQL
--- Fix: explicitly casts src.date_purchase TEXT to DATE during INSERT.
--- Safe to run after the failed attempt; the failed DO block was not committed.
+-- CONSTRUCTION MONITORING v28.7
 -- One-time import of existing Melendrez-Enriquez Residences inventory/cost records.
 -- Source set: uploaded 6-page Materials PDF + supplied Labor and Overhead screenshots.
 -- Re-running is safe: every imported row has a stable import_key.
@@ -433,7 +431,7 @@ BEGIN
   )
   SELECT
     v_project_id,s.category,s.description,s.quantity,s.unit,s.unit_cost,s.total_amount,
-    s.total_amount,0,s.date_purchase::date,s.supplier,s.reference_no,
+    s.total_amount,0,s.date_purchase,s.supplier,s.reference_no,
     'Imported Existing Inventory',s.custom_data
   FROM src s
   WHERE NOT EXISTS (
