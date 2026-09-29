@@ -1669,3 +1669,90 @@ The project folder view now automatically displays:
 These values are calculated from the live `inventory_entries` table and therefore keep updating as manual entries are added or edited.
 
 Imported source expenses are treated as already-paid actual costs (`paid_amount = total_amount`, `balance_amount = 0`). They remain editable in the ledger.
+
+
+## v28.8 — Per-View Scroll + Billing Forecast
+
+### Scroll position
+Each module now keeps its own scroll position:
+- leaving Inventory does not erase the Inventory scroll position
+- returning to Inventory restores the same location
+- refresh/realtime data updates restore the current module to the same scroll position
+- no new recurring timer and no MutationObserver
+
+### Total Collected
+Downpayment is excluded from `Total Collected`.
+
+The DP is still displayed separately in financial summaries, but it is not counted as regular client collection for the progress-billing collection total.
+
+### Billing Accumulated
+`Billing Accumulated %` is the highest cumulative accomplishment percentage encoded on regular GenCon `Billing` records.
+
+Downpayment and VO records do not change the base contract accomplishment percentage.
+
+### Remaining to Bill
+`Remaining Accomplishment % = 100% - Billing Accumulated %`
+
+`Remaining Gross = Contract Amount × Remaining Accomplishment %`
+
+Then the latest regular Billing retention and recoupment rates are deducted:
+
+`Remaining Net to Bill = Remaining Gross - Retention - Recoupment`
+
+### Next Billing
+`Pending / Next Billable % = Current Actual Accomplishment - Previous Billing Accumulated %`
+
+`Next Billing Gross = Contract Amount × Pending %`
+
+Then:
+- Less Retention
+- Less Recoupment
+- = Next Billing Net
+
+If Actual does not exceed the previous Billing Accumulated %, Next Billing is zero.
+
+The same DP-excluded collection logic is reflected on Home, selected-project Dashboard financial snapshot, project financial table, and Billing KPIs.
+
+No database schema change required.
+Run `v28.8-scroll-billing-forecast-release.sql` once after deployment is Ready.
+
+
+## v28.9 — Subcon Total Amount + Dated Add Payment
+
+The Subcon folder now keeps the existing Linked GenCon → Subcon allocation table and adds a true Subcontractor Billing / Payment area.
+
+### Project-level Subcon summary
+Added:
+- Total Amount for Subcon — sum of Subcontractor Billing Net Due
+- Subcon Gross Billing
+- Total Paid to Subcon
+- Balance to Pay
+
+`Total Amount for Subcon` means the actual payable amount after each Subcontractor Billing retention and recoupment.
+
+### Subcontractor Billing payment table
+Every actual `Subcontractor Billing` now shows:
+- Billing
+- Subcontractor
+- Gross
+- Retention
+- Recoupment
+- Total Amount for Subcon / Net Due
+- Paid
+- Balance
+- Payment History
+- Action
+
+### Add Payment
+Uses the same v28.5 payment dialog as GenCon:
+- Add Payment remains visible until Balance = 0
+- each payment stores its own amount/date/reference
+- multiple payments remain separately listed
+- every payment has Edit
+- editing recalculates Paid, Balance and billing status
+- fully-paid rows show `Fully Paid`
+
+An `+ Add Subcon Billing` button is included inside the Subcon folder and reuses the existing billing form.
+
+No schema change required.
+Run `v28.9-subcon-payments-release.sql` once after deployment is Ready.

@@ -4117,3 +4117,296 @@ html[data-theme="executive"] .status-pill.not-awarded-result{
 @media(max-width:560px){
   .inventory-project-total-summary{grid-template-columns:1fr}
 }
+
+
+/* =========================================================
+   CONSTRUCTION MONITORING v28.8
+   BILLING FORECAST + SCROLL STABILITY
+   ========================================================= */
+.billing-forecast-panel{
+  margin:14px 0 16px!important;
+}
+.billing-forecast-summary{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:8px;
+  margin-bottom:12px;
+}
+.billing-forecast-kpi{
+  padding:11px;
+  border-radius:11px;
+  border:1px solid var(--line);
+  background:var(--surface-soft);
+}
+.billing-forecast-kpi span{
+  display:block;
+  font-size:8px;
+  color:var(--muted);
+  margin-bottom:5px;
+  line-height:1.35;
+}
+.billing-forecast-kpi strong{
+  display:block;
+  font-size:12px!important;
+}
+.billing-forecast-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.billing-forecast-block{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:14px;
+  background:var(--surface);
+}
+.billing-forecast-block.next-billing-block{
+  border-color:color-mix(in srgb,var(--blue) 45%,var(--line));
+  background:linear-gradient(145deg,var(--surface),color-mix(in srgb,var(--surface-soft) 82%,var(--blue) 18%));
+}
+.billing-forecast-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  gap:12px;
+  padding-bottom:10px;
+  margin-bottom:10px;
+  border-bottom:1px solid var(--line);
+}
+.billing-forecast-title span{
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.12em;
+  color:var(--muted);
+}
+.billing-forecast-title strong{
+  font-size:20px!important;
+}
+.billing-breakdown{
+  display:grid;
+  gap:7px;
+}
+.billing-breakdown>div{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:7px 0;
+  border-bottom:1px dashed color-mix(in srgb,var(--line) 82%,transparent);
+}
+.billing-breakdown>div:last-child{
+  border-bottom:0;
+  padding-top:9px;
+}
+.billing-breakdown span{
+  font-size:9px;
+  color:var(--muted);
+}
+.billing-breakdown strong{
+  font-size:10px!important;
+  white-space:nowrap;
+}
+.billing-formula-note{
+  margin-top:12px;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:var(--surface-soft);
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.55;
+}
+.billing-formula-note strong{
+  color:var(--heading,var(--text))!important;
+}
+@media(max-width:1180px){
+  .billing-forecast-summary{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+}
+@media(max-width:760px){
+  .billing-forecast-summary{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  .billing-forecast-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+/* Prevent browser scroll anchoring from fighting manual per-view restoration. */
+html, body, .main{
+  overflow-anchor:none;
+}
+
+
+/* =========================================================
+   CONSTRUCTION MONITORING v28.9
+   SUBCON TOTAL + DATED PAYMENTS
+   ========================================================= */
+.subcon-clean-summary{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+.subcon-clean-summary .subcon-summary-emphasis{
+  border-color:color-mix(in srgb,var(--blue) 40%,var(--line))!important;
+  background:linear-gradient(145deg,var(--surface),color-mix(in srgb,var(--surface-soft) 82%,var(--blue) 18%))!important;
+}
+.subcon-clean-summary small{
+  display:block;
+  margin-top:4px;
+  font-size:8px!important;
+  line-height:1.35;
+  color:var(--muted)!important;
+}
+
+.subcon-payment-section{
+  margin-top:16px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  overflow:hidden;
+  background:var(--surface);
+}
+.subcon-payment-head{
+  padding:14px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  border-bottom:1px solid var(--line);
+}
+.subcon-payment-head>div>span{
+  display:block;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.12em;
+  color:var(--muted);
+}
+.subcon-payment-head h3{
+  margin:4px 0;
+  font-size:15px!important;
+}
+.subcon-payment-head p{
+  margin:0;
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.45;
+}
+.subcon-payment-table-wrap{
+  overflow:auto;
+}
+.subcon-payment-table{
+  width:100%;
+  min-width:1450px;
+  border-collapse:collapse;
+}
+.subcon-payment-table th{
+  font-size:8px!important;
+  white-space:nowrap;
+}
+.subcon-payment-table td{
+  vertical-align:top;
+  font-size:9px;
+}
+.subcon-payment-table td>small{
+  display:block;
+  margin-top:3px;
+  color:var(--muted);
+  font-size:8px!important;
+}
+.subcon-payment-history{
+  display:grid;
+  gap:5px;
+  min-width:205px;
+}
+.subcon-payment-history-item{
+  padding:7px 8px;
+  border-radius:8px;
+  border:1px solid var(--line);
+  background:var(--surface-soft);
+}
+.subcon-payment-history-item.legacy{
+  border-style:dashed;
+}
+.subcon-payment-history-item>div:first-child{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+}
+.subcon-payment-history-item span{
+  color:var(--muted);
+  font-size:8px;
+}
+.subcon-payment-history-item strong{
+  font-size:9px!important;
+  white-space:nowrap;
+}
+.subcon-payment-history-meta{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  margin-top:4px;
+}
+.subcon-payment-history-meta small{
+  color:var(--muted)!important;
+  font-size:8px!important;
+}
+.subcon-payment-history-meta button{
+  border:0;
+  background:transparent;
+  color:var(--blue);
+  padding:0;
+  font-size:8px;
+  font-weight:850;
+  cursor:pointer;
+}
+.subcon-no-payment{
+  color:var(--muted);
+  font-size:8px;
+  white-space:nowrap;
+}
+.subcon-payment-actions{
+  display:grid;
+  gap:6px;
+  min-width:110px;
+}
+.subcon-paid-badge{
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  min-height:30px;
+  padding:5px 8px;
+  border-radius:999px;
+  border:1px solid rgba(34,197,94,.25);
+  background:rgba(34,197,94,.10);
+  color:#15803d;
+  font-size:8px;
+  font-weight:900;
+}
+.subcon-payment-empty{
+  min-height:120px;
+  padding:24px;
+  display:grid;
+  place-items:center;
+  text-align:center;
+  gap:4px;
+}
+.subcon-payment-empty strong{
+  font-size:12px!important;
+}
+.subcon-payment-empty span{
+  color:var(--muted);
+  font-size:9px;
+}
+@media(max-width:1100px){
+  .subcon-clean-summary{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+}
+@media(max-width:700px){
+  .subcon-clean-summary{
+    grid-template-columns:1fr!important;
+  }
+  .subcon-payment-head{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+}

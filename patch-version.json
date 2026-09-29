@@ -1,5 +1,5 @@
 {
-  "version": "28.7",
-  "label": "Construction Monitoring v28.7",
-  "message": "Imports the existing Melendrez materials/labor/overhead cost records into the project inventory and adds live Materials, Labor, Overhead and Grand Total summaries."
+  "version": "28.9",
+  "label": "Construction Monitoring v28.9",
+  "message": "Subcon now shows Total Amount for Subcon, gross billing, paid and remaining balance, plus the same dated Add/Edit Payment workflow as GenCon."
 }
