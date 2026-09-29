@@ -1,5 +1,5 @@
 {
-  "version": "28.3",
-  "label": "Construction Monitoring v28.3",
-  "message": "Rebuilds the theme palette using Earth, Matcha/Almond, Chai/Vanilla and Navy/Teal combinations, with hard contrast/readability rules across Home, Dashboard, tables, controls and branding."
+  "version": "28.6",
+  "label": "Construction Monitoring v28.6",
+  "message": "For Quotation now has Pending, Awarded and Not Awarded folders. Unmarked projects automatically stay in Pending, and uploaded final quotation PDFs can be downloaded directly from the quotation project."
 }

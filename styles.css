@@ -3541,3 +3541,535 @@ html[data-theme] .sidebar .brand-mark{
   color:var(--navy)!important;
   border:1px solid rgba(255,255,255,.88)!important;
 }
+
+
+/* =========================================================
+   CONSTRUCTION MONITORING v28.4
+   PER-PROJECT COST FOLDERS
+   ========================================================= */
+.inventory-browser{
+  padding:18px!important;
+  margin-bottom:16px;
+}
+.inventory-browser-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:14px;
+}
+.inventory-browser-label{
+  display:block;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.16em;
+  color:var(--muted);
+  margin-bottom:7px;
+}
+.inventory-breadcrumb{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  flex-wrap:wrap;
+}
+.inventory-breadcrumb button{
+  border:0;
+  background:transparent;
+  color:var(--blue);
+  padding:0;
+  cursor:pointer;
+  font:inherit;
+  font-size:12px;
+  font-weight:800;
+}
+.inventory-breadcrumb span{
+  color:var(--muted);
+  font-size:12px;
+}
+.inventory-breadcrumb strong{
+  font-size:12px;
+}
+.inventory-back-btn{
+  min-height:34px;
+  padding:7px 12px!important;
+}
+.inventory-project-selector{
+  margin:0 0 16px!important;
+  padding:12px!important;
+  display:grid!important;
+  grid-template-columns:minmax(280px,480px) 1fr!important;
+  align-items:end!important;
+}
+.inventory-project-selector .muted{
+  align-self:center;
+  font-size:9px!important;
+  line-height:1.5;
+}
+
+.inventory-folder-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+}
+.inventory-folder-project-head{
+  grid-column:1/-1;
+  padding:4px 2px 2px;
+}
+.inventory-folder-project-head>span{
+  display:block;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.15em;
+  color:var(--muted);
+}
+.inventory-folder-project-head h2{
+  margin:5px 0 3px;
+  font-size:20px;
+}
+.inventory-folder-project-head p{
+  margin:0;
+  font-size:9px;
+  color:var(--muted);
+}
+
+.inventory-folder-card{
+  position:relative;
+  min-height:210px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:22px 18px 16px;
+  text-align:left;
+  background:
+    linear-gradient(180deg,color-mix(in srgb,var(--surface) 96%,var(--blue) 4%),var(--surface));
+  color:var(--text);
+  cursor:pointer;
+  overflow:hidden;
+  box-shadow:0 10px 30px rgba(25,35,45,.05);
+  transition:transform .14s ease,border-color .14s ease,box-shadow .14s ease;
+}
+.inventory-folder-card:hover{
+  transform:translateY(-2px);
+  border-color:color-mix(in srgb,var(--blue) 45%,var(--line));
+  box-shadow:0 16px 34px rgba(25,35,45,.09);
+}
+.inventory-folder-tab{
+  position:absolute;
+  left:18px;
+  top:-1px;
+  width:92px;
+  height:14px;
+  border-radius:0 0 9px 9px;
+  background:color-mix(in srgb,var(--blue) 18%,var(--surface));
+  border:1px solid color-mix(in srgb,var(--blue) 24%,var(--line));
+  border-top:0;
+}
+.inventory-folder-icon{
+  width:44px;
+  height:44px;
+  display:grid;
+  place-items:center;
+  border-radius:13px;
+  margin:8px 0 15px;
+  background:var(--surface-soft);
+  border:1px solid var(--line);
+  color:var(--blue);
+  font-size:19px;
+  font-weight:900;
+}
+.inventory-folder-copy>span{
+  display:block;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.12em;
+  color:var(--muted);
+  margin-bottom:5px;
+}
+.inventory-folder-copy h3{
+  margin:0 0 5px;
+  font-size:14px!important;
+  line-height:1.25;
+}
+.inventory-folder-copy p{
+  margin:0;
+  min-height:30px;
+  font-size:9px;
+  line-height:1.5;
+  color:var(--muted);
+}
+.inventory-folder-stats{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px;
+  margin-top:16px;
+  padding-top:12px;
+  border-top:1px solid var(--line);
+}
+.inventory-folder-stats div:last-child{text-align:right}
+.inventory-folder-stats span,
+.inventory-cost-metrics span{
+  display:block;
+  font-size:8px;
+  color:var(--muted);
+  margin-bottom:3px;
+}
+.inventory-folder-stats strong{
+  font-size:11px!important;
+}
+
+.inventory-cost-metrics{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:7px;
+  margin-top:14px;
+}
+.inventory-cost-metrics>div{
+  padding:9px;
+  border-radius:10px;
+  background:var(--surface-soft);
+  border:1px solid var(--line);
+}
+.inventory-cost-metrics strong{
+  font-size:10px!important;
+}
+.cost-subfolder-card{
+  min-height:250px;
+}
+.cost-subfolder-card[data-cost-subfolder="Materials"] .inventory-folder-icon{
+  color:#2563eb;
+}
+.cost-subfolder-card[data-cost-subfolder="Labor"] .inventory-folder-icon{
+  color:#15803d;
+}
+.cost-subfolder-card[data-cost-subfolder="Overhead"] .inventory-folder-icon{
+  color:#b45309;
+}
+.legacy-folder-card{
+  opacity:.88;
+  grid-column:1/-1;
+  min-height:170px;
+}
+.legacy-folder-card .inventory-cost-metrics{
+  grid-template-columns:repeat(4,1fr);
+}
+
+#inventoryLedgerArea{
+  display:grid;
+  gap:14px;
+}
+#inventoryLedgerArea[hidden]{
+  display:none!important;
+}
+#inventoryProjectFolders[hidden],
+#inventoryCostFolders[hidden]{
+  display:none!important;
+}
+#addInventoryRowBtn:disabled{
+  opacity:.48;
+  cursor:not-allowed;
+}
+
+@media(max-width:1180px){
+  .inventory-folder-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  .inventory-project-selector{
+    grid-template-columns:1fr!important;
+  }
+}
+@media(max-width:720px){
+  .inventory-folder-grid{
+    grid-template-columns:1fr;
+  }
+  .legacy-folder-card{
+    grid-column:auto;
+  }
+  .legacy-folder-card .inventory-cost-metrics{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+
+/* =========================================================
+   CONSTRUCTION MONITORING v28.5
+   PAYMENT HISTORY / EDITABLE TRANSACTIONS
+   ========================================================= */
+.payment-dialog-card{
+  width:min(720px,94vw)!important;
+}
+.payment-form-grid{
+  margin-top:14px;
+}
+.payment-billing-summary{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  margin:12px 0 4px;
+}
+.payment-billing-summary>div{
+  padding:11px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:var(--surface-soft);
+}
+.payment-billing-summary span{
+  display:block;
+  font-size:8px;
+  color:var(--muted);
+  margin-bottom:4px;
+}
+.payment-billing-summary strong{
+  display:block;
+  font-size:12px;
+}
+.payment-validation-note{
+  margin-top:12px;
+  padding:10px 12px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--surface-soft);
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.5;
+}
+
+.billing-paid-total{
+  font-weight:900;
+  color:var(--heading,var(--text));
+  margin-bottom:7px;
+  white-space:nowrap;
+}
+.payment-history-list{
+  display:grid;
+  gap:5px;
+  min-width:190px;
+}
+.payment-history-item{
+  padding:7px 8px;
+  border-radius:9px;
+  border:1px solid var(--line);
+  background:var(--surface-soft);
+}
+.payment-history-main{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+.payment-history-main span,
+.legacy-payment span{
+  font-size:8px;
+  color:var(--muted);
+}
+.payment-history-main strong,
+.legacy-payment strong{
+  font-size:9px!important;
+  white-space:nowrap;
+}
+.payment-history-meta{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-top:4px;
+}
+.payment-history-meta small,
+.legacy-payment small{
+  font-size:8px!important;
+  color:var(--muted)!important;
+}
+.payment-edit-btn{
+  border:0;
+  background:transparent;
+  color:var(--blue);
+  padding:0;
+  font-size:8px;
+  font-weight:850;
+  cursor:pointer;
+}
+.payment-edit-btn:hover{text-decoration:underline}
+.payment-history-empty{
+  font-size:8px;
+  color:var(--muted);
+  padding:5px 0;
+}
+.legacy-payment{
+  border-style:dashed;
+}
+.payment-complete-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:28px;
+  padding:5px 8px;
+  border-radius:999px;
+  background:rgba(34,197,94,.10);
+  color:#15803d;
+  border:1px solid rgba(34,197,94,.22);
+  font-size:8px;
+  font-weight:900;
+  white-space:nowrap;
+}
+html[data-theme="dark"] .payment-complete-badge,
+html[data-theme="midnight"] .payment-complete-badge,
+html[data-theme="executive"] .payment-complete-badge{
+  color:#86efac;
+}
+.payment-add-action{
+  white-space:nowrap;
+}
+#billingRows td:nth-child(10){
+  min-width:220px;
+  vertical-align:top;
+}
+#billingRows td:last-child{
+  min-width:250px;
+  vertical-align:top;
+}
+@media(max-width:760px){
+  .payment-billing-summary{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+
+/* =========================================================
+   CONSTRUCTION MONITORING v28.6
+   QUOTATION RESULT FOLDERS + FINAL FILE DOWNLOAD
+   ========================================================= */
+.quotation-award-folders{
+  margin:14px 0 16px!important;
+  padding:16px!important;
+}
+.quotation-folder-panel-head{
+  margin-bottom:12px;
+}
+.quotation-folder-panel-head h2{
+  margin:0 0 3px;
+}
+.quotation-folder-tabs{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px!important;
+}
+.quotation-folder-tab{
+  position:relative;
+  width:100%;
+  min-height:104px;
+  border:1px solid var(--line)!important;
+  border-radius:16px!important;
+  padding:15px!important;
+  background:var(--surface)!important;
+  color:var(--text)!important;
+  display:grid!important;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  gap:11px!important;
+  text-align:left;
+  box-shadow:0 7px 20px rgba(25,35,45,.04);
+  overflow:hidden;
+}
+.quotation-folder-tab:before{
+  content:"";
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:5px;
+  background:var(--line);
+}
+.quotation-folder-tab.pending-folder:before{background:#f59e0b}
+.quotation-folder-tab.awarded-folder:before{background:#22c55e}
+.quotation-folder-tab.not-awarded-folder:before{background:#ef4444}
+.quotation-folder-tab:hover{
+  transform:translateY(-1px);
+  border-color:color-mix(in srgb,var(--blue) 38%,var(--line))!important;
+}
+.quotation-folder-tab.active{
+  border-color:var(--blue)!important;
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--blue) 13%,transparent),0 12px 26px rgba(25,35,45,.07)!important;
+}
+.quotation-folder-icon{
+  width:38px!important;
+  min-width:38px!important;
+  height:38px!important;
+  padding:0!important;
+  display:grid!important;
+  place-items:center!important;
+  border-radius:11px!important;
+  background:var(--surface-soft)!important;
+  font-size:15px!important;
+  font-weight:900!important;
+}
+.pending-folder .quotation-folder-icon{color:#b45309}
+.awarded-folder .quotation-folder-icon{color:#15803d}
+.not-awarded-folder .quotation-folder-icon{color:#b91c1c}
+.quotation-folder-tab>div{
+  min-width:0;
+}
+.quotation-folder-tab>div strong{
+  display:block;
+  font-size:12px!important;
+  margin-bottom:3px;
+}
+.quotation-folder-tab>div small{
+  display:block;
+  color:var(--muted)!important;
+  font-size:9px!important;
+  line-height:1.35;
+}
+.quotation-folder-tab>b{
+  min-width:32px;
+  height:32px;
+  padding:0 9px;
+  display:grid;
+  place-items:center;
+  border-radius:999px;
+  background:var(--surface-soft);
+  border:1px solid var(--line);
+  color:var(--heading,var(--text));
+  font-size:11px;
+}
+.quotation-project-card[data-result-folder="pending"]{
+  border-top:3px solid #f59e0b;
+}
+.quotation-project-card[data-result-folder="awarded"]{
+  border-top:3px solid #22c55e;
+}
+.quotation-project-card[data-result-folder="not_awarded"]{
+  border-top:3px solid #ef4444;
+}
+.status-pill.awarded-result{
+  color:#166534!important;
+  background:#dcfce7!important;
+  border-color:#86efac!important;
+}
+.status-pill.not-awarded-result{
+  color:#991b1b!important;
+  background:#fee2e2!important;
+  border-color:#fca5a5!important;
+}
+html[data-theme="dark"] .status-pill.awarded-result,
+html[data-theme="midnight"] .status-pill.awarded-result,
+html[data-theme="executive"] .status-pill.awarded-result{
+  color:#bbf7d0!important;
+  background:rgba(34,197,94,.12)!important;
+}
+html[data-theme="dark"] .status-pill.not-awarded-result,
+html[data-theme="midnight"] .status-pill.not-awarded-result,
+html[data-theme="executive"] .status-pill.not-awarded-result{
+  color:#fecaca!important;
+  background:rgba(239,68,68,.12)!important;
+}
+.quotation-final-file-actions{
+  display:flex;
+  justify-content:flex-start;
+  gap:8px;
+  margin-top:10px;
+}
+#downloadQuotationFinalBtn{
+  min-height:38px;
+  font-weight:850;
+}
+@media(max-width:900px){
+  .quotation-folder-tabs{
+    grid-template-columns:1fr!important;
+  }
+}

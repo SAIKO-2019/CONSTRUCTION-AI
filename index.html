@@ -7,8 +7,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Construction Monitoring</title>
-  <link rel="stylesheet" href="styles.css?v=2831" />
-    <script src="patch-gate.js?v=2831"></script>
+  <link rel="stylesheet" href="styles.css?v=2861" />
+    <script src="patch-gate.js?v=2861"></script>
 <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
 </head>
 <body>
@@ -552,20 +552,56 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
 
 
       <section id="inventory" class="view">
-        <div class="page-head"><div><small>ACCOUNTING / PROCUREMENT</small><h1>Inventory / Cost Ledger</h1><p>Spreadsheet-style project ledger organized into per-project folders for Materials, Labor, Overhead, Equipment, Subcontractor and Other costs.</p></div><div class="row-actions"><button id="addInventoryRowBtn" class="primary-btn">+ Add Row</button><button id="addInventoryColumnBtn" class="secondary-btn">+ Add Column</button></div></div>
-        <div class="toolbar panel"><label>Project Folder<select id="inventoryProject"></select></label></div>
-        <div class="project-cost-folders" id="projectCostFolders">
-          <button class="cost-folder active" data-cost-folder="all">All</button>
-          <button class="cost-folder" data-cost-folder="Materials">Materials</button>
-          <button class="cost-folder" data-cost-folder="Labor">Labor</button>
-          <button class="cost-folder" data-cost-folder="Overhead">Overhead</button>
-          <button class="cost-folder" data-cost-folder="Equipment">Equipment</button>
-          <button class="cost-folder" data-cost-folder="Subcontractor">Subcontractor</button>
-          <button class="cost-folder" data-cost-folder="Other">Other</button>
+        <div class="page-head">
+          <div>
+            <small>ACCOUNTING / PROCUREMENT</small>
+            <h1>Inventory / Cost Ledger</h1>
+            <p>Each project has its own cost folder, with separate ledgers for Materials, Labor and Overhead Cost.</p>
+          </div>
+          <div class="row-actions">
+            <button id="addInventoryRowBtn" class="primary-btn" disabled>+ Add Row</button>
+            <button id="addInventoryColumnBtn" class="secondary-btn">+ Add Column</button>
+          </div>
         </div>
-        <div id="costFolderSummary" class="kpi-grid"></div>
-        <div id="inventoryKPIs" class="kpi-grid"></div>
-        <div class="panel"><div class="sheet-toolbar"><span class="smart-badge">Spreadsheet Mode</span><span class="muted">Edit cells directly. Add rows/columns as needed.</span></div><div class="table-wrap"><table id="inventorySheet"><thead id="inventoryHead"></thead><tbody id="inventoryRows"></tbody></table></div></div>
+
+        <div class="inventory-browser panel">
+          <div class="inventory-browser-top">
+            <div>
+              <span class="inventory-browser-label">COST FOLDERS</span>
+              <div id="inventoryBreadcrumb" class="inventory-breadcrumb">
+                <button type="button" data-inventory-level="projects">Projects</button>
+              </div>
+            </div>
+            <button id="inventoryBackBtn" class="secondary-btn inventory-back-btn" type="button" hidden>← Back</button>
+          </div>
+
+          <div class="toolbar inventory-project-selector">
+            <label>Selected Project
+              <select id="inventoryProject"></select>
+            </label>
+            <span class="muted">Project records are isolated by Project Folder and update across accounts through the shared database.</span>
+          </div>
+
+          <div id="inventoryProjectFolders" class="inventory-folder-grid"></div>
+          <div id="inventoryCostFolders" class="inventory-folder-grid" hidden></div>
+        </div>
+
+        <div id="inventoryLedgerArea" hidden>
+          <div id="costFolderSummary" class="kpi-grid"></div>
+          <div id="inventoryKPIs" class="kpi-grid"></div>
+          <div id="inventoryLedgerPanel" class="panel">
+            <div class="sheet-toolbar">
+              <span id="inventoryLedgerBadge" class="smart-badge">Cost Folder</span>
+              <span class="muted">Edit cells directly. Add rows/columns as needed. Values save to the selected project only.</span>
+            </div>
+            <div class="table-wrap">
+              <table id="inventorySheet">
+                <thead id="inventoryHead"></thead>
+                <tbody id="inventoryRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section id="budget" class="view">
@@ -628,6 +664,32 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
         </div>
 
         <div id="quotationOverviewKPIs" class="kpi-grid"></div>
+
+        <div class="quotation-award-folders panel">
+          <div class="panel-head quotation-folder-panel-head">
+            <div>
+              <h2>Quotation Folders</h2>
+              <p class="muted">Projects with no Awarded / Not Awarded mark automatically stay in Pending.</p>
+            </div>
+          </div>
+          <div class="quotation-folder-tabs">
+            <button type="button" class="quotation-folder-tab active pending-folder" data-folder="pending">
+              <span class="quotation-folder-icon">◫</span>
+              <div><strong>Pending</strong><small>Unclassified / awaiting result</small></div>
+              <b id="quotationPendingCount">0</b>
+            </button>
+            <button type="button" class="quotation-folder-tab awarded-folder" data-folder="awarded">
+              <span class="quotation-folder-icon">✓</span>
+              <div><strong>Awarded</strong><small>Accepted / won projects</small></div>
+              <b id="quotationAwardedCount">0</b>
+            </button>
+            <button type="button" class="quotation-folder-tab not-awarded-folder" data-folder="not_awarded">
+              <span class="quotation-folder-icon">×</span>
+              <div><strong>Not Awarded</strong><small>Declined / lost projects</small></div>
+              <b id="quotationNotAwardedCount">0</b>
+            </button>
+          </div>
+        </div>
 
         <div id="quotationProjectCards" class="quotation-project-card-grid"></div>
 
@@ -758,6 +820,9 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
                 <span>PDF only. Invalid files are rejected; choose the corrected file again to re-upload.</span>
               </div>
               <div id="quotationCompletionFile" class="smart-note">No final file uploaded yet.</div>
+              <div class="quotation-final-file-actions">
+                <button id="downloadQuotationFinalBtn" class="secondary-btn" type="button" hidden>↓ Download Final PDF</button>
+              </div>
             </div>
 
             <div class="panel quotation-history-panel">
@@ -921,13 +986,13 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
   <script>if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";}</script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=2831"></script>
-  <script src="v13.js?v=2831"></script>
-  <script src="v14.js?v=2831"></script>
-  <script src="v14.2.js?v=2831"></script>
-  <script src="v14.3.js?v=2831"></script>
-  <script src="v14.4.js?v=2831"></script>
-  <script src="v14.5.js?v=2831"></script>
+  <script src="app.js?v=2861"></script>
+  <script src="v13.js?v=2861"></script>
+  <script src="v14.js?v=2861"></script>
+  <script src="v14.2.js?v=2861"></script>
+  <script src="v14.3.js?v=2861"></script>
+  <script src="v14.4.js?v=2861"></script>
+  <script src="v14.5.js?v=2861"></script>
 
 
       <section id="profile" class="view">
@@ -1000,6 +1065,43 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
         </form>
       </dialog>
 
+
+
+  <dialog id="paymentHistoryDialog" class="settings-dialog-shell">
+    <form id="paymentHistoryForm" class="dialog-card payment-dialog-card">
+      <div class="dialog-head">
+        <div>
+          <h2 id="paymentDialogTitle">Add Payment</h2>
+          <p id="paymentDialogSubtitle" class="muted">Record a payment for the selected billing.</p>
+        </div>
+        <button type="button" id="closePaymentDialogBtn">×</button>
+      </div>
+
+      <input id="paymentBillingId" type="hidden">
+      <input id="paymentRecordId" type="hidden">
+
+      <div id="paymentBillingSummary" class="payment-billing-summary"></div>
+
+      <div class="form-grid payment-form-grid">
+        <label>Payment Amount
+          <input id="paymentAmountInput" type="number" min="0.01" step="0.01" required placeholder="0.00">
+        </label>
+        <label>Payment Date
+          <input id="paymentDateInput" type="date" required>
+        </label>
+        <label class="span-2">Reference No. <span class="muted">(optional)</span>
+          <input id="paymentReferenceInput" type="text" placeholder="OR / Check / Bank reference">
+        </label>
+      </div>
+
+      <div id="paymentValidationNote" class="payment-validation-note"></div>
+
+      <div class="dialog-actions">
+        <button type="button" class="secondary-btn" id="cancelPaymentBtn">Cancel</button>
+        <button type="submit" class="primary-btn" id="savePaymentBtn">Save Payment</button>
+      </div>
+    </form>
+  </dialog>
 
   <dialog id="settingsDialog" class="settings-dialog-shell">
     <form id="settingsForm" class="dialog-card wide settings-dialog-card">
@@ -1122,13 +1224,13 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </div>
   </dialog>
 
-  <script src="v14.7.js?v=2831"></script>
-  <script src="v14.8.js?v=2831"></script>
-  <script src="v15.9.js?v=2831"></script>
-  <script src="v17-core.js?v=2831"></script>
-  <script src="v18.js?v=2831"></script>
-  <script src="v19.js?v=2831"></script>
-  <script src="v20.js?v=2831"></script>
+  <script src="v14.7.js?v=2861"></script>
+  <script src="v14.8.js?v=2861"></script>
+  <script src="v15.9.js?v=2861"></script>
+  <script src="v17-core.js?v=2861"></script>
+  <script src="v18.js?v=2861"></script>
+  <script src="v19.js?v=2861"></script>
+  <script src="v20.js?v=2861"></script>
 
   <dialog id="quotationNotifDialog">
     <div class="dialog-card quotation-notif-dialog">
@@ -1155,9 +1257,9 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </div>
   </dialog>
 
-  <script src="v20.3.js?v=2831"></script>
-  <script src="v20.5.js?v=2831"></script>
-  <script src="v20.6.js?v=2831"></script>
+  <script src="v20.3.js?v=2861"></script>
+  <script src="v20.5.js?v=2861"></script>
+  <script src="v20.6.js?v=2861"></script>
 
   <dialog id="editQuotationDialog">
     <form id="editQuotationForm" class="dialog-card quotation-edit-dialog">
@@ -1180,25 +1282,25 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </form>
   </dialog>
 
-  <script src="v20.7.js?v=2831"></script>
-  <script src="v21.js?v=2831"></script>
-  <script src="patch-watch.js?v=2831"></script>
-  <script src="v21.3.js?v=2831"></script>
-  <script src="v21.4.js?v=2831"></script>
-  <script src="v21.5.js?v=2831"></script>
-  <script src="v21.6.js?v=2831"></script>
-  <script src="v22.6.js?v=2831"></script>
-  <script src="v22.9.js?v=2831"></script>
-  <script src="v23.0.js?v=2831"></script>
-  <script src="v23.2.js?v=2831"></script>
-  <script src="v23.3.js?v=2831"></script>
-  <script src="v23.4.js?v=2831"></script>
-  <script src="v23.5.js?v=2831"></script>
-  <script src="v23.6.js?v=2831"></script>
-  <script src="v23.7.js?v=2831"></script>
-  <script src="v23.8.js?v=2831"></script>
-  <script src="v23.9.js?v=2831"></script>
-  <script src="v24.0.js?v=2831"></script>
+  <script src="v20.7.js?v=2861"></script>
+  <script src="v21.js?v=2861"></script>
+  <script src="patch-watch.js?v=2861"></script>
+  <script src="v21.3.js?v=2861"></script>
+  <script src="v21.4.js?v=2861"></script>
+  <script src="v21.5.js?v=2861"></script>
+  <script src="v21.6.js?v=2861"></script>
+  <script src="v22.6.js?v=2861"></script>
+  <script src="v22.9.js?v=2861"></script>
+  <script src="v23.0.js?v=2861"></script>
+  <script src="v23.2.js?v=2861"></script>
+  <script src="v23.3.js?v=2861"></script>
+  <script src="v23.4.js?v=2861"></script>
+  <script src="v23.5.js?v=2861"></script>
+  <script src="v23.6.js?v=2861"></script>
+  <script src="v23.7.js?v=2861"></script>
+  <script src="v23.8.js?v=2861"></script>
+  <script src="v23.9.js?v=2861"></script>
+  <script src="v24.0.js?v=2861"></script>
 
   <dialog id="linkedSubconDialog">
     <form id="linkedSubconForm" class="dialog-card wide">
@@ -1225,34 +1327,36 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </form>
   </dialog>
 
-  <script src="v24.1.js?v=2831"></script>
-  <script src="v24.4.js?v=2831"></script>
-  <script src="v24.5.js?v=2831"></script>
-  <script src="v24.6.js?v=2831"></script>
-  <script src="v24.7.js?v=2831"></script>
-  <script src="v24.8.js?v=2831"></script>
-  <script src="v25.0.js?v=2831"></script>
-  <script src="v25.1.js?v=2831"></script>
-  <script src="v25.4.js?v=2831"></script>
-  <script src="v25.5.js?v=2831"></script>
-  <script src="v25.8.js?v=2831"></script>
-  <script src="v26.0.js?v=2831"></script>
-  <script src="v26.1.js?v=2831"></script>
-  <script src="v26.2.js?v=2831"></script>
-  <script src="v26.3.js?v=2831"></script>
-  <script src="v26.4.js?v=2831"></script>
-  <script src="v26.5.js?v=2831"></script>
-  <script src="v26.8.js?v=2831"></script>
-  <script src="v26.9.js?v=2831"></script>
-  <script src="v27.0.js?v=2831"></script>
-  <script src="v27.1.js?v=2831"></script>
-  <script src="v27.2.js?v=2831"></script>
-  <script src="v27.3.js?v=2831"></script>
-  <script src="v27.4.js?v=2831"></script>
-  <script src="v27.5.js?v=2831"></script>
-  <script src="v28.0.js?v=2831"></script>
-  <script src="v28.1.js?v=2831"></script>
-  <script src="v28.2.js?v=2831"></script>
-  <script src="v28.3.js?v=2831"></script>
+  <script src="v24.1.js?v=2861"></script>
+  <script src="v24.4.js?v=2861"></script>
+  <script src="v24.5.js?v=2861"></script>
+  <script src="v24.6.js?v=2861"></script>
+  <script src="v24.7.js?v=2861"></script>
+  <script src="v24.8.js?v=2861"></script>
+  <script src="v25.0.js?v=2861"></script>
+  <script src="v25.1.js?v=2861"></script>
+  <script src="v25.4.js?v=2861"></script>
+  <script src="v25.5.js?v=2861"></script>
+  <script src="v25.8.js?v=2861"></script>
+  <script src="v26.0.js?v=2861"></script>
+  <script src="v26.1.js?v=2861"></script>
+  <script src="v26.2.js?v=2861"></script>
+  <script src="v26.3.js?v=2861"></script>
+  <script src="v26.4.js?v=2861"></script>
+  <script src="v26.5.js?v=2861"></script>
+  <script src="v26.8.js?v=2861"></script>
+  <script src="v26.9.js?v=2861"></script>
+  <script src="v27.0.js?v=2861"></script>
+  <script src="v27.1.js?v=2861"></script>
+  <script src="v27.2.js?v=2861"></script>
+  <script src="v27.3.js?v=2861"></script>
+  <script src="v27.4.js?v=2861"></script>
+  <script src="v27.5.js?v=2861"></script>
+  <script src="v28.0.js?v=2861"></script>
+  <script src="v28.1.js?v=2861"></script>
+  <script src="v28.2.js?v=2861"></script>
+  <script src="v28.3.js?v=2861"></script>
+  <script src="v28.4.js?v=2861"></script>
+  <script src="v28.5.js?v=2861"></script>
 </body>
 </html>

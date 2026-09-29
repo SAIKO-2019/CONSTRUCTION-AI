@@ -1532,3 +1532,115 @@ Because the existing `lavender` preference is now Earth Neutral, accounts curren
 - No new timer and no MutationObserver.
 
 Run `v28.3-readable-theme-release.sql` once after Vercel is Ready.
+
+
+## v28.4 — Per-Project Cost Folders
+
+Inventory / Cost Ledger now uses a real folder-style workflow:
+
+**Projects → Selected Project → Materials / Labor / Overhead Cost → Ledger**
+
+### Project folders
+- Every project automatically appears as its own folder.
+- Each project folder shows its own total/record count.
+- Data remains isolated by `project_id`.
+
+### Main cost folders
+Each project has:
+- Materials
+- Labor
+- Overhead Cost
+
+Each folder has:
+- Total
+- Paid
+- Balance
+- Row count
+- Its own filtered spreadsheet ledger
+
+`+ Add Row` is enabled only after opening one of these three folders, preventing entries from accidentally going to the wrong project/category.
+
+### Existing older cost records
+Existing Equipment, Subcontractor and Other inventory records are **not deleted**.
+If a project already has them, a read/edit **Other Existing Costs** folder appears so legacy data remains accessible. New rows are limited to Materials, Labor and Overhead Cost.
+
+### Realtime / multi-account
+This reuses the existing `inventory_entries` and `inventory_columns` tables already watched by Supabase Realtime. Changes remain visible to other open accounts without a new polling timer.
+
+No new database schema is required.
+Run `v28.4-project-cost-folders-release.sql` once after deployment is Ready to broadcast the release gate.
+
+
+## v28.5 — Multi-Payment History + Editable Payment Transactions
+
+Billing & Payments now treats each payment as its own transaction.
+
+### Add Payment
+- `Add Payment` remains visible while the billing still has an outstanding balance.
+- When the billing reaches its full Net Due, the button is replaced by `Fully Paid`.
+- Overpayment is blocked.
+
+### Separate payment dates
+Every transaction stores and displays its own:
+- Amount
+- Payment date
+- Optional reference number
+
+Example:
+- Payment 1 — Sep 29, 2026 — ₱100,000.00
+- Payment 2 — Oct 05, 2026 — ₱50,000.00
+
+Both remain listed under the billing.
+
+### Edit Payment
+Each dated payment has its own `Edit` action.
+Editing the amount, date or reference automatically recalculates:
+- Received / Paid
+- Outstanding balance
+- Billing status
+- Final paid date when fully paid
+
+### Existing/legacy received values
+If an older billing contains a Received value without a matching `payments` transaction, it is preserved and displayed as `Previous Received` rather than being deleted.
+
+### Multi-account
+The existing `payments` and `billings` Realtime subscriptions refresh the payment history on other open accounts. No additional polling timer is added.
+
+No database schema change is required.
+Run `v28.5-payment-history-release.sql` once after deployment is Ready.
+
+
+## v28.6 — Quotation Folders + Final PDF Download
+
+### Designated quotation folders
+The For Quotation page now has three visible folders:
+- **Pending**
+- **Awarded**
+- **Not Awarded**
+
+Folder logic:
+- `status = Awarded` → Awarded
+- `status = Not Awarded` → Not Awarded
+- Any other status, including For Quotation / Complete / blank → Pending
+
+This means every unmarked quotation automatically stays in Pending.
+
+### Result workflow
+After the final quotation PDF is uploaded:
+- Mark Awarded → moves to Awarded
+- Mark Not Awarded → moves to Not Awarded
+- Remove from Folder → returns to Pending
+
+Folder counters update from the shared quotation data.
+
+### Download final quotation
+When a final PDF exists, the selected quotation now shows:
+**Download Final PDF**
+
+The button creates a short-lived signed URL from the existing `project-files` Supabase Storage bucket and downloads/opens the exact uploaded quotation file.
+
+### Multi-account
+`quotation_projects` is already part of the shared Realtime refresh, so folder/result changes update across open accounts.
+
+No schema change required.
+Run `v28.6-quotation-folders-download-release.sql` once after deployment is Ready.
