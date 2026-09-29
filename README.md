@@ -1861,3 +1861,19 @@ The supplied architectural/geometric images are now assigned across existing the
 Panels and tables keep strong opacity/contrast so text and records remain readable.
 
 Run `v28.11-live-financials-theme.sql` once after deployment is Ready.
+
+
+## v28.12 — Theme Layout Hotfix
+
+v28.11 changed the themed sidebar to `position: relative` while adding its architectural pseudo-background. Since the sidebar is the first child of the application shell, that made it occupy normal document flow and pushed the entire main area/topbar downward.
+
+v28.12 restores the original shell behavior:
+- desktop sidebar = fixed
+- main content starts at the top
+- topbar = sticky at top
+- architectural theme backgrounds remain active
+- tablet/mobile responsive widths remain intact
+
+No financial, billing, inventory, Projected, Actual, Quotation, or payment logic was changed in this hotfix.
+
+Run `v28.12-theme-layout-fix-release.sql` once after Vercel is Ready.

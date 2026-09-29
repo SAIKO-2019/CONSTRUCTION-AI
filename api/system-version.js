@@ -4,11 +4,11 @@ export default async function handler(req,res){
     process.env.VERCEL_GIT_COMMIT_SHA ||
     process.env.VERCEL_DEPLOYMENT_ID ||
     process.env.VERCEL_URL ||
-    'local-v28.11';
+    'local-v28.12';
 
   return res.status(200).json({
     ok:true,
-    appRelease:'28.11',
+    appRelease:'28.12',
     deployment,
     checkedAt:new Date().toISOString()
   });
