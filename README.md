@@ -1877,3 +1877,26 @@ v28.12 restores the original shell behavior:
 No financial, billing, inventory, Projected, Actual, Quotation, or payment logic was changed in this hotfix.
 
 Run `v28.12-theme-layout-fix-release.sql` once after Vercel is Ready.
+
+
+## v28.13 — Theme-Aware S-Curve & Text Visibility
+
+Visual-only hotfix.
+
+Fixes theme readability for:
+- Main project S-Curve
+- Per-project mini S-Curves
+- Date-Aligned S-Curve
+- chart labels, grid lines, points, and legends
+- Dashboard headings / KPI values
+- Project cards
+- financial figures
+- tables and record text
+- inputs/selects/textareas
+
+Each theme now has its own chart contrast palette. Dark/Midnight/Executive use bright Planned/Actual colors; light and earth palettes use darker chart colors.
+
+Architectural backgrounds from v28.11 remain enabled.
+
+No business logic or database records changed.
+Run `v28.13-theme-contrast-scurve-release.sql` once after Vercel is Ready.

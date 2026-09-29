@@ -4686,3 +4686,289 @@ html[data-theme] .topbar{
     position:static!important;
   }
 }
+
+
+/* =========================================================
+   CONSTRUCTION MONITORING v28.13
+   THEME-AWARE TEXT + S-CURVE VISIBILITY
+   ========================================================= */
+
+/* ---------- Chart palette follows theme ---------- */
+html[data-theme]{
+  --chart-planned:#2563EB;
+  --chart-actual:#15803D;
+  --chart-grid:#CBD5E1;
+  --chart-label:var(--heading,var(--text));
+  --chart-surface:color-mix(in srgb,var(--surface) 97%,transparent);
+}
+html[data-theme="dark"],
+html[data-theme="midnight"]{
+  --chart-planned:#60A5FA;
+  --chart-actual:#4ADE80;
+  --chart-grid:#475569;
+  --chart-label:#F8FAFC;
+  --chart-surface:rgba(7,15,27,.84);
+}
+html[data-theme="executive"]{
+  --chart-planned:#F6C76B;
+  --chart-actual:#5EEAD4;
+  --chart-grid:#3B4654;
+  --chart-label:#FFF7E6;
+  --chart-surface:rgba(8,12,17,.86);
+}
+html[data-theme="ocean"]{
+  --chart-planned:#2F5F8F;
+  --chart-actual:#2F7D62;
+  --chart-grid:#A7BDCA;
+}
+html[data-theme="forest"]{
+  --chart-planned:#526E8A;
+  --chart-actual:#527246;
+  --chart-grid:#B8BEA9;
+}
+html[data-theme="summer"],
+html[data-theme="sunset"]{
+  --chart-planned:#8C572E;
+  --chart-actual:#3F7450;
+  --chart-grid:#CFB99C;
+}
+html[data-theme="pastel"],
+html[data-theme="lavender"],
+html[data-theme="cute"]{
+  --chart-planned:#5C6F91;
+  --chart-actual:#4E765B;
+  --chart-grid:#C9C5BB;
+}
+
+/* ---------- General readable text on themed content ---------- */
+html[data-theme] .page-head h1,
+html[data-theme] .page-head h2,
+html[data-theme] .panel-head h1,
+html[data-theme] .panel-head h2,
+html[data-theme] .panel-head h3,
+html[data-theme] .v28-project-toolbar h1,
+html[data-theme] .v28-project-visual-copy h2,
+html[data-theme] .project-curve-head h3,
+html[data-theme] .financial-sheet-head h2,
+html[data-theme] .financial-sheet-card h3,
+html[data-theme] .budget-live-summary h3,
+html[data-theme] .inventory-folder-title,
+html[data-theme] .quotation-project-card h3{
+  color:var(--heading,var(--text))!important;
+  opacity:1!important;
+}
+html[data-theme] .page-head p,
+html[data-theme] .panel-head span,
+html[data-theme] .panel-head p,
+html[data-theme] .v28-project-toolbar p,
+html[data-theme] .v28-project-toolbar small,
+html[data-theme] .project-curve-head small,
+html[data-theme] .chart-legend,
+html[data-theme] .project-curve-legend{
+  color:var(--muted)!important;
+  opacity:1!important;
+}
+html[data-theme] .panel,
+html[data-theme] .kpi,
+html[data-theme] .folder-card,
+html[data-theme] .project-curve-card,
+html[data-theme] .v28-finance-cell,
+html[data-theme] .financial-sheet-card,
+html[data-theme] .budget-live-summary section{
+  color:var(--text)!important;
+}
+
+/* KPI / dashboard figures should never fade into a themed card. */
+html[data-theme] .kpi strong,
+html[data-theme] .summary-cards strong,
+html[data-theme] .v28-metric-card strong,
+html[data-theme] .v28-progress-gauge strong,
+html[data-theme] .v28-finance-cell strong,
+html[data-theme] .v28-scope-row strong,
+html[data-theme] .project-curve-kpis strong,
+html[data-theme] .financial-sheet-row strong,
+html[data-theme] .financial-next-billing strong,
+html[data-theme] .budget-live-summary strong{
+  color:var(--heading,var(--text))!important;
+  opacity:1!important;
+}
+
+/* Restore semantic colors after the strong-text safety rule. */
+html[data-theme] .positive,
+html[data-theme] strong.positive{color:var(--green,#16a34a)!important}
+html[data-theme] .negative,
+html[data-theme] strong.negative{color:var(--red,#dc2626)!important}
+html[data-theme="dark"] .positive,
+html[data-theme="midnight"] .positive,
+html[data-theme="executive"] .positive,
+html[data-theme="dark"] strong.positive,
+html[data-theme="midnight"] strong.positive,
+html[data-theme="executive"] strong.positive{color:#86EFAC!important}
+html[data-theme="dark"] .negative,
+html[data-theme="midnight"] .negative,
+html[data-theme="executive"] .negative,
+html[data-theme="dark"] strong.negative,
+html[data-theme="midnight"] strong.negative,
+html[data-theme="executive"] strong.negative{color:#FCA5A5!important}
+
+/* ---------- S-Curve chart surfaces ---------- */
+html[data-theme] #v28ProjectSCurve,
+html[data-theme] #dashboardMatchedSCurve,
+html[data-theme] .matched-scurve-chart,
+html[data-theme] .actual-scurve-panel .chart-box,
+html[data-theme] .chart-box{
+  background:var(--chart-surface)!important;
+  border:1px solid var(--line)!important;
+  border-radius:12px!important;
+  padding:10px!important;
+  color:var(--chart-label)!important;
+}
+html[data-theme] .project-curve-card{
+  background:color-mix(in srgb,var(--surface) 97%,transparent)!important;
+  border-color:var(--line)!important;
+  box-shadow:0 9px 24px color-mix(in srgb,var(--navy) 8%,transparent)!important;
+}
+html[data-theme] .project-mini-scurve,
+html[data-theme] .scurve-svg,
+html[data-theme] #v28ProjectSCurve svg,
+html[data-theme] .report-scurve svg{
+  background:var(--chart-surface)!important;
+  border-radius:9px!important;
+}
+
+/* SVG labels + grid adapt to the active theme. */
+html[data-theme] #v28ProjectSCurve svg text,
+html[data-theme] #dashboardMatchedSCurve svg text,
+html[data-theme] .project-mini-scurve text,
+html[data-theme] .scurve-svg text,
+html[data-theme] .report-scurve svg text{
+  fill:var(--chart-label)!important;
+  opacity:1!important;
+  font-weight:650!important;
+}
+html[data-theme] #v28ProjectSCurve svg line,
+html[data-theme] #dashboardMatchedSCurve svg line,
+html[data-theme] .project-mini-scurve line,
+html[data-theme] .scurve-svg line,
+html[data-theme] .report-scurve svg line{
+  stroke:var(--chart-grid)!important;
+  opacity:.72!important;
+}
+
+/* Planned line: override legacy hard-coded blue as well as v28 var stroke. */
+html[data-theme] #v28ProjectSCurve svg polyline,
+html[data-theme] #dashboardMatchedSCurve svg polyline[stroke="#2563eb"],
+html[data-theme] .project-mini-scurve polyline[stroke="#2563eb"],
+html[data-theme] .scurve-svg polyline[stroke="#2563eb"],
+html[data-theme] .report-scurve svg polyline[stroke="#2563eb"]{
+  stroke:var(--chart-planned)!important;
+  opacity:1!important;
+  filter:drop-shadow(0 0 1.5px color-mix(in srgb,var(--chart-planned) 28%,transparent));
+}
+
+/* Actual line / points. */
+html[data-theme] #v28ProjectSCurve svg path,
+html[data-theme] #dashboardMatchedSCurve svg polyline[stroke="#16a34a"],
+html[data-theme] .project-mini-scurve polyline[stroke="#16a34a"],
+html[data-theme] .project-mini-scurve path,
+html[data-theme] .scurve-svg polyline[stroke="#16a34a"],
+html[data-theme] .report-scurve svg polyline[stroke="#16a34a"]{
+  stroke:var(--chart-actual)!important;
+  opacity:1!important;
+  filter:drop-shadow(0 0 1.5px color-mix(in srgb,var(--chart-actual) 28%,transparent));
+}
+html[data-theme] #v28ProjectSCurve svg circle,
+html[data-theme] #dashboardMatchedSCurve svg circle,
+html[data-theme] .project-mini-scurve circle,
+html[data-theme] .scurve-svg circle,
+html[data-theme] .report-scurve svg circle{
+  fill:var(--chart-actual)!important;
+  stroke:var(--chart-surface)!important;
+  stroke-width:1.2!important;
+}
+
+/* Legends stay readable and match the chart. */
+html[data-theme] .chart-legend,
+html[data-theme] .project-curve-legend{
+  color:var(--chart-label)!important;
+  font-weight:650!important;
+}
+html[data-theme] .chart-legend span,
+html[data-theme] .project-curve-legend span{
+  color:var(--chart-label)!important;
+  opacity:.94!important;
+}
+html[data-theme] .chart-legend span:nth-child(1) .legend-dot,
+html[data-theme] .project-curve-legend .planned-dot{
+  background:var(--chart-planned)!important;
+}
+html[data-theme] .chart-legend span:nth-child(2) .legend-dot,
+html[data-theme] .project-curve-legend .actual-dot{
+  background:var(--chart-actual)!important;
+}
+
+/* ---------- Dark-theme card contrast ---------- */
+html[data-theme="dark"] .v28-project-visual,
+html[data-theme="midnight"] .v28-project-visual,
+html[data-theme="executive"] .v28-project-visual,
+html[data-theme="dark"] .v28-finance-cell,
+html[data-theme="midnight"] .v28-finance-cell,
+html[data-theme="executive"] .v28-finance-cell,
+html[data-theme="dark"] .project-curve-kpis>div,
+html[data-theme="midnight"] .project-curve-kpis>div,
+html[data-theme="executive"] .project-curve-kpis>div{
+  background:color-mix(in srgb,var(--surface-soft) 94%,transparent)!important;
+  color:var(--text)!important;
+  border-color:var(--line)!important;
+}
+html[data-theme="dark"] .v28-project-visual-copy h2,
+html[data-theme="midnight"] .v28-project-visual-copy h2,
+html[data-theme="executive"] .v28-project-visual-copy h2,
+html[data-theme="dark"] .v28-project-visual-copy p,
+html[data-theme="midnight"] .v28-project-visual-copy p,
+html[data-theme="executive"] .v28-project-visual-copy p{
+  color:var(--text)!important;
+}
+
+/* ---------- Inputs / table records always readable ---------- */
+html[data-theme] table td,
+html[data-theme] table td strong,
+html[data-theme] table td span,
+html[data-theme] table td small{
+  opacity:1!important;
+}
+html[data-theme] table td strong{
+  color:var(--heading,var(--text))!important;
+}
+html[data-theme] table td small{
+  color:var(--muted)!important;
+}
+html[data-theme] input,
+html[data-theme] select,
+html[data-theme] textarea,
+html[data-theme] option{
+  color:var(--text)!important;
+  -webkit-text-fill-color:var(--text)!important;
+}
+
+/* Keep the architectural hero deliberately white/high-contrast. */
+html[data-theme] .v28-home-hero h1,
+html[data-theme] .v28-home-hero h2,
+html[data-theme] .v28-home-hero h3,
+html[data-theme] .v28-home-hero strong{
+  color:#FFF!important;
+}
+html[data-theme] .v28-home-hero p,
+html[data-theme] .v28-home-hero span,
+html[data-theme] .v28-home-hero small{
+  color:rgba(255,255,255,.88)!important;
+}
+
+/* Accessible focus visibility on every theme. */
+html[data-theme] button:focus-visible,
+html[data-theme] input:focus-visible,
+html[data-theme] select:focus-visible,
+html[data-theme] textarea:focus-visible{
+  outline:2px solid var(--chart-planned)!important;
+  outline-offset:2px!important;
+}

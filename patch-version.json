@@ -1,5 +1,5 @@
 {
-  "version": "28.12",
-  "label": "Construction Monitoring v28.12",
-  "message": "Theme layout hotfix: architectural backgrounds remain enabled, while the sidebar is fixed again and the topbar/main content stay at the top of the page."
+  "version": "28.13",
+  "label": "Construction Monitoring v28.13",
+  "message": "Theme visibility hotfix: S-Curves, chart labels, legends, dashboard text, KPI values, tables and records now automatically use high-contrast colors per active theme while retaining the architectural backgrounds."
 }
