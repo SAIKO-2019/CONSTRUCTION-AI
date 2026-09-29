@@ -1805,3 +1805,59 @@ v28.8 computation remains:
 - Remaining/Next billing less Retention and Recoupment
 
 Run `v28.10-subcon-amount-payments-material-fix.sql` once after Vercel is Ready.
+
+
+## v28.11 — Unified Live Financials + Architectural Theme Backgrounds
+
+### Selected-project financial rule
+All Home / Billing / Budget values follow the selected Project Folder.
+
+`Total Received`:
+- includes regular client Billing / VO receipts
+- excludes Downpayment
+- excludes Subcon/Labor/Equipment cost billings
+
+This fixes project figures being accidentally mixed with collections from other projects.
+
+### Billing computation
+Billing shows:
+- Total Contract Amount
+- Down Payment Received
+- Total Received
+- Total Accomplishment / Billing Accumulated
+- Unpaid Amount
+- Need to Collect
+- Pending Accomplishment
+- Remaining Contract Amount
+- Recoupment
+- Retention
+- Structural / other non-accomplishment billing adjustment when a structural-labeled row exists
+- Total Remaining Net
+- Next Billing based on Actual Accomplishment minus Billing Accumulated
+
+### Budget Monitoring
+Budget reads the same live tables:
+- Projected Total Budget Amount from BOQ / progress budget
+- Running Expenses from Inventory / Cost Ledger
+- Projected Remaining Labor & Materials from linked progress / BOQ
+- Subcontractor paid values from `subcon_payments`
+- Subcon Remaining Balance
+- Projected Total Running Payables = Remaining Labor & Materials + Subcon Remaining Balance
+- live Billing collection summary
+
+Realtime remains driven by the existing Supabase subscriptions; no new polling timer was added.
+
+### Themes
+The supplied architectural/geometric images are now assigned across existing themes:
+- Ocean → blue architectural facade
+- Light / Glass / Forest → white futuristic architecture
+- Dark → black triangular panels
+- Midnight → black ribbed architecture
+- Pastel / Cute / Lavender → white geometric panels
+- Summer → gold cube geometry
+- Sunset → metallic faceted geometry
+- Executive → black/white ribbed geometry
+
+Panels and tables keep strong opacity/contrast so text and records remain readable.
+
+Run `v28.11-live-financials-theme.sql` once after deployment is Ready.

@@ -50,9 +50,6 @@
       else if(view==='billing' && typeof renderBilling==='function')renderBilling();
       else if(view==='schedule' && typeof renderSchedule==='function')renderSchedule();
       else if(view==='progress' && typeof renderProgress==='function')renderProgress();
-      else if(view==='inventory' && typeof renderInventory==='function')renderInventory();
-      else if(view==='budget' && typeof renderBudget==='function')renderBudget();
-      else if(view==='quotation' && typeof renderQuotationProjects==='function')renderQuotationProjects();
       else if(view==='files' && typeof renderFiles==='function')renderFiles();
       else if(view==='templates' && typeof renderTemplates==='function')renderTemplates();
 
