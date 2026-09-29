@@ -167,11 +167,11 @@
     $('billingForecastBadge').textContent=f.pendingPct>0?'READY TO BILL':'UP TO DATE';
 
     $('billingForecastSummary').innerHTML=[
-      ['Contract Amount',money(f.contract)],
-      ['Downpayment',money(f.dpGross)],
-      ['Billing Accumulated',`${f.accumulated.toFixed(2)}%`],
+      ['Total Contract Amount',money(f.contract)],
+      ['Down Payment Received',money(f.dpReceived)],
+      ['Total Accomplishment / Billing Accumulated',`${f.accumulated.toFixed(2)}%`],
       ['Actual Accomplishment',`${f.actual.toFixed(2)}%`],
-      ['Pending Accomplishment',`${f.pendingPct.toFixed(2)}%`],
+      ['Pending Accomplishment for Next Billing',`${f.pendingPct.toFixed(2)}%`],
       ['Total Collected (Excl. DP)',money(f.totalCollected)]
     ].map(([label,value])=>`
       <div class="billing-forecast-kpi">

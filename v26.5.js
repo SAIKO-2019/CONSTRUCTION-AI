@@ -152,12 +152,42 @@
   }
 
   function calcLinked(b){
-    const collected=Math.max(0,n(b.received_amount));
+    const amountToIssue=Math.max(0,n(b.subcon_amount_to_issue));
     const deductions=Math.max(0,n(b.subcon_total_deductions));
-    const retention=collected*Math.max(0,n(b.subcon_retention_percent))/100;
-    const recoupment=collected*Math.max(0,n(b.subcon_recoupment_percent))/100;
-    const available=Math.max(0,collected-deductions-retention-recoupment);
-    return {collected,deductions,retention,recoupment,available};
+    const retention=amountToIssue*Math.max(0,n(b.subcon_retention_percent))/100;
+    const recoupment=amountToIssue*Math.max(0,n(b.subcon_recoupment_percent))/100;
+    const available=Math.max(0,amountToIssue-deductions-retention-recoupment);
+    return {amountToIssue,deductions,retention,recoupment,available};
+  }
+
+  function linkedSubconPayments(billingId){
+    return (cache.subconPayments||[])
+      .filter(p=>String(p.billing_id)===String(billingId))
+      .slice()
+      .sort((a,b)=>{
+        const da=String(a.payment_date||''),db=String(b.payment_date||'');
+        if(da!==db)return da.localeCompare(db);
+        return String(a.created_at||'').localeCompare(String(b.created_at||''));
+      });
+  }
+
+  function linkedPaymentState(b){
+    const c=calcLinked(b);
+    const rows=linkedSubconPayments(b.id);
+    const paid=rows.reduce((sum,p)=>sum+Math.max(0,n(p.amount)),0);
+    const balance=Math.max(0,c.available-paid);
+    return {...c,rows,paid,balance};
+  }
+
+  function linkedPaymentHistory(b){
+    const state=linkedPaymentState(b);
+    if(!state.rows.length)return '<span class="subcon-mini-empty">—</span>';
+    return `<div class="subcon-mini-history">${state.rows.map((p,i)=>`
+      <div>
+        <span>${i+1}. ${esc(String(p.payment_date||'—'))}</span>
+        <strong>${money(p.amount)}</strong>
+        <button type="button" onclick="openSubconPaymentDialog('${b.id}','${p.id}')">Edit</button>
+      </div>`).join('')}</div>`;
   }
 
   function billingLabel(b){
@@ -203,25 +233,36 @@
         <thead><tr>
           <th>Billing</th>
           <th>Subcon</th>
-          <th>GenCon Collected</th>
+          <th>Amount to Issue</th>
           <th>Deductions</th>
           <th>Retention</th>
           <th>Recoupment</th>
           <th>Available</th>
+          <th>Paid</th>
+          <th>Balance</th>
+          <th>Payment Date/s</th>
           <th>Action</th>
         </tr></thead>
         <tbody>${rows.map(b=>{
-          const c=calcLinked(b);
+          const c=linkedPaymentState(b);
           const has=!!b.has_subcon;
           return `<tr class="${has?'has-subcon-row':'no-subcon-row'}">
             <td><strong>${billingLabel(b)}</strong></td>
             <td><span class="subcon-clean-pill ${has?'yes':'no'}">${has?'Has Subcon':'No Subcon'}</span></td>
-            <td>${money(c.collected)}</td>
+            <td>${money(c.amountToIssue)}</td>
             <td>${money(c.deductions)}</td>
             <td>${money(c.retention)}</td>
             <td>${money(c.recoupment)}</td>
             <td><strong>${has?money(c.available):'—'}</strong></td>
-            <td><button type="button" class="secondary-btn compact-btn" onclick="openLinkedSubcon('${b.id}')">Setup</button></td>
+            <td><strong>${has?money(c.paid):'—'}</strong></td>
+            <td><strong>${has?money(c.balance):'—'}</strong></td>
+            <td>${has?linkedPaymentHistory(b):'—'}</td>
+            <td><div class="subcon-clean-actions">
+              <button type="button" class="secondary-btn compact-btn" onclick="openLinkedSubcon('${b.id}')">Amount to Issue</button>
+              ${has && c.available>0 && c.balance>0.01
+                ? `<button type="button" class="primary-btn compact-btn" onclick="openSubconPaymentDialog('${b.id}','')">Add Payment</button>`
+                : (has && c.available>0 ? '<span class="subcon-mini-paid">Fully Paid</span>' : '')}
+            </div></td>
           </tr>`;
         }).join('')}</tbody>
       </table>
