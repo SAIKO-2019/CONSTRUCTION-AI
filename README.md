@@ -1756,3 +1756,52 @@ An `+ Add Subcon Billing` button is included inside the Subcon folder and reuses
 
 No schema change required.
 Run `v28.9-subcon-payments-release.sql` once after deployment is Ready.
+
+
+## v28.10 — Clean Subcon + Amount to Issue + Material ₱900 Fix
+
+### Subcon
+The large extra Subcon Billing/Payment section added in v28.9 has been removed.
+
+The original compact Linked GenCon → Subcon table remains.
+
+`Setup` is now **Amount to Issue**.
+
+Per billing calculation starts from:
+
+`Amount to Issue`
+`- Total Deductions`
+`- Retention`
+`- Recoupment`
+`= Available for Subcon`
+
+The GenCon amount collected from the client is no longer the computation base for the Subcon allocation.
+
+### Add Payment
+Only the required payment capability was added to the same existing table:
+- Add Payment
+- Paid
+- Balance
+- payment date/history
+- Edit each payment
+
+Subcon payments use a separate `subcon_payments` table so they do not change or contaminate GenCon client collections.
+
+`Add Payment` remains visible until the Available for Subcon balance becomes zero.
+
+### Melendres Materials
+A transparent `-900` correction is inserted for Melendres Materials.
+
+Imported Materials:
+`₱1,475,360.00 - ₱900.00 = ₱1,474,460.00`
+
+The correction is duplicate-safe and does not delete any source purchase line.
+
+### Billing forecast
+v28.8 computation remains:
+- Downpayment excluded from Total Collected
+- Billing Accumulated from regular billing accomplishment %
+- Pending accomplishment = Actual - Previous Billing Accumulated
+- Remaining/Next billing less Retention and Recoupment
+
+Run `v28.10-subcon-amount-payments-material-fix.sql` once after Vercel is Ready.

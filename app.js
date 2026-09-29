@@ -1,7 +1,7 @@
 const cfg=window.SAIKO_CONFIG||{};
 const sb=(window.supabase&&cfg.SUPABASE_URL&&cfg.SUPABASE_PUBLISHABLE_KEY)?window.supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_PUBLISHABLE_KEY):null;
 const PROFILE_TABLE='SAIKO BUILDERS';
-let currentUser=null,currentProfile=null,cache={projects:[],billings:[],payments:[],schedule:[],progress:[],projectedSeries:[],actualSeries:[],projectedScopeSeries:[],files:[],templates:[],boq:[]};
+let currentUser=null,currentProfile=null,cache={projects:[],billings:[],payments:[],subconPayments:[],schedule:[],progress:[],projectedSeries:[],actualSeries:[],projectedScopeSeries:[],files:[],templates:[],boq:[]};
 let smartImportItems=[];
 // v25.0: selection state exists before auth/session can render any module.
 let selectedProjectIds=new Set();
@@ -57,6 +57,7 @@ async function refreshAll(){
     ['projects','projects'],
     ['billings','billings'],
     ['payments','payments'],
+    ['subconPayments','subcon_payments'],
     ['schedule','schedule_items'],
     ['progress','actual_progress'],
     ['files','project_files'],

@@ -12,12 +12,12 @@
   }
 
   function calcLinked(b){
-    const collected=num(b.received_amount);
+    const amountToIssue=Math.max(0,num(b.subcon_amount_to_issue));
     const deductions=Math.max(0,num(b.subcon_total_deductions));
-    const retention=collected*Math.max(0,num(b.subcon_retention_percent))/100;
-    const recoupment=collected*Math.max(0,num(b.subcon_recoupment_percent))/100;
-    const available=Math.max(0,collected-deductions-retention-recoupment);
-    return {collected,deductions,retention,recoupment,available};
+    const retention=amountToIssue*Math.max(0,num(b.subcon_retention_percent))/100;
+    const recoupment=amountToIssue*Math.max(0,num(b.subcon_recoupment_percent))/100;
+    const available=Math.max(0,amountToIssue-deductions-retention-recoupment);
+    return {amountToIssue,deductions,retention,recoupment,available};
   }
 
   function renderLinkedSubcon(){
@@ -44,7 +44,7 @@
           <button type="button" class="secondary-btn compact-btn" onclick="openLinkedSubcon('${b.id}')">Setup</button>
         </div>
         <div class="linked-subcon-stats">
-          <div><span>GenCon Collected</span><strong>${money(c.collected)}</strong></div>
+          <div><span>Amount to Issue</span><strong>${money(c.amountToIssue)}</strong></div>
           <div><span>Total Deductions</span><strong>${money(c.deductions)}</strong></div>
           <div><span>Retention</span><strong>${money(c.retention)}</strong></div>
           <div><span>Recoupment</span><strong>${money(c.recoupment)}</strong></div>
@@ -55,18 +55,18 @@
   }
 
   function calcDialog(){
-    const collected=num($('linkedCollected')?.value);
+    const amountToIssue=Math.max(0,num($('linkedCollected')?.value));
     const deductions=Math.max(0,num($('linkedTotalDeductions')?.value));
-    const retention=collected*Math.max(0,num($('linkedRetentionPct')?.value))/100;
-    const recoupment=collected*Math.max(0,num($('linkedRecoupmentPct')?.value))/100;
+    const retention=amountToIssue*Math.max(0,num($('linkedRetentionPct')?.value))/100;
+    const recoupment=amountToIssue*Math.max(0,num($('linkedRecoupmentPct')?.value))/100;
     const has=$('linkedHasSubcon')?.value==='true';
-    const available=Math.max(0,collected-deductions-retention-recoupment);
+    const available=Math.max(0,amountToIssue-deductions-retention-recoupment);
     $('linkedSubconCalc').innerHTML=[
-      ['Collected',money(collected)],
+      ['Amount to Issue',money(amountToIssue)],
       ['Less Deductions',money(deductions)],
       ['Less Retention',money(retention)],
       ['Less Recoupment',money(recoupment)],
-      ['Net Available for Subcon',has?money(available):'No Subcon']
+      ['Net Amount for Subcon',has?money(available):'No Subcon']
     ].map(x=>`<div><span>${x[0]}</span><strong>${x[1]}</strong></div>`).join('');
   }
 
@@ -76,7 +76,7 @@
     $('linkedSubconBillingId').value=b.id;
     $('linkedSubconBillingLabel').value=b.billing_category==='Downpayment'?`Downpayment ${b.billing_no||''}`:(b.variation_no?`VO ${b.variation_no}`:`Billing ${b.billing_no||'—'}`);
     $('linkedHasSubcon').value=b.has_subcon?'true':'false';
-    $('linkedCollected').value=num(b.received_amount);
+    $('linkedCollected').value=num(b.subcon_amount_to_issue);
     $('linkedTotalDeductions').value=num(b.subcon_total_deductions);
     $('linkedRetentionPct').value=num(b.subcon_retention_percent);
     $('linkedRecoupmentPct').value=num(b.subcon_recoupment_percent);
@@ -94,6 +94,7 @@
     const id=$('linkedSubconBillingId').value;
     const values={
       has_subcon:$('linkedHasSubcon').value==='true',
+      subcon_amount_to_issue:Math.max(0,num($('linkedCollected').value)),
       subcon_total_deductions:Math.max(0,num($('linkedTotalDeductions').value)),
       subcon_retention_percent:Math.max(0,num($('linkedRetentionPct').value)),
       subcon_recoupment_percent:Math.max(0,num($('linkedRecoupmentPct').value))
@@ -105,7 +106,7 @@
       renderLinkedSubcon();
       renderBilling();
       renderDashboard();
-      toast('Subcon allocation setup saved.');
+      toast('Subcon Amount to Issue saved.');
     }catch(err){alert(err.message||'Could not save Subcon setup.');}
   };
 

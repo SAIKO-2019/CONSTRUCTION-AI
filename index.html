@@ -7,8 +7,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Construction Monitoring</title>
-  <link rel="stylesheet" href="styles.css?v=2891" />
-    <script src="patch-gate.js?v=2891"></script>
+  <link rel="stylesheet" href="styles.css?v=28101" />
+    <script src="patch-gate.js?v=28101"></script>
 <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
 </head>
 <body>
@@ -1018,13 +1018,13 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
   <script>if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";}</script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=2891"></script>
-  <script src="v13.js?v=2891"></script>
-  <script src="v14.js?v=2891"></script>
-  <script src="v14.2.js?v=2891"></script>
-  <script src="v14.3.js?v=2891"></script>
-  <script src="v14.4.js?v=2891"></script>
-  <script src="v14.5.js?v=2891"></script>
+  <script src="app.js?v=28101"></script>
+  <script src="v13.js?v=28101"></script>
+  <script src="v14.js?v=28101"></script>
+  <script src="v14.2.js?v=28101"></script>
+  <script src="v14.3.js?v=28101"></script>
+  <script src="v14.4.js?v=28101"></script>
+  <script src="v14.5.js?v=28101"></script>
 
 
       <section id="profile" class="view">
@@ -1131,6 +1131,43 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
       <div class="dialog-actions">
         <button type="button" class="secondary-btn" id="cancelPaymentBtn">Cancel</button>
         <button type="submit" class="primary-btn" id="savePaymentBtn">Save Payment</button>
+      </div>
+    </form>
+  </dialog>
+
+
+  <dialog id="subconPaymentDialog" class="settings-dialog-shell">
+    <form id="subconPaymentForm" class="dialog-card payment-dialog-card">
+      <div class="dialog-head">
+        <div>
+          <h2 id="subconPaymentDialogTitle">Add Subcon Payment</h2>
+          <p id="subconPaymentDialogSubtitle" class="muted">Record payment against this billing's Amount to Issue.</p>
+        </div>
+        <button type="button" id="closeSubconPaymentDialogBtn">×</button>
+      </div>
+
+      <input id="subconPaymentBillingId" type="hidden">
+      <input id="subconPaymentRecordId" type="hidden">
+
+      <div id="subconPaymentSummary" class="payment-billing-summary"></div>
+
+      <div class="form-grid payment-form-grid">
+        <label>Payment Amount
+          <input id="subconPaymentAmount" type="number" min="0.01" step="0.01" required placeholder="0.00">
+        </label>
+        <label>Payment Date
+          <input id="subconPaymentDate" type="date" required>
+        </label>
+        <label class="span-2">Reference No. <span class="muted">(optional)</span>
+          <input id="subconPaymentReference" type="text" placeholder="OR / Check / Bank reference">
+        </label>
+      </div>
+
+      <div id="subconPaymentNote" class="payment-validation-note"></div>
+
+      <div class="dialog-actions">
+        <button type="button" class="secondary-btn" id="cancelSubconPaymentBtn">Cancel</button>
+        <button type="submit" class="primary-btn" id="saveSubconPaymentBtn">Save Payment</button>
       </div>
     </form>
   </dialog>
@@ -1256,13 +1293,13 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </div>
   </dialog>
 
-  <script src="v14.7.js?v=2891"></script>
-  <script src="v14.8.js?v=2891"></script>
-  <script src="v15.9.js?v=2891"></script>
-  <script src="v17-core.js?v=2891"></script>
-  <script src="v18.js?v=2891"></script>
-  <script src="v19.js?v=2891"></script>
-  <script src="v20.js?v=2891"></script>
+  <script src="v14.7.js?v=28101"></script>
+  <script src="v14.8.js?v=28101"></script>
+  <script src="v15.9.js?v=28101"></script>
+  <script src="v17-core.js?v=28101"></script>
+  <script src="v18.js?v=28101"></script>
+  <script src="v19.js?v=28101"></script>
+  <script src="v20.js?v=28101"></script>
 
   <dialog id="quotationNotifDialog">
     <div class="dialog-card quotation-notif-dialog">
@@ -1289,9 +1326,9 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </div>
   </dialog>
 
-  <script src="v20.3.js?v=2891"></script>
-  <script src="v20.5.js?v=2891"></script>
-  <script src="v20.6.js?v=2891"></script>
+  <script src="v20.3.js?v=28101"></script>
+  <script src="v20.5.js?v=28101"></script>
+  <script src="v20.6.js?v=28101"></script>
 
   <dialog id="editQuotationDialog">
     <form id="editQuotationForm" class="dialog-card quotation-edit-dialog">
@@ -1314,29 +1351,29 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </form>
   </dialog>
 
-  <script src="v20.7.js?v=2891"></script>
-  <script src="v21.js?v=2891"></script>
-  <script src="patch-watch.js?v=2891"></script>
-  <script src="v21.3.js?v=2891"></script>
-  <script src="v21.4.js?v=2891"></script>
-  <script src="v21.5.js?v=2891"></script>
-  <script src="v21.6.js?v=2891"></script>
-  <script src="v22.6.js?v=2891"></script>
-  <script src="v22.9.js?v=2891"></script>
-  <script src="v23.0.js?v=2891"></script>
-  <script src="v23.2.js?v=2891"></script>
-  <script src="v23.3.js?v=2891"></script>
-  <script src="v23.4.js?v=2891"></script>
-  <script src="v23.5.js?v=2891"></script>
-  <script src="v23.6.js?v=2891"></script>
-  <script src="v23.7.js?v=2891"></script>
-  <script src="v23.8.js?v=2891"></script>
-  <script src="v23.9.js?v=2891"></script>
-  <script src="v24.0.js?v=2891"></script>
+  <script src="v20.7.js?v=28101"></script>
+  <script src="v21.js?v=28101"></script>
+  <script src="patch-watch.js?v=28101"></script>
+  <script src="v21.3.js?v=28101"></script>
+  <script src="v21.4.js?v=28101"></script>
+  <script src="v21.5.js?v=28101"></script>
+  <script src="v21.6.js?v=28101"></script>
+  <script src="v22.6.js?v=28101"></script>
+  <script src="v22.9.js?v=28101"></script>
+  <script src="v23.0.js?v=28101"></script>
+  <script src="v23.2.js?v=28101"></script>
+  <script src="v23.3.js?v=28101"></script>
+  <script src="v23.4.js?v=28101"></script>
+  <script src="v23.5.js?v=28101"></script>
+  <script src="v23.6.js?v=28101"></script>
+  <script src="v23.7.js?v=28101"></script>
+  <script src="v23.8.js?v=28101"></script>
+  <script src="v23.9.js?v=28101"></script>
+  <script src="v24.0.js?v=28101"></script>
 
   <dialog id="linkedSubconDialog">
     <form id="linkedSubconForm" class="dialog-card wide">
-      <div class="dialog-head"><h2>Subcon Allocation Setup</h2><button type="button" data-close="linkedSubconDialog">×</button></div>
+      <div class="dialog-head"><h2>Subcon Amount to Issue</h2><button type="button" data-close="linkedSubconDialog">×</button></div>
       <input id="linkedSubconBillingId" type="hidden">
       <div class="form-grid">
         <label class="span-2">GenCon Billing<input id="linkedSubconBillingLabel" readonly></label>
@@ -1346,7 +1383,7 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
             <option value="true">Has Subcon</option>
           </select>
         </label>
-        <label>Collected from GenCon<input id="linkedCollected" readonly></label>
+        <label>Amount to Issue<input id="linkedCollected" type="number" min="0" step="0.01" value="0"></label>
         <label>Total Deductions<input id="linkedTotalDeductions" type="number" min="0" step="0.01" value="0"></label>
         <label>Retention %<input id="linkedRetentionPct" type="number" min="0" max="100" step="0.01" value="0"></label>
         <label>Recoupment %<input id="linkedRecoupmentPct" type="number" min="0" max="100" step="0.01" value="0"></label>
@@ -1354,43 +1391,43 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
       <div id="linkedSubconCalc" class="summary-cards compact-summary"></div>
       <div class="dialog-actions">
         <button type="button" class="secondary-btn" data-close="linkedSubconDialog">Cancel</button>
-        <button type="submit" class="primary-btn">Save Subcon Setup</button>
+        <button type="submit" class="primary-btn">Save Amount to Issue</button>
       </div>
     </form>
   </dialog>
 
-  <script src="v24.1.js?v=2891"></script>
-  <script src="v24.4.js?v=2891"></script>
-  <script src="v24.5.js?v=2891"></script>
-  <script src="v24.6.js?v=2891"></script>
-  <script src="v24.7.js?v=2891"></script>
-  <script src="v24.8.js?v=2891"></script>
-  <script src="v25.0.js?v=2891"></script>
-  <script src="v25.1.js?v=2891"></script>
-  <script src="v25.4.js?v=2891"></script>
-  <script src="v25.5.js?v=2891"></script>
-  <script src="v25.8.js?v=2891"></script>
-  <script src="v26.0.js?v=2891"></script>
-  <script src="v26.1.js?v=2891"></script>
-  <script src="v26.2.js?v=2891"></script>
-  <script src="v26.3.js?v=2891"></script>
-  <script src="v26.4.js?v=2891"></script>
-  <script src="v26.5.js?v=2891"></script>
-  <script src="v26.8.js?v=2891"></script>
-  <script src="v26.9.js?v=2891"></script>
-  <script src="v27.0.js?v=2891"></script>
-  <script src="v27.1.js?v=2891"></script>
-  <script src="v27.2.js?v=2891"></script>
-  <script src="v27.3.js?v=2891"></script>
-  <script src="v27.4.js?v=2891"></script>
-  <script src="v27.5.js?v=2891"></script>
-  <script src="v28.0.js?v=2891"></script>
-  <script src="v28.1.js?v=2891"></script>
-  <script src="v28.2.js?v=2891"></script>
-  <script src="v28.3.js?v=2891"></script>
-  <script src="v28.4.js?v=2891"></script>
-  <script src="v28.5.js?v=2891"></script>
-  <script src="v28.8.js?v=2891"></script>
-  <script src="v28.9.js?v=2891"></script>
+  <script src="v24.1.js?v=28101"></script>
+  <script src="v24.4.js?v=28101"></script>
+  <script src="v24.5.js?v=28101"></script>
+  <script src="v24.6.js?v=28101"></script>
+  <script src="v24.7.js?v=28101"></script>
+  <script src="v24.8.js?v=28101"></script>
+  <script src="v25.0.js?v=28101"></script>
+  <script src="v25.1.js?v=28101"></script>
+  <script src="v25.4.js?v=28101"></script>
+  <script src="v25.5.js?v=28101"></script>
+  <script src="v25.8.js?v=28101"></script>
+  <script src="v26.0.js?v=28101"></script>
+  <script src="v26.1.js?v=28101"></script>
+  <script src="v26.2.js?v=28101"></script>
+  <script src="v26.3.js?v=28101"></script>
+  <script src="v26.4.js?v=28101"></script>
+  <script src="v26.5.js?v=28101"></script>
+  <script src="v26.8.js?v=28101"></script>
+  <script src="v26.9.js?v=28101"></script>
+  <script src="v27.0.js?v=28101"></script>
+  <script src="v27.1.js?v=28101"></script>
+  <script src="v27.2.js?v=28101"></script>
+  <script src="v27.3.js?v=28101"></script>
+  <script src="v27.4.js?v=28101"></script>
+  <script src="v27.5.js?v=28101"></script>
+  <script src="v28.0.js?v=28101"></script>
+  <script src="v28.1.js?v=28101"></script>
+  <script src="v28.2.js?v=28101"></script>
+  <script src="v28.3.js?v=28101"></script>
+  <script src="v28.4.js?v=28101"></script>
+  <script src="v28.5.js?v=28101"></script>
+  <script src="v28.8.js?v=28101"></script>
+  <script src="v28.10.js?v=28101"></script>
 </body>
 </html>
