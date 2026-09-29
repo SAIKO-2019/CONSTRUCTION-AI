@@ -161,11 +161,22 @@
       </button>`);
     }
 
+    const materialsTotal=folderTotal(pid,'Materials').total;
+    const laborTotal=folderTotal(pid,'Labor').total;
+    const overheadTotal=folderTotal(pid,'Overhead').total;
+    const grandTotal=materialsTotal+laborTotal+overheadTotal;
+
     host.innerHTML=`
       <div class="inventory-folder-project-head">
         <span>OPEN PROJECT</span>
         <h2>${esc(p.project_name)}</h2>
         <p>${esc(p.location||'')} ${p.status?`• ${esc(p.status)}`:''}</p>
+      </div>
+      <div class="inventory-project-total-summary">
+        <div><span>Materials Total</span><strong>${money(materialsTotal)}</strong></div>
+        <div><span>Labor Total</span><strong>${money(laborTotal)}</strong></div>
+        <div><span>Overhead Total</span><strong>${money(overheadTotal)}</strong></div>
+        <div class="grand-total"><span>Grand Total Cost</span><strong>${money(grandTotal)}</strong></div>
       </div>
       ${cards.join('')}`;
   }
