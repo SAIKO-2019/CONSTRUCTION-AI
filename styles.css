@@ -4073,3 +4073,47 @@ html[data-theme="executive"] .status-pill.not-awarded-result{
     grid-template-columns:1fr!important;
   }
 }
+
+
+/* =========================================================
+   CONSTRUCTION MONITORING v28.7
+   PROJECT COST TOTALS + IMPORTED EXISTING INVENTORY
+   ========================================================= */
+.inventory-project-total-summary{
+  grid-column:1/-1;
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+  margin:2px 0 4px;
+}
+.inventory-project-total-summary>div{
+  padding:13px 14px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:var(--surface-soft);
+}
+.inventory-project-total-summary span{
+  display:block;
+  margin-bottom:4px;
+  color:var(--muted);
+  font-size:8px;
+  font-weight:800;
+  letter-spacing:.04em;
+}
+.inventory-project-total-summary strong{
+  font-size:15px!important;
+}
+.inventory-project-total-summary .grand-total{
+  background:linear-gradient(135deg,var(--navy),var(--navy2));
+  border-color:transparent;
+}
+.inventory-project-total-summary .grand-total span,
+.inventory-project-total-summary .grand-total strong{
+  color:#fff!important;
+}
+@media(max-width:900px){
+  .inventory-project-total-summary{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:560px){
+  .inventory-project-total-summary{grid-template-columns:1fr}
+}

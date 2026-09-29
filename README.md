@@ -1644,3 +1644,28 @@ The button creates a short-lived signed URL from the existing `project-files` Su
 
 No schema change required.
 Run `v28.6-quotation-folders-download-release.sql` once after deployment is Ready.
+
+
+## v28.7 — Melendrez Existing Inventory Import + Project Cost Totals
+
+One-time import script: `v28.7-melendres-inventory-import.sql`
+
+Imported source rows:
+- Materials: 328 rows — ₱1,475,360.00
+- Labor: 18 rows — ₱1,149,669.00
+- Overhead Cost: 49 rows — ₱117,378.00
+- Grand Total imported: ₱2,742,407.00
+
+The import is idempotent using `custom_data.import_key`, so accidentally running the SQL again will not duplicate the imported rows.
+
+All imported records enter the same existing inventory ledger, so the team can continue manual input immediately afterward using the normal Add Row workflow.
+
+The project folder view now automatically displays:
+- Materials Total
+- Labor Total
+- Overhead Total
+- Grand Total Cost
+
+These values are calculated from the live `inventory_entries` table and therefore keep updating as manual entries are added or edited.
+
+Imported source expenses are treated as already-paid actual costs (`paid_amount = total_amount`, `balance_amount = 0`). They remain editable in the ledger.
