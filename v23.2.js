@@ -71,17 +71,15 @@
     if($('bIssuedDateField'))$('bIssuedDateField').style.display='none';
 
     if($('bInputBy')){
-      $('bInputBy').readOnly=!showSub;
-      $('bInputBy').title=showSub
-        ? 'Editable for Subcon row.'
-        : 'Automatically based on the current user.';
+      $('bInputBy').readOnly=false;
+      $('bInputBy').title='Editable billing record field.';
     }
 
     const note=$('billingRuleNote');
     if(note){
       note.textContent=showSub
-        ? 'Subcontractor Billing: Billing/VO No., subcontractor, gross billing amount, request date, retention, recoupment and Encoded By are editable. Billing %, Net Due, Outstanding and Status are computed automatically. Issued/Paid entries are managed below.'
-        : 'Client Billing: retention and recoupment are optional. Tick only when applicable.';
+        ? 'Subcontractor Billing: Billing/VO No., subcontractor, gross billing amount, request date, optional retention/recoupment and Encoded By are editable. Existing applied deductions load automatically. Billing %, Net Due, Outstanding and Status are computed automatically. Issued/Paid entries are managed below.'
+        : 'Client Billing: Retention and Recoupment are OPTIONAL. Leave each box unchecked when it does not apply. Existing applied values are loaded automatically when editing.';
     }
   }
 
@@ -151,6 +149,30 @@
   if($('bUseRecoupment'))$('bUseRecoupment').onchange=updateBillingUI232;
   if($('bType'))$('bType').onchange=updateBillingUI232;
 
+  function suggestedDeductionRate(kind){
+    const pid=$('bProject')?.value||$('workspaceProject')?.value||'';
+    const p=(cache.projects||[]).find(x=>String(x.id)===String(pid))||{};
+    const projectRate=kind==='retention'
+      ? Number(p.budget_retention_percent||0)
+      : Number(p.budget_recoupment_percent||0);
+    if(projectRate>0)return projectRate;
+
+    const field=kind==='retention'?'retention_percent':'recoupment_percent';
+    const amountField=kind==='retention'?'retention_amount':'recoupment_amount';
+
+    const rows=(cache.billings||[])
+      .filter(b=>String(b.project_id)===String(pid))
+      .filter(b=>Number(b[amountField]||0)>0 || !!b[`${kind}_applicable`])
+      .slice()
+      .sort((a,b)=>{
+        const da=String(a.date_request||a.date_submitted||a.created_at||'');
+        const db=String(b.date_request||b.date_submitted||b.created_at||'');
+        return db.localeCompare(da);
+      });
+
+    return Math.max(0,Number(rows[0]?.[field]||0));
+  }
+
   // ---------- Add billing ----------
   $('addBillingBtn').onclick=()=>{
     editingBillingId=null;
@@ -165,8 +187,8 @@
     $('bRecordType').value='Billing';
     if(typeof updateRecordTypeUI==='function')updateRecordTypeUI();
 
-    $('bRetention').value=5;
-    $('bRecoup').value=30;
+    $('bRetention').value=suggestedDeductionRate('retention');
+    $('bRecoup').value=suggestedDeductionRate('recoupment');
     $('bUseRetention').checked=false;
     $('bUseRecoupment').checked=false;
     $('bInputBy').value=typeof profileName==='function'?profileName():(currentProfile?.full_name||'');
@@ -197,10 +219,10 @@
     $('bGross').value=Number(b.gross_amount||0);
     $('bAccomplishment').value=Number(b.accomplishment_percent||0);
 
-    $('bUseRetention').checked=!!b.retention_applicable || Number(b.retention_percent||0)>0;
-    $('bRetention').value=Number(b.retention_percent||0);
-    $('bUseRecoupment').checked=!!b.recoupment_applicable || Number(b.recoupment_percent||0)>0;
-    $('bRecoup').value=Number(b.recoupment_percent||0);
+    $('bUseRetention').checked=!!b.retention_applicable || Number(b.retention_amount||0)>0;
+    $('bRetention').value=Number(b.retention_percent||0) || suggestedDeductionRate('retention');
+    $('bUseRecoupment').checked=!!b.recoupment_applicable || Number(b.recoupment_amount||0)>0;
+    $('bRecoup').value=Number(b.recoupment_percent||0) || suggestedDeductionRate('recoupment');
 
     $('bRequestDate').value=b.date_request||b.date_submitted||'';
     $('bReceived').value=Number(b.received_amount||0);

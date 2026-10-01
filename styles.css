@@ -6112,3 +6112,24 @@ html[data-theme] .excel-budget-sheet table td small{
 html,body,.app-shell,.main-shell,.view{
   overflow-anchor:auto;
 }
+
+
+/* CONSTRUCTION MONITORING v28.30 */
+#billingDialog .check-field small,
+#billingDialog label>small{
+  color:var(--muted)!important;
+  font-size:8px!important;
+  font-weight:700;
+}
+#billingDialog input:disabled{
+  opacity:.58;
+  cursor:not-allowed;
+}
+.excel-editable-note{
+  display:block;
+  margin-bottom:1px;
+  color:#245f36!important;
+  font-size:7px!important;
+  font-weight:900;
+  letter-spacing:.08em;
+}

@@ -1,14 +1,16 @@
 {
-  "base": "v28.25 or later",
-  "to": "v28.29",
+  "base": "v28.29 or v28.25+ cumulative",
+  "to": "v28.30",
   "type": "CUMULATIVE PATCH ONLY",
   "upload_overwrite_only": [
     "app.js",
     "v13.js",
     "v23.7.js",
     "v23.8.js",
+    "v23.2.js",
     "v28.5.js",
     "v28.11.js",
+    "v28.19.js",
     "v28.22.js",
     "styles.css",
     "index.html",
@@ -16,15 +18,24 @@
     "patch-watch.js",
     "patch-gate.js",
     "api/system-version.js",
-    "v28.29-single-issued-action-release.sql"
+    "v28.30-optional-deductions-dashboard-cleanup.sql"
   ],
-  "fixes": [
-    "Exactly one Add Issued Amount button per Subcon billing row.",
-    "Old Add Issued Amount / Add Payment actions are removed before the current balance-aware button is inserted.",
-    "One top Add Row button only for Billing.",
-    "Ascending GenCon/Subcon billing order.",
-    "Stable viewport during refresh/realtime updates.",
-    "Contract-capped collection formulas retained."
+  "billing": [
+    "Retention checkbox is optional.",
+    "Recoupment checkbox is optional.",
+    "A non-zero percentage does NOT automatically turn the deduction on.",
+    "Existing applied Retention/Recoupment values are loaded automatically on Edit.",
+    "Encoded By is editable.",
+    "Payment totals remain edited through dated payment/issued history."
   ],
-  "after_upload": "Wait for Vercel Ready, then run v28.29-single-issued-action-release.sql once."
+  "dashboard": [
+    "Need to Collect removed ONLY from Dashboard Financial Snapshot."
+  ],
+  "budget": [
+    "Need-to-Collect tracker remains in Budget Monitoring.",
+    "Retention %, Recoupment %, and Billed Accomplishment Before % are editable per project.",
+    "Existing billing deduction rates are backfilled into project Budget inputs when not yet configured.",
+    "Melendrez billed accomplishment baseline remains 47.25%."
+  ],
+  "after_upload": "Wait for Vercel Ready, then run v28.30-optional-deductions-dashboard-cleanup.sql once."
 }

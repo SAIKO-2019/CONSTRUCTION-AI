@@ -335,8 +335,9 @@
         ['Down Payment Received',money(d.dpReceived)],
         ['Total Received',money(d.totalReceived)],
         ['Total Accomplishment',`${d.accumulated.toFixed(2)}%`],
-        ['Unpaid Amount',money(d.unpaid)]
-      ].map(([a,b])=>`<div class="kpi"><span>${a}</span><strong>${b}</strong></div>`).join('');
+        ['Unpaid Amount',money(d.unpaid)],
+        ['Need to Collect',money(d.needToCollect)]
+      ].map(([a,b])=>`<div class="kpi ${a==='Need to Collect'?'financial-alert-kpi':''}"><span>${a}</span><strong>${b}</strong></div>`).join('');
     }
 
     panel.innerHTML=`
@@ -526,8 +527,7 @@
         ['Contract Amount',money(d.contract)],
         ['Downpayment Received',money(d.dpReceived)],
         ['Regular / VO Billed',money(regularGross)],
-        ['Total Received',money(d.totalReceived)],
-        ['Need to Collect',money(d.needToCollect)]
+        ['Total Received',money(d.totalReceived)]
       ].map(([a,b])=>`<div class="v28-finance-cell"><span>${a}</span><strong>${b}</strong></div>`).join('');
     }
 

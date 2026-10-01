@@ -42,20 +42,12 @@
     field.readOnly=true;
     field.title='Auto: Subcon Billing Amount ÷ Subcon Contract Amount × 100';
 
-    // A typed non-zero deduction rate automatically becomes applicable.
-    if(n($('bRetention')?.value)>0 && $('bUseRetention')){
-      $('bUseRetention').checked=true;
-    }
-    if(n($('bRecoup')?.value)>0 && $('bUseRecoupment')){
-      $('bUseRecoupment').checked=true;
-    }
-
     const note=$('billingRuleNote');
     if(note){
       note.innerHTML=
         `<strong>Subcon Billing:</strong> Billing % is automatic: `+
         `${money(gross)} ÷ ${money(contract)} = <strong>${pct.toFixed(2)}%</strong>. `+
-        `Retention and Recoupment are deducted from this billing amount; use Add Issued Amount to record the actual payment.`;
+        `Retention and Recoupment are OPTIONAL and are deducted only when their Apply checkbox is selected; use Add Issued Amount to record the actual payment.`;
     }
   }
 

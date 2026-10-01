@@ -455,6 +455,7 @@
             <label>% Progress:${input(m.progress,'budget_progress_override','number','step="0.01" min="0" max="100"')}</label>
           </div>
           <div class="excel-deduction-inputs">
+            <small class="excel-editable-note">EDITABLE PER PROJECT</small>
             <label>Billed Accomplishment Before %:${input(c.billedPct,'budget_billed_accomplishment_override','number','step="0.01" min="0" max="100"')}</label>
             <label>Retention %:${input(c.retPct,'budget_retention_percent','number','step="0.01" min="0" max="100"')}</label>
             <label>Recoupment %:${input(c.recPct,'budget_recoupment_percent','number','step="0.01" min="0" max="100"')}</label>

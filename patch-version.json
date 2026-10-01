@@ -1,5 +1,5 @@
 {
-  "version": "28.29",
-  "label": "Construction Monitoring v28.29",
-  "message": "Subcon Billing action cleanup: each billing row now has exactly one Add Issued Amount button. Legacy/generated duplicates are removed before the balance-aware action is rendered. Includes the v28.28 ascending order, stable viewport, single top Add Row, and contract-capped collection fixes."
+  "version": "28.30",
+  "label": "Construction Monitoring v28.30",
+  "message": "Retention and Recoupment are truly optional per Billing row; existing applied deductions load automatically on Edit; Budget Retention/Recoupment inputs are editable per project and are backfilled from existing billing data; Need to Collect is removed only from the Dashboard Financial Snapshot, while Billing and Budget calculations remain available."
 }
