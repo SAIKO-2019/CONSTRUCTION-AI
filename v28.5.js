@@ -300,10 +300,18 @@
         const actions=actionCell.querySelector('.row-actions');
         if(!actions)return;
 
-        // Remove the older payment action and replace it with the balance-aware one.
+        // v28.29: remove every older/generated payment action first.
+        // This guarantees exactly ONE Add Payment / Add Issued Amount button.
         [...actions.querySelectorAll('button')].forEach(btn=>{
           const txt=(btn.textContent||'').trim().toLowerCase();
-          if(txt==='payment'||txt==='receive payment'||txt==='add payment'){
+          if(
+            btn.classList.contains('payment-add-action') ||
+            txt==='payment' ||
+            txt==='receive payment' ||
+            txt==='add payment' ||
+            txt==='add issued amount' ||
+            txt==='issued amount'
+          ){
             btn.remove();
           }
         });

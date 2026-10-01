@@ -1,5 +1,5 @@
 {
-  "version": "28.28",
-  "label": "Construction Monitoring v28.28",
-  "message": "Billing rows are naturally ascending in every project's GenCon and Subcon folders; viewport/table scroll position is preserved during refreshes and realtime rerenders; one top Add Row button remains; Billing Need-to-Collect KPI is removed; collection formulas stay contract-capped."
+  "version": "28.29",
+  "label": "Construction Monitoring v28.29",
+  "message": "Subcon Billing action cleanup: each billing row now has exactly one Add Issued Amount button. Legacy/generated duplicates are removed before the balance-aware action is rendered. Includes the v28.28 ascending order, stable viewport, single top Add Row, and contract-capped collection fixes."
 }

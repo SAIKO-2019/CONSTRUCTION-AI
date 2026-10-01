@@ -1,23 +1,30 @@
 {
-  "base": "v28.25",
-  "to": "v28.28",
+  "base": "v28.25 or later",
+  "to": "v28.29",
   "type": "CUMULATIVE PATCH ONLY",
-  "note": "If v28.26/v28.27 were not uploaded, that is okay. Apply this directly over v28.25.",
-  "ascending_order": [
-    "Every GenCon folder: Downpayment, Billing No.1, No.2, No.3..., VO No.1, No.2...",
-    "Every Subcon folder uses the same ascending rule.",
-    "Sorting is display-only; database records are not renumbered or rewritten."
+  "upload_overwrite_only": [
+    "app.js",
+    "v13.js",
+    "v23.7.js",
+    "v23.8.js",
+    "v28.5.js",
+    "v28.11.js",
+    "v28.22.js",
+    "styles.css",
+    "index.html",
+    "patch-version.json",
+    "patch-watch.js",
+    "patch-gate.js",
+    "api/system-version.js",
+    "v28.29-single-issued-action-release.sql"
   ],
-  "viewport_lock": [
-    "Normal realtime/data refresh keeps the current vertical screen position.",
-    "Horizontal position inside wide tables is preserved.",
-    "Changing project keeps the current screen position instead of jumping to the top.",
-    "No MutationObserver and no recurring timer added."
+  "fixes": [
+    "Exactly one Add Issued Amount button per Subcon billing row.",
+    "Old Add Issued Amount / Add Payment actions are removed before the current balance-aware button is inserted.",
+    "One top Add Row button only for Billing.",
+    "Ascending GenCon/Subcon billing order.",
+    "Stable viewport during refresh/realtime updates.",
+    "Contract-capped collection formulas retained."
   ],
-  "billing_ui": [
-    "Only one + Add Row button at the top.",
-    "GenCon opens Client Billing; Subcon opens Subcontractor Billing.",
-    "Need to Collect KPI removed from Billing summary."
-  ],
-  "after_upload": "Wait for Vercel Ready, then run v28.28-ascending-viewport-lock.sql once."
+  "after_upload": "Wait for Vercel Ready, then run v28.29-single-issued-action-release.sql once."
 }
