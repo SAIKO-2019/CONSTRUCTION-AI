@@ -65,15 +65,9 @@
     const t=totals(rows);
 
     const tablePanel=$('billingRows')?.closest('.panel');
-    if(party==='subcon'){
-      // Clean Subcon folder: linked GenCon→Subcon cards only.
-      if($('subconCommercialSettings'))$('subconCommercialSettings').style.display='none';
-      if($('billingKPIs'))$('billingKPIs').style.display='none';
-      if(tablePanel)tablePanel.style.display='none';
-      if($('addBillingBtn'))$('addBillingBtn').style.display='none';
-      return;
-    }
 
+    // v28.15: both folders use the same Billing table.
+    // GenCon shows Client Billing rows; Subcon shows Subcontractor Billing rows.
     if($('billingKPIs'))$('billingKPIs').style.display='grid';
     if(tablePanel)tablePanel.style.display='';
     if($('addBillingBtn'))$('addBillingBtn').style.display='';
@@ -87,10 +81,10 @@
           ['Retention Held',money(t.retention)]
         ]
       : [
-          ['Subcon Issued',money(t.issued)],
           ['Subcon Gross Billed',money(t.gross)],
-          ['Subcon Paid',money(t.received)],
-          ['Subcon Outstanding',money(t.outstanding)]
+          ['Issued / Paid',money(t.received)],
+          ['Subcon Outstanding',money(t.outstanding)],
+          ['Retention Held',money(t.retention)]
         ]
     ).map(x=>`<div class="kpi"><span>${x[0]}</span><strong>${x[1]}</strong></div>`).join('');
 
@@ -117,7 +111,7 @@
       <td>${esc(b.status)}</td>
       <td><div class="row-actions">
         <button class="icon-action" type="button" onclick="editBilling('${b.id}')">Edit</button>
-        <button class="icon-action" type="button" onclick="addPayment('${b.id}')">${b.billing_type==='Subcontractor Billing'?'Add Payment':'Receive Payment'}</button>
+        <button class="icon-action" type="button" onclick="addPayment('${b.id}')">${b.billing_type==='Subcontractor Billing'?'Add Issued Amount':'Receive Payment'}</button>
         <button class="icon-action" type="button" onclick="generateBilling('${b.id}')">Download</button>
         <button class="danger-link" type="button" onclick="deleteBilling('${b.id}')">Delete</button>
       </div></td>

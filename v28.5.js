@@ -29,6 +29,10 @@
     return (cache.billings||[]).find(b=>String(b.id)===String(id))||null;
   }
 
+  function isSubconBilling(b){
+    return b?.billing_type==='Subcontractor Billing';
+  }
+
   function paymentRows(billingId){
     return (cache.payments||[])
       .filter(p=>String(p.billing_id)===String(billingId))
@@ -106,10 +110,15 @@
       legacyBase:st.legacyBase
     };
 
+    const isSubcon=isSubconBilling(b);
+    const noun=isSubcon?'Issued Amount':'Payment';
+
     $('paymentBillingId').value=String(b.id);
     $('paymentRecordId').value=editingPaymentId;
-    $('paymentDialogTitle').textContent=paymentId?'Edit Payment':'Add Payment';
+    $('paymentDialogTitle').textContent=paymentId?`Edit ${noun}`:`Add ${noun}`;
     $('paymentDialogSubtitle').textContent=`${b.billing_no||b.variation_no||'Billing'} • ${proj(b.project_id)?.project_name||'Project'}`;
+    if($('paymentAmountLabel'))$('paymentAmountLabel').textContent=isSubcon?'Issued Amount':'Payment Amount';
+    if($('paymentDateLabel'))$('paymentDateLabel').textContent=isSubcon?'Date Issued':'Payment Date';
     $('paymentAmountInput').value=p?num(p.amount).toFixed(2):'';
     $('paymentDateInput').value=p?.payment_date||isoToday();
     $('paymentReferenceInput').value=p?.reference_no||'';
@@ -119,16 +128,18 @@
 
     $('paymentBillingSummary').innerHTML=[
       ['Net Due',money(st.netDue)],
-      ['Recorded Paid',money(st.totalReceived)],
+      [isSubcon?'Total Issued':'Recorded Paid',money(st.totalReceived)],
       ['Current Balance',money(st.outstanding)],
-      [paymentId?'Maximum Edited Amount':'Maximum New Payment',money(max)]
+      [paymentId?'Maximum Edited Amount':(isSubcon?'Maximum New Issued Amount':'Maximum New Payment'),money(max)]
     ].map(x=>`<div><span>${x[0]}</span><strong>${x[1]}</strong></div>`).join('');
 
     $('paymentValidationNote').innerHTML=paymentId
-      ? `Editing this transaction will automatically recalculate the billing balance. Maximum allowed for this payment is <strong>${money(max)}</strong>.`
-      : `Add Payment will remain available until the full balance of <strong>${money(st.outstanding)}</strong> is completed.`;
+      ? `Editing this ${isSubcon?'issued amount':'payment'} will automatically recalculate the billing balance. Maximum allowed is <strong>${money(max)}</strong>.`
+      : `${isSubcon?'Add Issued Amount':'Add Payment'} will remain available until the full balance of <strong>${money(st.outstanding)}</strong> is completed.`;
 
-    $('savePaymentBtn').textContent=paymentId?'Update Payment':'Save Payment';
+    $('savePaymentBtn').textContent=paymentId
+      ? (isSubcon?'Update Issued Amount':'Update Payment')
+      : (isSubcon?'Save Issued Amount':'Save Payment');
     paymentDialog().showModal();
     setTimeout(()=>$('paymentAmountInput')?.focus(),50);
   }
@@ -154,9 +165,12 @@
       return alert(`Payment cannot exceed the remaining allowed amount of ${money(next.maxForRecord)}.`);
     }
 
+    const isSubcon=isSubconBilling(b);
     const saveBtn=$('savePaymentBtn');
     saveBtn.disabled=true;
-    saveBtn.textContent=paymentId?'Updating…':'Saving…';
+    saveBtn.textContent=paymentId
+      ? (isSubcon?'Updating Issued Amount…':'Updating…')
+      : (isSubcon?'Saving Issued Amount…':'Saving…');
 
     try{
       if(paymentId){
@@ -202,15 +216,25 @@
 
       closePaymentDialog();
       await refreshAll();
-      renderBilling();
-      if(typeof renderDashboard==='function')renderDashboard();
-      if(typeof window.renderSaikoHome==='function')window.renderSaikoHome();
-      if(typeof toast==='function')toast(paymentId?'Payment updated.':'Payment added.');
+
+      // Payment is already committed at this point. Keep optional view refreshes
+      // from being reported as a payment-save failure.
+      try{renderBilling()}catch(renderErr){console.warn('Billing post-payment render:',renderErr)}
+      try{if(typeof renderDashboard==='function')renderDashboard()}catch(renderErr){console.warn('Dashboard post-payment render:',renderErr)}
+      try{if(typeof window.renderSaikoHome==='function')window.renderSaikoHome()}catch(renderErr){console.warn('Home post-payment render:',renderErr)}
+
+      if(typeof toast==='function')toast(
+        paymentId
+          ? (isSubcon?'Issued amount updated.':'Payment updated.')
+          : (isSubcon?'Issued amount added.':'Payment added.')
+      );
     }catch(err){
-      alert(err?.message||'Could not save payment.');
+      alert(err?.message||(isSubcon?'Could not save issued amount.':'Could not save payment.'));
     }finally{
       saveBtn.disabled=false;
-      saveBtn.textContent=paymentId?'Update Payment':'Save Payment';
+      saveBtn.textContent=paymentId
+        ? (isSubcon?'Update Issued Amount':'Update Payment')
+        : (isSubcon?'Save Issued Amount':'Save Payment');
     }
   }
 
@@ -229,10 +253,11 @@
       </div>`);
     }
 
+    const isSubcon=isSubconBilling(b);
     st.rows.forEach((p,i)=>{
       parts.push(`<div class="payment-history-item">
         <div class="payment-history-main">
-          <span>Payment ${i+1}</span>
+          <span>${isSubcon?'Issued':'Payment'} ${i+1}</span>
           <strong>${money(p.amount)}</strong>
         </div>
         <div class="payment-history-meta">
@@ -287,7 +312,7 @@
           const add=document.createElement('button');
           add.type='button';
           add.className='icon-action payment-add-action';
-          add.textContent='Add Payment';
+          add.textContent=isSubconBilling(b)?'Add Issued Amount':'Add Payment';
           add.onclick=()=>openPaymentDialog(b.id,'');
           const editBtn=[...actions.querySelectorAll('button')].find(x=>(x.textContent||'').trim()==='Edit');
           if(editBtn && editBtn.nextSibling){

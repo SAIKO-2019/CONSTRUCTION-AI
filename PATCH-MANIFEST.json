@@ -1,0 +1,25 @@
+{
+  "from": "v28.14",
+  "to": "v28.15",
+  "purpose": "Subcon Billing per-billing Issued Amount workflow, same transaction behavior as GenCon.",
+  "upload_overwrite_only": [
+    "patch-watch.js",
+    "v28.5.js",
+    "v23.8.js",
+    "patch-version.json",
+    "v24.3.js",
+    "patch-gate.js",
+    "styles.css",
+    "index.html",
+    "v28.11.js",
+    "api/system-version.js",
+    "v28.15-subcon-issued-amount-release.sql"
+  ],
+  "delete_files": [],
+  "notes": [
+    "Upload/overwrite only these files at the GitHub repository root.",
+    "All other repository files stay unchanged.",
+    "After Vercel is Ready, run v28.15-subcon-issued-amount-release.sql once.",
+    "No schema change."
+  ]
+}

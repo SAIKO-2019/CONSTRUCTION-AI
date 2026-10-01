@@ -37,10 +37,12 @@
         panel.hidden=false;
         panel.classList.add('clean-subcon-only');
       }
-      if(kpis)kpis.style.display='none';
+      // v28.15: show the SAME billing grid as GenCon, filtered to
+      // Subcontractor Billing. This is where Issued Amount is recorded.
+      if(kpis)kpis.style.display='grid';
       if(settings)settings.style.display='none';
-      if(table)table.style.display='none';
-      if(addBtn)addBtn.style.display='none';
+      if(table)table.style.display='';
+      if(addBtn)addBtn.style.display='';
     }else{
       if(panel)panel.classList.remove('clean-subcon-only');
       if(kpis)kpis.style.display='grid';

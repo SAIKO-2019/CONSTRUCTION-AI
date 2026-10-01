@@ -4972,3 +4972,12 @@ html[data-theme] textarea:focus-visible{
   outline:2px solid var(--chart-planned)!important;
   outline-offset:2px!important;
 }
+
+
+/* CONSTRUCTION MONITORING v28.15 — Subcon issued amount workflow */
+.billing-party-tab.subcon-tab.active{
+  box-shadow:inset 3px 0 0 color-mix(in srgb,var(--blue) 70%,var(--line));
+}
+#billingRows .payment-add-action{
+  white-space:nowrap;
+}

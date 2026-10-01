@@ -207,30 +207,46 @@
   function subconSnapshot(pid){
     const p=project(pid)||{};
     const contract=Math.max(0,n(p.subcon_contract_amount));
+
+    // Actual Subcontractor Billing records use the SAME transaction engine
+    // as GenCon. Their received_amount is the running total of Issued Amounts.
+    const actualBills=rowsForProject(pid).filter(b=>b.billing_type==='Subcontractor Billing');
+    const actualDP=actualBills.filter(isDownpayment);
+    const actualRegular=actualBills.filter(b=>!isDownpayment(b));
+
+    // Linked GenCon→Subcon allocation remains the fallback / allocation plan.
     const client=clientRows(pid);
     const linked=client.filter(b=>b.has_subcon || n(b.subcon_amount_to_issue)>0);
+    const linkedDP=linked.filter(isDownpayment);
+    const linkedRegular=linked.filter(b=>!isDownpayment(b));
 
-    const dpRows=linked.filter(isDownpayment);
-    const regularRows=linked.filter(b=>!isDownpayment(b));
-
-    const dpPaid=dpRows.reduce((s,b)=>
+    const linkedDPPaid=linkedDP.reduce((s,b)=>
       s+linkedSubconPaymentRows(b.id).reduce((x,p)=>x+n(p.amount),0),0
     );
-    const regularPaid=regularRows.reduce((s,b)=>
+    const linkedRegularPaid=linkedRegular.reduce((s,b)=>
       s+linkedSubconPaymentRows(b.id).reduce((x,p)=>x+n(p.amount),0),0
     );
 
-    const dpAmountToIssue=dpRows.reduce((s,b)=>s+Math.max(0,n(b.subcon_amount_to_issue)),0);
-    const regularAmountToIssue=regularRows.reduce((s,b)=>s+Math.max(0,n(b.subcon_amount_to_issue)),0);
+    const actualDPPaid=actualDP.reduce((s,b)=>s+Math.max(0,n(b.received_amount)),0);
+    const actualRegularPaid=actualRegular.reduce((s,b)=>s+Math.max(0,n(b.received_amount)),0);
 
-    // Actual payment history is authoritative. Amount to Issue is shown separately.
-    const issuedDP=dpPaid;
-    const issuedAmount=regularPaid;
+    const issuedDP=actualBills.length?actualDPPaid:linkedDPPaid;
+    const issuedAmount=actualBills.length?actualRegularPaid:linkedRegularPaid;
 
-    const retentionRates=linked.map(b=>Math.max(0,n(b.subcon_retention_percent))).filter(Boolean);
-    const retentionPct=retentionRates.length?Math.max(...retentionRates):0;
+    const dpAmountToIssue=linkedDP.reduce((s,b)=>s+Math.max(0,n(b.subcon_amount_to_issue)),0);
+    const regularAmountToIssue=linkedRegular.reduce((s,b)=>s+Math.max(0,n(b.subcon_amount_to_issue)),0);
+
+    const actualRetentionRates=actualBills
+      .map(b=>Math.max(0,n(b.retention_percent)))
+      .filter(Boolean);
+    const linkedRetentionRates=linked
+      .map(b=>Math.max(0,n(b.subcon_retention_percent)))
+      .filter(Boolean);
+    const retentionPct=actualRetentionRates.length
+      ? Math.max(...actualRetentionRates)
+      : (linkedRetentionRates.length?Math.max(...linkedRetentionRates):0);
+
     const retention=contract*retentionPct/100;
-
     const remaining=Math.max(0,contract-issuedDP-issuedAmount-retention);
     const plannedDPPercent=contract?dpAmountToIssue/contract*100:0;
     const paidDPPercent=contract?issuedDP/contract*100:0;

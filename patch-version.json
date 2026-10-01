@@ -1,5 +1,5 @@
 {
-  "version": "28.13",
-  "label": "Construction Monitoring v28.13",
-  "message": "Theme visibility hotfix: S-Curves, chart labels, legends, dashboard text, KPI values, tables and records now automatically use high-contrast colors per active theme while retaining the architectural backgrounds."
+  "version": "28.15",
+  "label": "Construction Monitoring v28.15",
+  "message": "Subcon Billing now uses the same per-billing transaction workflow as GenCon. Enter Issued Amount per Subcontractor Billing, keep dated/editable history, automatically update Paid/Balance/Status, and feed the same values into Budget Monitoring."
 }
