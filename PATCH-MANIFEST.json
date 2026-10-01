@@ -1,29 +1,36 @@
 {
-  "from": "v28.20",
-  "to": "v28.21",
-  "type": "patch-only",
-  "purpose": "Budget Monitoring redesigned to follow the uploaded Budget & Cost Tracker workbook structure.",
+  "version": "28.22",
+  "type": "CUMULATIVE PATCH ONLY",
+  "safe_base": "v28.17 or later",
   "upload_overwrite_only": [
-    "v28.21.js",
+    "v23.7.js",
+    "v13.js",
+    "v23.8.js",
+    "v23.2.js",
+    "v28.19.js",
+    "v28.4.js",
+    "v28.22.js",
     "styles.css",
     "index.html",
     "patch-version.json",
     "patch-watch.js",
     "patch-gate.js",
     "api/system-version.js",
-    "v28.21-budget-cost-tracker-release.sql"
+    "v28.22-excel-budget-replica.sql"
   ],
   "delete_files": [],
-  "actual_cost_rule": "Total Actual Cost = Inventory/Purchases total_amount + Subcon Billing received_amount (Issued/Paid).",
-  "budget_sections": [
-    "Project Summary",
-    "Projected Cost Breakdown by Category",
-    "Actual Cost Breakdown by Category",
-    "Projected vs Actual Category Table",
-    "Scope/Task Cost Table from BOQ + linked Inventory",
-    "Subcon Billing & Issued Amount Report",
-    "Inventory/Purchases Cost Ledger"
+  "covers": [
+    "v28.18 one Active Project Folder across modules",
+    "v28.19 auto GenCon -> Subcon mirrored rows",
+    "v28.20 full Subcon row edit + Issued Amount history",
+    "v28.22 exact workbook-style Budget & Cost Tracker",
+    "v28.22 collection formulas + dedicated pie chart",
+    "v28.22 Inventory Add Row + removal of redundant project-folder browser",
+    "Removal of ONE PROJECT SOURCE badge"
   ],
-  "live_sync": "Uses existing realtime caches for BOQ, inventory_entries, billings and payments. No new polling timer.",
-  "after_upload": "Wait for Vercel Ready, then run v28.21-budget-cost-tracker-release.sql once."
+  "after_upload": [
+    "Wait for Vercel Ready.",
+    "Run v28.22-excel-budget-replica.sql once in Supabase SQL Editor.",
+    "Allow the release gate to refresh/sign out open sessions."
+  ]
 }

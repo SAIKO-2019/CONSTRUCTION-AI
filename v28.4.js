@@ -9,7 +9,7 @@
     {key:'Overhead',label:'Overhead Cost',icon:'⌂',note:'Project overhead, site expenses and indirect costs'}
   ];
 
-  let level='projects'; // projects | costs | ledger
+  let level='costs'; // costs | ledger; project comes from Active Project Folder
   let browserProjectId='';
   let selectedCategory='';
 
@@ -71,10 +71,7 @@
     if(!host)return;
     const pid=selectedPid(),p=project(pid);
 
-    let out=`<button type="button" data-inventory-level="projects">Projects</button>`;
-    if(level==='costs'||level==='ledger'){
-      out+=`<span>›</span><button type="button" data-inventory-level="costs">${esc(p?.project_name||'Project')}</button>`;
-    }
+    let out=`<button type="button" data-inventory-level="costs">${esc(p?.project_name||'Active Project')}</button>`;
     if(level==='ledger'){
       const label=selectedCategory==='Legacy'?'Other Existing Costs':(PRIMARY.find(c=>c.key===selectedCategory)?.label||selectedCategory);
       out+=`<span>›</span><strong>${esc(label)}</strong>`;
@@ -82,7 +79,7 @@
     host.innerHTML=out;
 
     const back=$('inventoryBackBtn');
-    if(back)back.hidden=level==='projects';
+    if(back)back.hidden=level!=='ledger';
   }
 
   function renderProjectFolders(){
@@ -234,14 +231,20 @@
     const ledger=$('inventoryLedgerArea');
     const add=$('addInventoryRowBtn');
 
-    if(projects)projects.hidden=level!=='projects';
+    // Active Project Folder already selects the project globally.
+    if(projects)projects.hidden=true;
     if(costs)costs.hidden=level!=='costs';
     if(ledger)ledger.hidden=level!=='ledger';
 
     if(add){
-      const canAdd=level==='ledger' && selectedCategory && selectedCategory!=='Legacy';
-      add.disabled=!canAdd;
-      add.title=canAdd?'Add a row to this cost folder':'Open Materials, Labor or Overhead Cost first';
+      const pid=selectedPid();
+      add.hidden=false;
+      add.disabled=!pid;
+      add.title=!pid
+        ? 'Select an Active Project Folder first'
+        : (level==='ledger'&&selectedCategory&&selectedCategory!=='Legacy'
+            ? 'Add a row to this cost folder'
+            : 'Add a row to Materials, Labor or Overhead Cost');
     }
   }
 
@@ -274,8 +277,6 @@
     if(level==='ledger'){
       level='costs';
       selectedCategory='';
-    }else if(level==='costs'){
-      level='projects';
     }
     renderBrowser();
   }
@@ -300,9 +301,7 @@
     $('inventoryBreadcrumb').addEventListener('click',e=>{
       const btn=e.target.closest('[data-inventory-level]');
       if(!btn)return;
-      if(btn.dataset.inventoryLevel==='projects'){
-        level='projects';selectedCategory='';
-      }else if(btn.dataset.inventoryLevel==='costs'){
+      if(btn.dataset.inventoryLevel==='projects'||btn.dataset.inventoryLevel==='costs'){
         level='costs';selectedCategory='';
       }
       renderBrowser();
@@ -324,15 +323,23 @@
   if($('addInventoryRowBtn')){
     $('addInventoryRowBtn').onclick=async()=>{
       const pid=selectedPid();
-      if(!pid)return alert('Select a project first.');
-      if(level!=='ledger'||!selectedCategory||selectedCategory==='Legacy'){
-        return alert('Open Materials, Labor or Overhead Cost first.');
+      if(!pid)return alert('Select an Active Project Folder first.');
+
+      let category=(level==='ledger'&&selectedCategory&&selectedCategory!=='Legacy')?selectedCategory:'';
+      if(!category){
+        const raw=prompt('Add row to which folder?\nType: Materials, Labor, or Overhead Cost','Materials');
+        if(!raw)return;
+        const key=String(raw).trim().toLowerCase();
+        if(key.startsWith('mat'))category='Materials';
+        else if(key.startsWith('lab'))category='Labor';
+        else if(key.startsWith('over'))category='Overhead';
+        else return alert('Use Materials, Labor, or Overhead Cost.');
       }
 
       const {error}=await sb.from('inventory_entries').insert({
         project_id:pid,
-        category:selectedCategory,
-        description:`New ${PRIMARY.find(c=>c.key===selectedCategory)?.label||selectedCategory} Row`,
+        category,
+        description:`New ${PRIMARY.find(c=>c.key===category)?.label||category} Row`,
         quantity:0,
         unit_cost:0,
         total_amount:0,
@@ -344,9 +351,10 @@
       if(error)return alert(error.message);
 
       await refreshAll();
+      selectedCategory=category;
       level='ledger';
       renderBrowser();
-      if(typeof toast==='function')toast(`${PRIMARY.find(c=>c.key===selectedCategory)?.label||selectedCategory} row added.`);
+      if(typeof toast==='function')toast(`${PRIMARY.find(c=>c.key===category)?.label||category} row added.`);
     };
   }
 
@@ -378,13 +386,12 @@
   window.renderInventory=function(){
     // Detect a project change made from the global Project Folder selector.
     const pid=$('inventoryProject')?.value||$('workspaceProject')?.value||'';
-    if(pid && browserProjectId && String(pid)!==String(browserProjectId)){
+    if(pid && (!browserProjectId || String(pid)!==String(browserProjectId))){
       browserProjectId=pid;
       selectedCategory='';
       level='costs';
-    }else if(pid && !browserProjectId){
-      browserProjectId=pid;
     }
+    if(pid && level==='projects')level='costs';
 
     if(level==='ledger')renderLedger();
     else renderBrowser();
@@ -396,8 +403,9 @@
   window.show=function(id){
     const out=priorShow(id);
     if(id==='inventory'){
-      if(!browserProjectId){
-        level='projects';
+      browserProjectId=$('workspaceProject')?.value||$('inventoryProject')?.value||browserProjectId||'';
+      if(level!=='ledger'){
+        level='costs';
         selectedCategory='';
       }
       renderBrowser();
@@ -410,7 +418,8 @@
   window.openInventoryCostFolder=openFolder;
 
   setTimeout(()=>{
-    if($('inventoryProject')?.value)browserProjectId=$('inventoryProject').value;
+    browserProjectId=$('workspaceProject')?.value||$('inventoryProject')?.value||browserProjectId||'';
+    if(browserProjectId&&level==='projects')level='costs';
     renderBrowser();
   },700);
 })();

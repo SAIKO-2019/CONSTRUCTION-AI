@@ -5447,3 +5447,573 @@ dialog label:has(#iProject){
     border-right:0!important;
   }
 }
+
+
+/* =========================================================
+   CONSTRUCTION MONITORING v28.22
+   EXACT WORKBOOK BUDGET TRACKER + COLLECTION FORMULAS
+   ========================================================= */
+
+/* Remove the highlighted "ONE PROJECT SOURCE" badge everywhere. */
+.workspace-project::after{
+  display:none!important;
+  content:none!important;
+}
+
+/* One project only: no second Inventory project browser. */
+#inventoryProjectFolders{
+  display:none!important;
+}
+#addInventoryRowBtn{
+  display:inline-flex!important;
+}
+
+/* The old Budget Monitoring widgets stay in DOM only for compatibility. */
+#budget > #budgetKPIs,
+#budget > .dashboard-grid,
+#budget > .budget-tracker-panel,
+#budget > .toolbar.panel:has(#budgetProject){
+  display:none!important;
+}
+
+.budget-excel-replica{
+  width:100%;
+  overflow:auto;
+}
+.excel-budget-sheet{
+  min-width:1440px;
+  padding:14px;
+  border:1px solid #6f6f6f;
+  background:#f4f4f4;
+  color:#111;
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:11px;
+}
+.excel-budget-sheet input,
+.excel-budget-sheet select{
+  font:inherit;
+  color:#111!important;
+  -webkit-text-fill-color:#111!important;
+}
+.excel-budget-header{
+  display:grid;
+  grid-template-columns:280px 1fr 1fr 220px 220px;
+  gap:12px;
+  align-items:start;
+  min-height:92px;
+  padding:14px;
+  border:1px solid #222;
+  background:#fff;
+}
+.excel-title{
+  font-size:24px;
+  font-weight:800;
+  line-height:1.05;
+}
+.excel-meta-grid{
+  display:grid;
+  gap:7px;
+}
+.excel-meta-grid label,
+.excel-hide-empty{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:8px;
+  align-items:center;
+  font-weight:700;
+  white-space:nowrap;
+}
+.excel-meta-grid input,
+.excel-hide-empty input{
+  min-width:0;
+  border:0!important;
+  border-bottom:1px solid #777!important;
+  background:transparent!important;
+  padding:2px 4px;
+  outline:none;
+  box-shadow:none!important;
+}
+.excel-hide-empty{
+  align-self:center;
+  padding:7px 9px;
+  border:1px solid #555;
+  background:#d9eaf7;
+}
+.excel-hide-empty input{
+  width:18px;
+}
+.excel-example{
+  font-weight:700;
+  font-size:10px;
+}
+.excel-example strong{
+  display:block;
+  margin-top:6px;
+  color:#3457ff;
+  text-decoration:underline;
+}
+
+.excel-top-grid{
+  display:grid;
+  grid-template-columns:34% 23% 17% 26%;
+  gap:14px;
+  margin-top:18px;
+}
+.excel-projected-box,
+.excel-chart-card,
+.excel-finance-box,
+.excel-project-summary-box,
+.excel-profit-box{
+  border:1px solid #222;
+  background:#fff;
+}
+.excel-green-title,
+.excel-yellow-title{
+  text-align:center;
+  font-weight:900;
+  padding:3px 8px;
+}
+.excel-green-title{background:#dcefd9}
+.excel-yellow-title{background:#ffea00}
+.excel-breakdown-two{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+  padding:8px 12px 16px;
+  min-height:290px;
+}
+.excel-breakdown-two h4{
+  text-align:center;
+  margin:0 0 7px;
+}
+.excel-breakdown-two>div>div{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:2px 0;
+}
+.excel-breakdown-two span{font-style:italic}
+
+.excel-chart-stack,
+.excel-financial-stack{
+  display:grid;
+  gap:18px;
+}
+.excel-chart-card{
+  min-height:140px;
+  padding:12px;
+}
+.excel-chart-card h3{
+  text-align:center;
+  margin:0 0 8px;
+  font-size:16px!important;
+  color:#111!important;
+}
+.excel-donut-wrap{
+  display:grid;
+  grid-template-columns:110px 1fr;
+  gap:12px;
+  align-items:center;
+  justify-content:center;
+}
+.excel-donut{
+  width:102px;
+  height:102px;
+  border-radius:50%;
+  position:relative;
+}
+.excel-donut i{
+  position:absolute;
+  inset:28px;
+  border-radius:50%;
+  background:#fff;
+}
+.excel-donut-legend{
+  display:grid;
+  gap:4px;
+}
+.excel-donut-legend span{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:8px;
+}
+.excel-donut-legend i{
+  width:8px;
+  height:8px;
+  display:inline-block;
+}
+.excel-donut-empty{
+  min-height:90px;
+  display:grid;
+  place-items:center;
+  color:#777;
+}
+
+.excel-finance-box{
+  padding:10px 12px;
+}
+.excel-finance-box>div,
+.excel-project-summary-box>div{
+  display:grid;
+  grid-template-columns:1fr 120px;
+  gap:10px;
+  align-items:center;
+  min-height:24px;
+}
+.excel-finance-box>div span,
+.excel-project-summary-box>div span{
+  text-align:right;
+  font-style:italic;
+}
+.excel-finance-box strong,
+.excel-project-summary-box strong{
+  color:#111!important;
+  white-space:nowrap;
+}
+.excel-finance-box .strong span{
+  font-weight:900;
+  text-decoration:underline;
+}
+.excel-finance-box input{
+  width:100%;
+  padding:3px 5px;
+  border:1px solid #777!important;
+  text-align:right;
+}
+.excel-blue-input input{background:#dcecf8!important}
+.excel-yellow-result{background:#ffea00}
+.excel-yellow-result span{
+  color:red;
+  font-weight:900;
+}
+.excel-yellow-result strong{font-size:14px!important}
+.excel-project-summary-box{
+  padding:8px 12px 10px;
+}
+.excel-project-summary-box h4{
+  margin:0 0 5px;
+  text-align:center;
+  font-style:italic;
+}
+.excel-profit-box table{
+  width:100%;
+  border-collapse:collapse;
+}
+.excel-profit-box th,
+.excel-profit-box td{
+  padding:4px 7px;
+  border:0!important;
+  background:#fff!important;
+  color:#111!important;
+  font-size:9px!important;
+}
+.excel-profit-box td:nth-child(n+2){text-align:right}
+
+.excel-pos{color:#18a63c!important}
+.excel-neg{color:#d52727!important}
+
+/* Collection section */
+.excel-collection-section{
+  margin-top:18px;
+  border:1px solid #222;
+  background:#fff;
+}
+.excel-collection-head{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  padding:12px 14px;
+  border-bottom:1px solid #222;
+  background:#eef3f8;
+}
+.excel-collection-head>div:first-child>span{
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.12em;
+}
+.excel-collection-head h3{
+  margin:3px 0;
+  color:#111!important;
+  font-size:15px!important;
+}
+.excel-collection-head p{
+  margin:0;
+  color:#555;
+  font-size:8px;
+}
+.excel-collection-contract{
+  text-align:right;
+  font-size:8px;
+  font-weight:700;
+}
+.excel-collection-contract strong{
+  display:block;
+  margin-top:4px;
+  color:#111!important;
+  font-size:16px!important;
+}
+.excel-collection-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr .9fr;
+  gap:12px;
+  padding:12px;
+}
+.excel-collection-card,
+.excel-collection-pie-card{
+  border:1px solid #888;
+  background:#fff;
+  padding:10px 12px;
+}
+.excel-collection-card h4,
+.excel-collection-pie-card h4{
+  margin:0 0 8px;
+  text-align:center;
+  color:#111!important;
+  font-size:10px!important;
+  background:#dcefd9;
+  padding:5px;
+}
+.excel-collection-card.total h4{
+  background:#ffef9a;
+}
+.excel-collection-card>div{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  min-height:25px;
+  align-items:center;
+  border-bottom:1px dotted #bbb;
+}
+.excel-collection-card span{
+  font-size:8.5px;
+}
+.excel-collection-card strong{
+  color:#111!important;
+  font-size:9px!important;
+}
+.excel-collection-card .formula-result{
+  background:#edf5fb;
+  padding:0 5px;
+}
+.excel-collection-card .grand{
+  margin-top:5px;
+  padding:6px;
+  border:1px solid #222;
+  background:#fff3a6;
+}
+.excel-collection-card .grand strong{
+  font-size:13px!important;
+}
+.contract-cap-note{
+  display:block;
+  margin-top:5px;
+  color:#b91c1c!important;
+  font-size:8px!important;
+}
+.collect-pie-wrap{
+  display:grid;
+  grid-template-columns:150px 1fr;
+  gap:12px;
+  align-items:center;
+}
+.collect-pie{
+  width:145px;
+  height:145px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  position:relative;
+}
+.collect-pie::after{
+  content:"";
+  position:absolute;
+  inset:30px;
+  background:#fff;
+  border-radius:50%;
+}
+.collect-pie>div{
+  position:relative;
+  z-index:1;
+  width:90px;
+  text-align:center;
+}
+.collect-pie strong{
+  display:block;
+  color:#111!important;
+  font-size:10px!important;
+}
+.collect-pie span{
+  display:block;
+  margin-top:3px;
+  color:#555;
+  font-size:7px;
+}
+.collect-pie.zero{
+  background:#e5e7eb;
+}
+.collect-pie-legend{
+  display:grid;
+  gap:8px;
+}
+.collect-pie-legend>div{
+  display:grid;
+  grid-template-columns:10px 1fr auto;
+  gap:5px;
+  align-items:center;
+}
+.collect-pie-legend i{
+  width:9px;height:9px;display:block;
+}
+.collect-pie-legend .unpaid{background:#F3C94B}
+.collect-pie-legend .future{background:#6AA1F2}
+.collect-pie-legend span{
+  font-size:8px;
+}
+.collect-pie-legend strong{
+  color:#111!important;
+  font-size:8px!important;
+}
+.excel-collection-mini{
+  display:grid;
+  gap:5px;
+  margin-top:10px;
+}
+.excel-collection-mini span{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  font-size:8px;
+}
+.excel-collection-mini strong{
+  color:#111!important;
+}
+
+/* Main workbook table */
+.excel-main-table-wrap{margin-top:18px}
+.excel-sheet-toolbar{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:8px;
+  border:1px solid #222;
+  border-bottom:0;
+  background:#fff;
+}
+.excel-sheet-toolbar span{
+  margin-left:auto;
+  max-width:760px;
+  color:#555;
+  font-size:8px;
+}
+.excel-main-table{
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+  background:#fff;
+}
+.excel-main-table th,
+.excel-main-table td{
+  border:1px solid #222!important;
+  background:#fff!important;
+  color:#111!important;
+  padding:0;
+  vertical-align:middle;
+  font-size:9px!important;
+}
+.excel-main-table thead th{
+  height:26px;
+  text-align:center;
+  font-weight:900;
+}
+.excel-main-table .excel-input-hint th{
+  height:18px;
+  font-size:8px!important;
+  font-style:italic;
+  background:#ececec!important;
+}
+.excel-main-table th:nth-child(1){width:19%}
+.excel-main-table th:nth-child(2){width:10%}
+.excel-main-table th:nth-child(3){width:6%}
+.excel-main-table th:nth-child(4){width:5%}
+.excel-main-table th:nth-child(5){width:8%}
+.excel-main-table th:nth-child(6){width:9%}
+.excel-main-table th:nth-child(7){width:7%}
+.excel-main-table th:nth-child(8){width:8%}
+.excel-main-table th:nth-child(9){width:10%}
+.excel-main-table th:nth-child(10){width:10%}
+.excel-main-table th:nth-child(11){width:9%}
+.excel-main-table th:nth-child(12){width:8%}
+
+.excel-phase-total-row td{
+  height:26px;
+  font-weight:900;
+  border-top:2px solid #111!important;
+}
+.excel-phase-name{
+  width:100%;
+  border:0!important;
+  background:transparent!important;
+  padding:4px 6px;
+  font-weight:900;
+  text-transform:uppercase;
+  box-shadow:none!important;
+}
+.excel-phase-total-label{text-align:right}
+.excel-row-input,
+.excel-edit-cell{
+  width:100%;
+  min-width:0;
+  border:0!important;
+  background:transparent!important;
+  padding:5px 6px;
+  outline:none;
+  box-shadow:none!important;
+}
+.excel-row-input:focus,
+.excel-edit-cell:focus{background:#fff7c2!important}
+.excel-auto-cell{
+  padding:5px 6px!important;
+  text-align:right;
+}
+.excel-actual-input{text-align:right}
+.excel-source-note{
+  display:block;
+  padding:0 5px 3px;
+  color:#6a6a6a!important;
+  font-size:7px!important;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.excel-phase-add-row td{border-top:0!important}
+.excel-add-task{
+  width:100%;
+  min-height:22px;
+  border:0;
+  background:#f6f6f6;
+  color:#555;
+  font-size:8px;
+  cursor:pointer;
+}
+.excel-add-task:hover{background:#e7f1e6;color:#111}
+.excel-system-phase td{background:#f3f3f3!important}
+
+/* Keep workbook readable regardless of selected application theme. */
+html[data-theme] .excel-budget-sheet,
+html[data-theme] .excel-budget-sheet *{
+  --heading:#111;
+}
+html[data-theme] .excel-budget-sheet table td strong,
+html[data-theme] .excel-budget-sheet table td span,
+html[data-theme] .excel-budget-sheet table td small{
+  color:inherit!important;
+}
+
+@media(max-width:1050px){
+  .excel-collection-grid{grid-template-columns:1fr 1fr}
+  .excel-collection-pie-card{grid-column:1 / -1}
+}
+@media(max-width:900px){
+  .excel-budget-sheet{min-width:1180px}
+}

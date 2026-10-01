@@ -1,5 +1,5 @@
 {
-  "version": "28.21",
-  "label": "Construction Monitoring v28.21",
-  "message": "Budget Monitoring is now a per-project Budget & Cost Tracker modeled after the uploaded workbook. It combines BOQ projected cost, Inventory/Purchases actual cost, Subcon Issued Amount actual cost, over/under, profit, category breakdowns, Subcon billing details and the full inventory ledger."
+  "version": "28.22",
+  "label": "Construction Monitoring v28.22",
+  "message": "Budget Monitoring now mirrors the uploaded Construction Budget & Cost Tracker workbook: same summary structure, projected breakdowns, profit by phase, editable task rows and formulas. It also adds contract-capped Next Billing / Total Need-to-Collect formulas with a dedicated pie chart, restores Inventory Add Row, and removes the ONE PROJECT SOURCE badge."
 }
