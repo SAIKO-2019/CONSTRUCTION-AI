@@ -1,5 +1,5 @@
 {
-  "version": "28.20",
-  "label": "Construction Monitoring v28.20",
-  "message": "Subcon Edit now exposes all user-entered row information in one dialog: billing/VO number, subcontractor, gross amount, request date, retention, recoupment and Encoded By, plus editable dated Issued/Paid history. Derived Billing %, Net Due, Outstanding and Status remain automatic."
+  "version": "28.21",
+  "label": "Construction Monitoring v28.21",
+  "message": "Budget Monitoring is now a per-project Budget & Cost Tracker modeled after the uploaded workbook. It combines BOQ projected cost, Inventory/Purchases actual cost, Subcon Issued Amount actual cost, over/under, profit, category breakdowns, Subcon billing details and the full inventory ledger."
 }

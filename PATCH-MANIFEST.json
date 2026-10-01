@@ -1,47 +1,29 @@
 {
-  "from": "v28.19",
-  "to": "v28.20",
+  "from": "v28.20",
+  "to": "v28.21",
   "type": "patch-only",
-  "purpose": "Make all user-entered Subcon row information editable from the row Edit dialog.",
+  "purpose": "Budget Monitoring redesigned to follow the uploaded Budget & Cost Tracker workbook structure.",
   "upload_overwrite_only": [
-    "v23.2.js",
-    "v28.19.js",
+    "v28.21.js",
     "styles.css",
     "index.html",
     "patch-version.json",
     "patch-watch.js",
     "patch-gate.js",
     "api/system-version.js",
-    "v28.20-subcon-full-row-edit-release.sql"
+    "v28.21-budget-cost-tracker-release.sql"
   ],
   "delete_files": [],
-  "editable_in_subcon_row": [
-    "Billing / VO No.",
-    "Record Type",
-    "Subcontractor / Payee",
-    "Gross Billing Amount",
-    "Date Request",
-    "Retention toggle and %",
-    "Recoupment toggle and %",
-    "Encoded By",
-    "Each Issued/Paid amount",
-    "Each Issued/Paid date",
-    "Each payment reference"
+  "actual_cost_rule": "Total Actual Cost = Inventory/Purchases total_amount + Subcon Billing received_amount (Issued/Paid).",
+  "budget_sections": [
+    "Project Summary",
+    "Projected Cost Breakdown by Category",
+    "Actual Cost Breakdown by Category",
+    "Projected vs Actual Category Table",
+    "Scope/Task Cost Table from BOQ + linked Inventory",
+    "Subcon Billing & Issued Amount Report",
+    "Inventory/Purchases Cost Ledger"
   ],
-  "automatic_not_manual": [
-    "Billing % = Gross / Subcon Contract",
-    "Retention amount",
-    "Recoupment amount",
-    "Net Due",
-    "Received/Paid total",
-    "Outstanding",
-    "Date Paid based on payments",
-    "Status"
-  ],
-  "system_locked": [
-    "Active Project Folder",
-    "Billing Type = Subcontractor Billing",
-    "GenCon\u2194Subcon source link"
-  ],
-  "after_upload": "Wait for Vercel Ready, then run v28.20-subcon-full-row-edit-release.sql once."
+  "live_sync": "Uses existing realtime caches for BOQ, inventory_entries, billings and payments. No new polling timer.",
+  "after_upload": "Wait for Vercel Ready, then run v28.21-budget-cost-tracker-release.sql once."
 }

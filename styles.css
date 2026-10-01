@@ -5222,3 +5222,228 @@ dialog label:has(#iProject){
     flex-direction:column;
   }
 }
+
+
+/* =========================================================
+   CONSTRUCTION MONITORING v28.21
+   BUDGET & COST TRACKER — workbook-style live report
+   ========================================================= */
+.budget-tracker-panel{
+  overflow:hidden;
+}
+.budget-tracker-workbook{
+  display:grid;
+  gap:16px;
+  padding:14px;
+}
+.tracker-project-summary,
+.tracker-section{
+  border:1px solid var(--line);
+  border-radius:14px;
+  overflow:hidden;
+  background:color-mix(in srgb,var(--surface) 96%,transparent);
+}
+.tracker-summary-title,
+.tracker-section-head{
+  padding:13px 14px;
+  border-bottom:1px solid var(--line);
+  background:color-mix(in srgb,var(--surface-soft) 95%,transparent);
+}
+.tracker-summary-title span,
+.tracker-section-head>div>span{
+  display:block;
+  color:var(--muted);
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.14em;
+}
+.tracker-summary-title h2,
+.tracker-section-head h3{
+  margin:4px 0 0;
+  color:var(--heading,var(--text))!important;
+}
+.tracker-section-head p{
+  margin:4px 0 0;
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.45;
+}
+.tracker-summary-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:0;
+}
+.tracker-summary-grid>div{
+  min-height:78px;
+  padding:12px;
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.tracker-summary-grid>div:nth-child(4n){
+  border-right:0;
+}
+.tracker-summary-grid span{
+  display:block;
+  color:var(--muted);
+  font-size:8px;
+}
+.tracker-summary-grid strong{
+  display:block;
+  margin-top:6px;
+  color:var(--heading,var(--text))!important;
+  font-size:14px!important;
+}
+.tracker-summary-grid small{
+  display:block;
+  margin-top:3px;
+  color:var(--muted)!important;
+  font-size:7.5px!important;
+}
+.tracker-positive strong,
+.tracker-positive{
+  color:var(--green,#15803d)!important;
+}
+.tracker-negative strong,
+.tracker-negative{
+  color:var(--red,#dc2626)!important;
+}
+
+.tracker-table{
+  width:100%;
+  min-width:1100px;
+  border-collapse:collapse;
+}
+.tracker-table th{
+  font-size:8px!important;
+  white-space:nowrap;
+}
+.tracker-table td{
+  font-size:8.5px!important;
+  vertical-align:top;
+}
+.tracker-table td strong{
+  font-size:9px!important;
+}
+.task-cost-table{min-width:1320px}
+.subcon-cost-table{min-width:1380px}
+.inventory-cost-table{min-width:1450px}
+.tracker-unlinked-row td{
+  background:color-mix(in srgb,var(--surface-soft) 90%,transparent)!important;
+}
+.tracker-source-pill{
+  display:inline-flex;
+  padding:3px 6px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:var(--surface-soft);
+  color:var(--muted);
+  font-size:7px;
+  white-space:nowrap;
+}
+
+.tracker-subcon-summary,
+.tracker-inventory-summary{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  padding:12px;
+}
+.tracker-subcon-summary>div,
+.tracker-inventory-summary>div{
+  padding:10px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:var(--surface-soft);
+}
+.tracker-subcon-summary>div.accent{
+  border-color:color-mix(in srgb,var(--blue) 48%,var(--line));
+}
+.tracker-subcon-summary span,
+.tracker-inventory-summary span{
+  display:block;
+  color:var(--muted);
+  font-size:8px;
+}
+.tracker-subcon-summary strong,
+.tracker-inventory-summary strong{
+  display:block;
+  margin-top:4px;
+  color:var(--heading,var(--text))!important;
+  font-size:11px!important;
+}
+
+.tracker-breakdown-list{
+  display:grid;
+  gap:10px;
+  padding:4px;
+}
+.tracker-breakdown-row>div:first-child{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:5px;
+}
+.tracker-breakdown-row span{
+  color:var(--text);
+  font-size:8.5px;
+}
+.tracker-breakdown-row strong{
+  color:var(--heading,var(--text))!important;
+  font-size:9px!important;
+}
+.tracker-breakdown-row small{
+  display:block;
+  margin-top:3px;
+  color:var(--muted)!important;
+  font-size:7.5px!important;
+}
+.tracker-breakdown-track{
+  height:8px;
+  overflow:hidden;
+  border-radius:999px;
+  background:var(--surface-soft);
+  border:1px solid var(--line);
+}
+.tracker-breakdown-track i{
+  display:block;
+  height:100%;
+  border-radius:inherit;
+  background:var(--chart-planned,var(--blue));
+}
+.tracker-breakdown-track.actual i{
+  background:var(--chart-actual,var(--green));
+}
+
+/* v28.19 separate report is superseded by this integrated tracker. */
+.subcon-budget-report{
+  display:none!important;
+}
+
+@media(max-width:1100px){
+  .tracker-summary-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+  .tracker-summary-grid>div:nth-child(4n){
+    border-right:1px solid var(--line);
+  }
+  .tracker-summary-grid>div:nth-child(3n){
+    border-right:0;
+  }
+}
+@media(max-width:760px){
+  .tracker-summary-grid,
+  .tracker-subcon-summary,
+  .tracker-inventory-summary{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+@media(max-width:520px){
+  .tracker-summary-grid,
+  .tracker-subcon-summary,
+  .tracker-inventory-summary{
+    grid-template-columns:1fr;
+  }
+  .tracker-summary-grid>div{
+    border-right:0!important;
+  }
+}
