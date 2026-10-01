@@ -5060,3 +5060,87 @@ dialog label:has(#iProject){
 @media(max-width:900px){
   .workspace-project::after{display:none}
 }
+
+
+/* =========================================================
+   CONSTRUCTION MONITORING v28.19
+   AUTO-MIRRORED SUBCON BILLING + BUDGET REPORT
+   ========================================================= */
+
+/* Old linked allocation UI is superseded by real auto-mirrored Subcon billing rows. */
+#linkedSubconPanel{
+  display:none!important;
+}
+
+.subcon-budget-report{
+  margin-top:18px;
+  padding:14px;
+  border-top:1px solid var(--line);
+}
+.subcon-budget-report-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:14px;
+  margin-bottom:12px;
+}
+.subcon-budget-report-head>div>span{
+  display:block;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.14em;
+  color:var(--muted);
+}
+.subcon-budget-report-head h3{
+  margin:4px 0 3px;
+  color:var(--heading,var(--text))!important;
+}
+.subcon-budget-report-head p{
+  margin:0;
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.45;
+}
+.subcon-budget-summary{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  margin-bottom:12px;
+}
+.subcon-budget-summary>div{
+  padding:10px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:color-mix(in srgb,var(--surface-soft) 94%,transparent);
+}
+.subcon-budget-summary>div.accent{
+  border-color:color-mix(in srgb,var(--blue) 48%,var(--line));
+}
+.subcon-budget-summary span,
+.subcon-budget-summary small{
+  display:block;
+  color:var(--muted);
+  font-size:8px;
+}
+.subcon-budget-summary strong{
+  display:block;
+  margin:4px 0 2px;
+  color:var(--heading,var(--text))!important;
+  font-size:11px!important;
+}
+.subcon-budget-table{
+  min-width:1320px;
+}
+.subcon-budget-table th{
+  white-space:nowrap;
+}
+.subcon-budget-table td small{
+  color:var(--muted)!important;
+  font-size:8px!important;
+}
+@media(max-width:1000px){
+  .subcon-budget-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:620px){
+  .subcon-budget-summary{grid-template-columns:1fr}
+}

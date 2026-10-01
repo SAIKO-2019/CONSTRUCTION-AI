@@ -1,26 +1,33 @@
 {
-  "from": "v28.17",
-  "to": "v28.18",
+  "from": "v28.18",
+  "to": "v28.19",
   "type": "patch-only",
-  "purpose": "Use one Active Project Folder across the entire web app.",
   "upload_overwrite_only": [
-    "v23.7.js",
-    "v13.js",
+    "v23.8.js",
+    "v28.11.js",
+    "v28.19.js",
     "styles.css",
     "index.html",
     "patch-version.json",
     "patch-watch.js",
     "patch-gate.js",
     "api/system-version.js",
-    "v28.18-single-project-folder-release.sql"
+    "v28.19-auto-subcon-mirror.sql"
   ],
   "delete_files": [],
   "behavior": [
-    "Topbar Active Project Folder is the only visible project selector.",
-    "Billing, Projected, Actual, Inventory, Budget, Reports, Project Files and Smart Upload mirror the same project automatically.",
-    "Old per-module project memories are cleared so a hidden selector cannot restore a conflicting project.",
-    "Add Billing and Add Inventory forms also inherit the active project.",
-    "No database schema/data change."
+    "Every GenCon Client Billing automatically has one corresponding Subcontractor Billing row.",
+    "Existing GenCon rows are backfilled by SQL; no manual re-encoding of row structure.",
+    "Subcon row values remain manual: subcontractor, billing amount, retention, recoupment, then Add Issued Amount.",
+    "Subcon Billing % = Subcon Billing Amount / Subcon Contract Amount x 100.",
+    "Retention and Recoupment amounts are calculated from each Subcon billing amount.",
+    "Budget Monitoring gets the detailed live Subcon Billing report and remaining contract balance.",
+    "Old linked Subcon allocation panel is hidden but its stored data is not deleted."
   ],
-  "after_upload": "Wait for Vercel Ready, then run v28.18-single-project-folder-release.sql once."
+  "after_upload": [
+    "Upload/overwrite these files.",
+    "Wait for Vercel Ready.",
+    "Run v28.19-auto-subcon-mirror.sql once in Supabase SQL Editor.",
+    "The release gate will refresh other open accounts."
+  ]
 }

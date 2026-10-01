@@ -70,7 +70,7 @@
     // GenCon shows Client Billing rows; Subcon shows Subcontractor Billing rows.
     if($('billingKPIs'))$('billingKPIs').style.display='grid';
     if(tablePanel)tablePanel.style.display='';
-    if($('addBillingBtn'))$('addBillingBtn').style.display='';
+    if($('addBillingBtn'))$('addBillingBtn').style.display=party==='subcon'?'none':'';
     if($('subconCommercialSettings'))$('subconCommercialSettings').style.display='none';
 
     $('billingKPIs').innerHTML=(party==='gencon'
@@ -95,7 +95,7 @@
       <td>
         <strong>${b.billing_category==='Downpayment'?`Downpayment: ${esc(b.billing_no||'DP')}`:(b.variation_no?`VO: ${esc(b.variation_no)}`:`Billing: ${esc(b.billing_no||'—')}`)}</strong>
         ${b.billing_type==='Subcontractor Billing'
-          ? `<br><small>Issued: ${money(b.issued_amount||0)}${b.issued_date?` · ${esc(b.issued_date)}`:''}<br>Balance: ${money(b.subcontract_balance||0)}</small>`
+          ? `<br><small>${b.source_gencon_billing_id?'Auto-linked from GenCon · ':''}Issued: ${money(b.received_amount||0)}<br>Balance: ${money(b.outstanding_amount||0)}</small>`
           : ''}
       </td>
       <td>${pct(b.accomplishment_percent||0)}</td>
