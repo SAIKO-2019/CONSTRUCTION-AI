@@ -136,7 +136,7 @@
 
       close();
       await refreshAll();
-      renderBilling();
+      try{renderBilling()}catch(renderErr){console.warn('Billing post-Subcon-payment render:',renderErr)}
       if(typeof toast==='function')toast(paymentId?'Subcon payment updated.':'Subcon payment added.');
     }catch(err){
       alert(err?.message||'Could not save Subcon payment.');

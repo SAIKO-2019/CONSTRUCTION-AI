@@ -131,6 +131,15 @@
     const panel=$('billingForecastPanel');
     if(!panel)return;
 
+    // v28.11 owns the unified Billing panel after its first render.
+    // Once that renderer replaces the old v28.8 child nodes, do not try
+    // to write to retired IDs such as billingForecastBadge/Summary again.
+    // This prevents: Cannot set properties of null (setting 'textContent').
+    if(!$('billingForecastBadge') || !$('billingForecastSummary') ||
+       !$('billingRemainingBreakdown') || !$('billingNextBreakdown')){
+      return;
+    }
+
     let party='gencon';
     try{party=localStorage.getItem('saiko_billing_party_folder')||'gencon'}catch(_){}
     if(party==='subcon'){
