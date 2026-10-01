@@ -6102,3 +6102,13 @@ html[data-theme] .excel-budget-sheet table td small{
   font-size:7px!important;
   font-style:italic;
 }
+
+
+/* CONSTRUCTION MONITORING v28.28 */
+#billingAddRowBtn{display:none!important}
+#addBillingBtn{white-space:nowrap}
+
+/* Keep browser scroll anchoring enabled instead of forcing page jumps. */
+html,body,.app-shell,.main-shell,.view{
+  overflow-anchor:auto;
+}

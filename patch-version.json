@@ -1,5 +1,5 @@
 {
-  "version": "28.25",
-  "label": "Construction Monitoring v28.25",
-  "message": "Budget collection/retention fix: per-project historical billed accomplishment baseline is supported, Melendrez is seeded at 47.25%, Retention/Recoupment remain per-project, and a permanent Add Row button is visible in both GenCon and Subcon billing tables."
+  "version": "28.28",
+  "label": "Construction Monitoring v28.28",
+  "message": "Billing rows are naturally ascending in every project's GenCon and Subcon folders; viewport/table scroll position is preserved during refreshes and realtime rerenders; one top Add Row button remains; Billing Need-to-Collect KPI is removed; collection formulas stay contract-capped."
 }

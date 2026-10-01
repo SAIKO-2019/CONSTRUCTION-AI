@@ -17,6 +17,39 @@
   function isGenconRow(b){return b.billing_type!=='Subcontractor Billing'}
   function isSubconRow(b){return b.billing_type==='Subcontractor Billing'}
 
+  // v28.28: natural ascending order for every project's GenCon/Subcon folder.
+  // Downpayment first, then Billing No.1, No.2, No.3..., then VO No.1...
+  function naturalNumber(value){
+    const m=String(value||'').match(/-?\d+(?:\.\d+)?/);
+    return m?Number(m[0]):Number.POSITIVE_INFINITY;
+  }
+  function billingKindRank(b){
+    const cat=String(b.billing_category||'').trim().toLowerCase();
+    const label=[b.billing_no,b.variation_no,b.billing_category].filter(Boolean).join(' ').toLowerCase();
+    if(cat==='downpayment'||/(^|[^a-z])(down\s*payment|downpayment|dp)([^a-z]|$)/i.test(label))return 0;
+    if(String(b.variation_no||'').trim())return 2;
+    if(cat==='billing'||String(b.billing_no||'').trim())return 1;
+    return 3;
+  }
+  function compareBillingAsc(a,b){
+    const kind=billingKindRank(a)-billingKindRank(b);
+    if(kind)return kind;
+
+    const av=a.variation_no||a.billing_no||'';
+    const bv=b.variation_no||b.billing_no||'';
+    const an=naturalNumber(av),bn=naturalNumber(bv);
+    if(an!==bn)return an-bn;
+
+    const txt=String(av).localeCompare(String(bv),undefined,{numeric:true,sensitivity:'base'});
+    if(txt)return txt;
+
+    const ad=String(a.date_request||a.date_submitted||a.created_at||'');
+    const bd=String(b.date_request||b.date_submitted||b.created_at||'');
+    if(ad!==bd)return ad.localeCompare(bd);
+
+    return String(a.id||'').localeCompare(String(b.id||''));
+  }
+
   function totals(rows){
     const gross=rows.reduce((s,b)=>s+moneyN(b.gross_amount),0);
     const received=rows.reduce((s,b)=>s+moneyN(b.received_amount),0);
@@ -58,9 +91,13 @@
 
   // Override billing renderer with folder filtering, retaining all v23.2/v23.3 actions.
   renderBilling=function(){
+    const viewport=typeof window.captureStableViewportV2828==='function'
+      ? window.captureStableViewportV2828()
+      : {x:window.scrollX||0,y:window.scrollY||0};
+
     const all=currentRows();
-    const gen=all.filter(isGenconRow);
-    const sub=all.filter(isSubconRow);
+    const gen=all.filter(isGenconRow).slice().sort(compareBillingAsc);
+    const sub=all.filter(isSubconRow).slice().sort(compareBillingAsc);
     const rows=party==='subcon'?sub:gen;
     const t=totals(rows);
 
@@ -73,22 +110,10 @@
     if(tablePanel)tablePanel.style.display='';
     if($('addBillingBtn')){
       $('addBillingBtn').style.display='';
-      $('addBillingBtn').textContent=party==='subcon'?'+ Add Subcon Billing':'+ Add GenCon Billing';
+      $('addBillingBtn').textContent='+ Add Row';
       $('addBillingBtn').title=party==='subcon'
-        ? 'Add a manual Subcontractor Billing row for the Active Project Folder.'
-        : 'Add a Client Billing row. A matching blank Subcon row will also be created automatically.';
-    }
-
-    // v28.25: permanent Add Row button beside the Billing table.
-    // This stays visible even when the page header button is off-screen.
-    const tableAdd=$('billingAddRowBtn');
-    if(tableAdd){
-      tableAdd.style.display='';
-      tableAdd.textContent=party==='subcon'?'+ Add Subcon Row':'+ Add GenCon Row';
-      tableAdd.title=party==='subcon'
-        ? 'Add a Subcontractor Billing row.'
-        : 'Add a Client Billing row.';
-      tableAdd.onclick=()=>$('addBillingBtn')?.click();
+        ? 'Add a Subcontractor Billing row for the Active Project Folder.'
+        : 'Add a Client Billing row for the Active Project Folder. A matching blank Subcon row is created automatically.';
     }
 
     if($('subconCommercialSettings'))$('subconCommercialSettings').style.display='none';
@@ -141,6 +166,10 @@
     bulkUI('billing',selectedBillingIds,rows);
 
     if(party==='subcon' && typeof renderBillingCommercialSettings==='function')renderBillingCommercialSettings();
+
+    if(typeof window.restoreStableViewportV2828==='function'){
+      window.restoreStableViewportV2828(viewport);
+    }
   };
 
   // Force Add Billing default type based on current folder.

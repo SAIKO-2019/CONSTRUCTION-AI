@@ -34,6 +34,45 @@
     'saiko_project_smart'
   ];
 
+  // v28.28: keep the user's exact viewport during data refreshes/rerenders.
+  // No polling and no MutationObserver.
+  function captureViewport(){
+    const active=document.querySelector('.view.active-view');
+    const scrollers=[];
+    if(active){
+      active.querySelectorAll('.table-wrap, .inventory-table-wrap, .quotation-table-wrap, .chart-box').forEach((el,i)=>{
+        if(el.scrollTop||el.scrollLeft){
+          scrollers.push({el,top:el.scrollTop,left:el.scrollLeft,i});
+        }
+      });
+    }
+    return {
+      x:window.scrollX||0,
+      y:window.scrollY||0,
+      scrollers
+    };
+  }
+
+  function restoreViewport(state){
+    if(!state)return;
+    const apply=()=>{
+      window.scrollTo(state.x||0,state.y||0);
+      (state.scrollers||[]).forEach(s=>{
+        if(!s.el?.isConnected)return;
+        s.el.scrollTop=s.top||0;
+        s.el.scrollLeft=s.left||0;
+      });
+    };
+    // Restore after the immediate DOM update and once more after layout settles.
+    requestAnimationFrame(()=>{
+      apply();
+      requestAnimationFrame(apply);
+    });
+  }
+
+  window.captureStableViewportV2828=captureViewport;
+  window.restoreStableViewportV2828=restoreViewport;
+
   function validProject(id){
     return !!(id && (cache.projects||[]).some(p=>String(p.id)===String(id)));
   }
@@ -96,13 +135,18 @@
     const target=resolveProject(pid);
     if(!target)return '';
 
+    const viewport=rerender?captureViewport():null;
+
     const ws=$('workspaceProject');
     if(canSelect(ws,target))ws.value=target;
 
     mirrorProject(target);
     saveProject(target);
 
-    if(rerender)renderActiveModule();
+    if(rerender){
+      renderActiveModule();
+      restoreViewport(viewport);
+    }
     return target;
   }
 
@@ -132,18 +176,16 @@
   refreshAll=async function(){
     const before=resolveProject();
     const activeView=document.querySelector('.view.active-view')?.id||'';
-    const scrollY=window.scrollY||0;
+    const viewport=captureViewport();
 
     await baseRefresh();
 
     const target=applyProject(before,false);
 
-    // A few late modules repopulate their selectors during refresh; mirror once more
-    // after those options exist.
     requestAnimationFrame(()=>{
       mirrorProject(target);
       if(activeView && $(activeView))renderActiveModule();
-      window.scrollTo(0,scrollY);
+      restoreViewport(viewport);
     });
   };
 

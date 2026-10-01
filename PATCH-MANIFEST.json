@@ -1,30 +1,23 @@
 {
-  "from": "v28.23",
-  "to": "v28.25",
+  "base": "v28.25",
+  "to": "v28.28",
   "type": "CUMULATIVE PATCH ONLY",
-  "upload_overwrite_only": [
-    "v23.8.js",
-    "v28.22.js",
-    "styles.css",
-    "index.html",
-    "patch-version.json",
-    "patch-watch.js",
-    "patch-gate.js",
-    "api/system-version.js",
-    "v28.25-retention-baseline-billing-add-row.sql"
+  "note": "If v28.26/v28.27 were not uploaded, that is okay. Apply this directly over v28.25.",
+  "ascending_order": [
+    "Every GenCon folder: Downpayment, Billing No.1, No.2, No.3..., VO No.1, No.2...",
+    "Every Subcon folder uses the same ascending rule.",
+    "Sorting is display-only; database records are not renumbered or rewritten."
   ],
-  "delete_files": [],
-  "includes": [
-    "Per-project Retention % input",
-    "Per-project Recoupment % input",
-    "Separate Billed Retention, Unbilled Retention, Total Retention Need to Collect",
-    "Need-to-Collect pie chart",
-    "Retention-to-Collect pie chart",
-    "Billed accomplishment historical override per project",
-    "Melendrez historical baseline = 47.25%",
-    "Permanent + Add GenCon Row button in GenCon table",
-    "Permanent + Add Subcon Row button in Subcon table"
+  "viewport_lock": [
+    "Normal realtime/data refresh keeps the current vertical screen position.",
+    "Horizontal position inside wide tables is preserved.",
+    "Changing project keeps the current screen position instead of jumping to the top.",
+    "No MutationObserver and no recurring timer added."
   ],
-  "retention_rule": "Total Retention Need to Collect = Billed Retention Held + Unbilled Retention. It remains separate from Total Amount Need to Collect.",
-  "after_upload": "Wait for Vercel Ready, then run v28.25-retention-baseline-billing-add-row.sql once."
+  "billing_ui": [
+    "Only one + Add Row button at the top.",
+    "GenCon opens Client Billing; Subcon opens Subcontractor Billing.",
+    "Need to Collect KPI removed from Billing summary."
+  ],
+  "after_upload": "Wait for Vercel Ready, then run v28.28-ascending-viewport-lock.sql once."
 }

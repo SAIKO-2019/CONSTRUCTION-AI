@@ -236,29 +236,23 @@
     const dpAmountToIssue=linkedDP.reduce((s,b)=>s+Math.max(0,n(b.subcon_amount_to_issue)),0);
     const regularAmountToIssue=linkedRegular.reduce((s,b)=>s+Math.max(0,n(b.subcon_amount_to_issue)),0);
 
-    // v28.19: each Subcon billing consumes the subcontract based on its GROSS
-    // amount. Retention and recoupment are calculated from that same billing
-    // amount; Net Payable is Gross - Retention - Recoupment.
-    const grossBilled=actualBills.reduce((s,b)=>s+Math.max(0,n(b.gross_amount)),0);
-    const retention=actualBills.reduce((s,b)=>s+Math.max(0,n(b.retention_amount)),0);
-    const recoupment=actualBills.reduce((s,b)=>s+Math.max(0,n(b.recoupment_amount)),0);
-    const netPayable=actualBills.reduce((s,b)=>s+Math.max(0,n(b.net_due)),0);
-    const paidTotal=actualBills.reduce((s,b)=>s+Math.max(0,n(b.received_amount)),0);
-    const unpaidPayable=Math.max(0,netPayable-paidTotal);
+    const actualRetentionRates=actualBills
+      .map(b=>Math.max(0,n(b.retention_percent)))
+      .filter(Boolean);
+    const linkedRetentionRates=linked
+      .map(b=>Math.max(0,n(b.subcon_retention_percent)))
+      .filter(Boolean);
+    const retentionPct=actualRetentionRates.length
+      ? Math.max(...actualRetentionRates)
+      : (linkedRetentionRates.length?Math.max(...linkedRetentionRates):0);
 
-    const actualRetentionRates=actualBills.map(b=>Math.max(0,n(b.retention_percent))).filter(Boolean);
-    const retentionPct=actualRetentionRates.length?Math.max(...actualRetentionRates):0;
-
-    // Remaining contract balance is after all Subcon gross billings.
-    // The report separately shows the Retention + Recoupment breakdown.
-    const remaining=Math.max(0,contract-grossBilled);
-    const billedPercent=contract?grossBilled/contract*100:0;
+    const retention=contract*retentionPct/100;
+    const remaining=Math.max(0,contract-issuedDP-issuedAmount-retention);
     const plannedDPPercent=contract?dpAmountToIssue/contract*100:0;
     const paidDPPercent=contract?issuedDP/contract*100:0;
 
     return {
-      contract,issuedDP,issuedAmount,retentionPct,retention,recoupment,
-      grossBilled,netPayable,paidTotal,unpaidPayable,remaining,billedPercent,
+      contract,issuedDP,issuedAmount,retentionPct,retention,remaining,
       dpAmountToIssue,regularAmountToIssue,plannedDPPercent,paidDPPercent,
       scope:p.subcon_scope_caption||''
     };
@@ -341,9 +335,8 @@
         ['Down Payment Received',money(d.dpReceived)],
         ['Total Received',money(d.totalReceived)],
         ['Total Accomplishment',`${d.accumulated.toFixed(2)}%`],
-        ['Unpaid Amount',money(d.unpaid)],
-        ['Need to Collect',money(d.needToCollect)]
-      ].map(([a,b])=>`<div class="kpi ${a==='Need to Collect'?'financial-alert-kpi':''}"><span>${a}</span><strong>${b}</strong></div>`).join('');
+        ['Unpaid Amount',money(d.unpaid)]
+      ].map(([a,b])=>`<div class="kpi"><span>${a}</span><strong>${b}</strong></div>`).join('');
     }
 
     panel.innerHTML=`
@@ -455,13 +448,10 @@
           <section>
             <h3>Subcontractor</h3>
             <div><span>Subcontractor Amount</span><strong>${money(s.contract)}</strong></div>
-            <div><span>Gross Subcon Billed (${s.billedPercent.toFixed(2)}%)</span><strong>${money(s.grossBilled)}</strong></div>
-            <div><span>Retention</span><strong>${money(s.retention)}</strong></div>
-            <div><span>Recoupment</span><strong>${money(s.recoupment)}</strong></div>
-            <div><span>Net Payable</span><strong>${money(s.netPayable)}</strong></div>
-            <div><span>Issued / Paid</span><strong>${money(s.paidTotal)}</strong></div>
-            <div><span>Unpaid Payable</span><strong>${money(s.unpaidPayable)}</strong></div>
-            <div class="live-accent danger"><span>Remaining Contract Balance</span><strong>${money(s.remaining)}</strong></div>
+            <div><span>Issued Downpayment</span><strong>${money(s.issuedDP)}</strong></div>
+            <div><span>Issued Amount</span><strong>${money(s.issuedAmount)}</strong></div>
+            <div><span>Retention (${s.retentionPct.toFixed(2)}%)</span><strong>${money(s.retention)}</strong></div>
+            <div class="live-accent danger"><span>Remaining Balance</span><strong>${money(s.remaining)}</strong></div>
           </section>
 
           <section>

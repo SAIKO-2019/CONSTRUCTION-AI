@@ -67,69 +67,85 @@
 
   function collectionModel(contract,actualPct){
     const p=project()||{};
+    const safeContract=Math.max(0,n(contract));
+    const safeActualPct=clamp(actualPct);
     const rows=bills().filter(isClient);
     const regular=rows.filter(isRegularBilling);
     const nonDp=rows.filter(b=>!isDownpayment(b));
 
-    // Sum of billed accomplishment percentages, hard-capped at 100%.
-    // A per-project historical baseline can override the row sum when older
-    // billings were encoded before the current tracker.
-    const billedPctFromRows=clamp(regular.reduce((sum,b)=>sum+Math.max(0,n(b.accomplishment_percent)),0));
-    const billedOverride=(p.budget_billed_accomplishment_override==null || String(p.budget_billed_accomplishment_override)==='')
-      ? null
-      : clamp(p.budget_billed_accomplishment_override);
+    const billedPctFromRows=clamp(
+      regular.reduce((sum,b)=>sum+Math.max(0,n(b.accomplishment_percent)),0)
+    );
+    const billedOverride=
+      (p.budget_billed_accomplishment_override==null ||
+       String(p.budget_billed_accomplishment_override)==='')
+        ? null
+        : clamp(p.budget_billed_accomplishment_override);
     const billedPct=billedOverride==null?billedPctFromRows:billedOverride;
 
-    // Collection deductions are project settings, editable at the top
-    // of the Budget & Cost Tracker and persistent per Active Project Folder.
     const retPct=clamp(p.budget_retention_percent,0,100);
     const recPct=clamp(p.budget_recoupment_percent,0,100);
 
-    // NEXT BILLING:
-    // (Actual accomplishment - total billed accomplishment) x Contract
-    // less Retention and Recoupment.
-    const nextPct=clamp(actualPct-billedPct);
-    const nextGross=Math.max(0,contract*nextPct/100);
-    const nextRetention=nextGross*retPct/100;
-    const nextRecoupment=nextGross*recPct/100;
-    const nextNet=Math.min(contract,Math.max(0,nextGross-nextRetention-nextRecoupment));
+    const nextPct=clamp(safeActualPct-billedPct);
+    const nextGross=Math.min(safeContract,Math.max(0,safeContract*nextPct/100));
+    const nextRetention=Math.min(nextGross,Math.max(0,nextGross*retPct/100));
+    const afterNextRetention=Math.max(0,nextGross-nextRetention);
+    const nextRecoupment=Math.min(afterNextRetention,Math.max(0,nextGross*recPct/100));
+    const nextNet=Math.min(safeContract,Math.max(0,nextGross-nextRetention-nextRecoupment));
 
-    // TOTAL AMOUNT NEED TO COLLECT:
-    // (100% - Actual accomplishment) x Contract
-    // less Retention and Recoupment
-    // plus remaining unpaid existing billings.
-    const remainingPct=clamp(100-actualPct);
-    const remainingGross=Math.max(0,contract*remainingPct/100);
-    const remainingRetention=remainingGross*retPct/100;
-    const remainingRecoupment=remainingGross*recPct/100;
-    const remainingFutureNet=Math.max(0,remainingGross-remainingRetention-remainingRecoupment);
+    const remainingPct=clamp(100-safeActualPct);
+    const remainingGross=Math.min(safeContract,Math.max(0,safeContract*remainingPct/100));
+    const remainingRetention=Math.min(remainingGross,Math.max(0,remainingGross*retPct/100));
+    const afterRemainingRetention=Math.max(0,remainingGross-remainingRetention);
+    const remainingRecoupment=Math.min(afterRemainingRetention,Math.max(0,remainingGross*recPct/100));
+    const remainingFutureNet=Math.min(
+      safeContract,
+      Math.max(0,remainingGross-remainingRetention-remainingRecoupment)
+    );
 
-    const unpaid=Math.max(0,nonDp.reduce((sum,b)=>sum+Math.max(0,n(b.outstanding_amount)),0));
+    const unpaidRaw=Math.max(
+      0,
+      nonDp.reduce((sum,b)=>sum+Math.max(0,n(b.outstanding_amount)),0)
+    );
+    const unpaid=Math.min(safeContract,unpaidRaw);
     const rawTotalNeed=Math.max(0,unpaid+remainingFutureNet);
-
-    // Never allow the computed collection requirement to exceed Contract Amount.
-    const totalNeed=Math.min(contract,rawTotalNeed);
+    const totalNeed=Math.min(safeContract,rawTotalNeed);
 
     const pieUnpaid=Math.min(unpaid,totalNeed);
     const pieFuture=Math.max(0,totalNeed-pieUnpaid);
+    const collected=Math.max(
+      0,
+      nonDp.reduce((sum,b)=>sum+Math.max(0,n(b.received_amount)),0)
+    );
 
-    const collected=Math.max(0,nonDp.reduce((sum,b)=>sum+Math.max(0,n(b.received_amount)),0));
-
-    // RETENTION TO COLLECT is intentionally SEPARATE from Total Amount Need to Collect.
-    // Billed Retention = actual retention already withheld on existing non-DP billings.
-    // Unbilled Retention = retention expected on the contract portion not yet billed.
-    const billedRetention=Math.max(0,nonDp.reduce((sum,b)=>sum+Math.max(0,n(b.retention_amount)),0));
+    // Separate retention collection, never added to Total Amount Need to Collect.
+    const retentionCeiling=Math.min(safeContract,Math.max(0,safeContract*retPct/100));
+    const billedRetentionRaw=Math.max(
+      0,
+      nonDp.reduce((sum,b)=>sum+Math.max(0,n(b.retention_amount)),0)
+    );
+    const billedRetention=Math.min(retentionCeiling,billedRetentionRaw);
     const unbilledPct=clamp(100-billedPct);
-    const unbilledGross=Math.max(0,contract*unbilledPct/100);
-    const unbilledRetention=Math.max(0,unbilledGross*retPct/100);
-    const totalRetentionNeed=Math.min(contract,Math.max(0,billedRetention+unbilledRetention));
+    const unbilledGross=Math.min(safeContract,Math.max(0,safeContract*unbilledPct/100));
+    const retentionRoom=Math.max(0,retentionCeiling-billedRetention);
+    const unbilledRetention=Math.min(
+      retentionRoom,
+      Math.max(0,unbilledGross*retPct/100)
+    );
+    const totalRetentionNeed=Math.min(
+      retentionCeiling,
+      Math.max(0,billedRetention+unbilledRetention)
+    );
 
     return {
+      contract:safeContract,
       billedPct,billedPctFromRows,billedOverride,retPct,recPct,
       nextPct,nextGross,nextRetention,nextRecoupment,nextNet,
-      remainingPct,remainingGross,remainingRetention,remainingRecoupment,remainingFutureNet,
-      unpaid,rawTotalNeed,totalNeed,pieUnpaid,pieFuture,collected,
-      billedRetention,unbilledPct,unbilledGross,unbilledRetention,totalRetentionNeed
+      remainingPct,remainingGross,remainingRetention,remainingRecoupment,
+      remainingFutureNet,unpaidRaw,unpaid,rawTotalNeed,totalNeed,
+      pieUnpaid,pieFuture,collected,
+      retentionCeiling,billedRetention,unbilledPct,unbilledGross,
+      unbilledRetention,totalRetentionNeed
     };
   }
 
