@@ -1,42 +1,26 @@
 {
-  "version": "28.17",
-  "type": "CUMULATIVE PATCH ONLY",
-  "safe_base": "v28.13, v28.14, v28.15, or v28.16",
-  "root_cause": [
-    "app.js was stopping at removed legacy element #importScheduleBtn.",
-    "After that was guarded, it would also stop at removed legacy element #addProgressBtn.",
-    "Because app.js stopped before the final bindBulk() section, Delete Selected, Clear Selection, and many later core button handlers were never attached.",
-    "v13.js had another unguarded #addProgressBtn access, preventing later Inventory/Actual-related handlers in that compatibility layer from attaching."
-  ],
-  "fixes": [
-    "Guards removed legacy controls instead of letting the core script abort.",
-    "Restores normal execution through all core button bindings.",
-    "Billing Delete explicitly clears child payment rows before deleting a billing, then refreshes the table.",
-    "Keeps the current GenCon/Subcon Issued Amount workflow and live finance logic.",
-    "No schema or data migration."
-  ],
+  "from": "v28.17",
+  "to": "v28.18",
+  "type": "patch-only",
+  "purpose": "Use one Active Project Folder across the entire web app.",
   "upload_overwrite_only": [
-    "app.js",
+    "v23.7.js",
     "v13.js",
-    "v23.8.js",
-    "v24.3.js",
-    "v28.5.js",
-    "v28.8.js",
-    "v28.10.js",
-    "v28.11.js",
     "styles.css",
     "index.html",
     "patch-version.json",
     "patch-watch.js",
     "patch-gate.js",
     "api/system-version.js",
-    "v28.17-button-stability-release.sql"
+    "v28.18-single-project-folder-release.sql"
   ],
   "delete_files": [],
-  "after_upload": [
-    "Upload/overwrite these files at the repository root.",
-    "Wait for Vercel deployment to show Ready.",
-    "Run v28.17-button-stability-release.sql once in Supabase SQL Editor.",
-    "Hard refresh/login again when the release gate asks."
-  ]
+  "behavior": [
+    "Topbar Active Project Folder is the only visible project selector.",
+    "Billing, Projected, Actual, Inventory, Budget, Reports, Project Files and Smart Upload mirror the same project automatically.",
+    "Old per-module project memories are cleared so a hidden selector cannot restore a conflicting project.",
+    "Add Billing and Add Inventory forms also inherit the active project.",
+    "No database schema/data change."
+  ],
+  "after_upload": "Wait for Vercel Ready, then run v28.18-single-project-folder-release.sql once."
 }

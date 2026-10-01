@@ -4981,3 +4981,82 @@ html[data-theme] textarea:focus-visible{
 #billingRows .payment-add-action{
   white-space:nowrap;
 }
+
+
+/* =========================================================
+   CONSTRUCTION MONITORING v28.18
+   SINGLE ACTIVE PROJECT FOLDER
+   ========================================================= */
+
+/* One visible project selector only: topbar #workspaceProject. */
+#billing label:has(#billingProjectFilter),
+#schedule label:has(#scheduleProject),
+#progress label:has(#progressProject),
+#inventory label:has(#inventoryProject),
+#budget label:has(#budgetProject),
+#reports label:has(#reportProject),
+#files label:has(#fileProject),
+#files label:has(#smartProject),
+dialog label:has(#bProject),
+dialog label:has(#iProject){
+  display:none!important;
+}
+
+/* Empty Budget project-selector toolbar is no longer needed. */
+#budget > .toolbar.panel:has(#budgetProject){
+  display:none!important;
+}
+
+/* Billing's old local selector panel becomes a compact context note only. */
+#billing > .toolbar.panel.compact-toolbar{
+  min-height:0!important;
+  padding:8px 12px!important;
+}
+#billing > .toolbar.panel.compact-toolbar > .muted::before{
+  content:"Active Project Folder: ";
+  font-weight:850;
+  color:var(--heading,var(--text));
+}
+
+/* Inventory keeps its useful isolation note, without a second dropdown. */
+#inventory .inventory-project-selector{
+  grid-template-columns:1fr!important;
+  padding-top:8px!important;
+}
+
+/* Projected / Actual / Files toolbars naturally expand after hiding duplicate selector. */
+#schedule .projected-upload-toolbar,
+#progress .tracker-link-toolbar,
+#files .smart-toolbar,
+#files > .toolbar.panel{
+  grid-auto-flow:row;
+}
+
+/* Make the one canonical selector visually obvious. */
+.workspace-project{
+  position:relative;
+  font-weight:850!important;
+}
+.workspace-project select{
+  border-width:2px!important;
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--blue) 8%,transparent)!important;
+}
+.workspace-project::after{
+  content:"ONE PROJECT SOURCE";
+  display:inline-flex;
+  align-items:center;
+  margin-left:7px;
+  padding:3px 6px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:var(--surface-soft);
+  color:var(--muted);
+  font-size:7px;
+  letter-spacing:.08em;
+  font-weight:900;
+  vertical-align:middle;
+}
+
+@media(max-width:900px){
+  .workspace-project::after{display:none}
+}

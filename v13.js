@@ -24,7 +24,7 @@ function syncProjectSelectsV13(){
 }
 
 function syncWorkspaceProject(pid, rerender=true){
-  ['billingProjectFilter','scheduleProject','progressProject','inventoryProject','budgetProject','fileProject','smartProject'].forEach(id=>{
+  ['billingProjectFilter','scheduleProject','progressProject','inventoryProject','budgetProject','reportProject','fileProject','smartProject'].forEach(id=>{
     const s=$(id); if(s && [...s.options].some(o=>String(o.value)===String(pid))) s.value=pid;
   });
   if(rerender){
