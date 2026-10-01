@@ -1,41 +1,22 @@
 {
-  "base": "v28.29 or v28.25+ cumulative",
-  "to": "v28.30",
-  "type": "CUMULATIVE PATCH ONLY",
+  "from": "v28.30",
+  "to": "v28.31",
+  "type": "PATCH ONLY",
   "upload_overwrite_only": [
-    "app.js",
-    "v13.js",
-    "v23.7.js",
-    "v23.8.js",
     "v23.2.js",
-    "v28.5.js",
     "v28.11.js",
-    "v28.19.js",
-    "v28.22.js",
-    "styles.css",
     "index.html",
     "patch-version.json",
     "patch-watch.js",
     "patch-gate.js",
     "api/system-version.js",
-    "v28.30-optional-deductions-dashboard-cleanup.sql"
+    "v28.31-billing-need-to-collect-and-vo-label-release.sql"
   ],
-  "billing": [
-    "Retention checkbox is optional.",
-    "Recoupment checkbox is optional.",
-    "A non-zero percentage does NOT automatically turn the deduction on.",
-    "Existing applied Retention/Recoupment values are loaded automatically on Edit.",
-    "Encoded By is editable.",
-    "Payment totals remain edited through dated payment/issued history."
+  "billing_need_to_collect": "MAX(0, Contract Amount - (Downpayment Received + Total Received [DP excluded]))",
+  "billing_label_fix": [
+    "Any non-empty Billing / VO label typed by the user is accepted.",
+    "billing_no always receives that exact label to satisfy the database NOT NULL constraint.",
+    "For VO, variation_no also receives the same label."
   ],
-  "dashboard": [
-    "Need to Collect removed ONLY from Dashboard Financial Snapshot."
-  ],
-  "budget": [
-    "Need-to-Collect tracker remains in Budget Monitoring.",
-    "Retention %, Recoupment %, and Billed Accomplishment Before % are editable per project.",
-    "Existing billing deduction rates are backfilled into project Budget inputs when not yet configured.",
-    "Melendrez billed accomplishment baseline remains 47.25%."
-  ],
-  "after_upload": "Wait for Vercel Ready, then run v28.30-optional-deductions-dashboard-cleanup.sql once."
+  "after_upload": "Wait for Vercel Ready, then run v28.31-billing-need-to-collect-and-vo-label-release.sql once."
 }

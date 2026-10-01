@@ -1,5 +1,5 @@
 {
-  "version": "28.30",
-  "label": "Construction Monitoring v28.30",
-  "message": "Retention and Recoupment are truly optional per Billing row; existing applied deductions load automatically on Edit; Budget Retention/Recoupment inputs are editable per project and are backfilled from existing billing data; Need to Collect is removed only from the Dashboard Financial Snapshot, while Billing and Budget calculations remain available."
+  "version": "28.31",
+  "label": "Construction Monitoring v28.31",
+  "message": "Billing Need to Collect is now Contract Amount minus (Downpayment Received + Total Received) per Active Project Folder. Billing/VO labels accept the user's exact text and always populate the required billing_no field, fixing the null billing_no save error."
 }

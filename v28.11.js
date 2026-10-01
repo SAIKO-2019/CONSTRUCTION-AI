@@ -170,6 +170,15 @@
       pendingGross-pendingRecoup-pendingRetention-structuralAdjustment
     );
 
+    // v28.31 Billing-page Need to Collect:
+    // Contract Amount - (Downpayment Received + Total Received / DP excluded).
+    // Selected project only and never below zero.
+    const billingNeedToCollect=Math.max(
+      0,
+      contract-Math.min(contract,Math.max(0,dpReceived+totalReceived))
+    );
+
+    // Keep the older forecast value available for other legacy/report consumers.
     const needToCollect=Math.max(0,unpaid+remainingNet);
 
     const actual=latestActualPercent(pid);
@@ -182,7 +191,7 @@
     return {
       pid,p,contract,dpReceived,totalReceived,accumulated,unpaid,
       retPct,recPct,pendingPct,pendingGross,pendingRecoup,pendingRetention,
-      structuralAdjustment,structuralLabel,remainingNet,needToCollect,
+      structuralAdjustment,structuralLabel,remainingNet,needToCollect,billingNeedToCollect,
       actual,nextPct,nextGross,nextRecoup,nextRetention,nextNet
     };
   }
@@ -336,7 +345,7 @@
         ['Total Received',money(d.totalReceived)],
         ['Total Accomplishment',`${d.accumulated.toFixed(2)}%`],
         ['Unpaid Amount',money(d.unpaid)],
-        ['Need to Collect',money(d.needToCollect)]
+        ['Need to Collect',money(d.billingNeedToCollect)]
       ].map(([a,b])=>`<div class="kpi ${a==='Need to Collect'?'financial-alert-kpi':''}"><span>${a}</span><strong>${b}</strong></div>`).join('');
     }
 
@@ -358,7 +367,10 @@
           <div class="financial-sheet-row"><span>Total Received <small>(DP excluded)</small></span><strong>${money(d.totalReceived)}</strong></div>
           <div class="financial-sheet-row"><span>Total Accomplishment</span><strong>${d.accumulated.toFixed(2)}%</strong></div>
           <div class="financial-sheet-row"><span>Unpaid Amount</span><strong>${money(d.unpaid)}</strong></div>
-          <div class="financial-sheet-row financial-highlight"><span>Need to Collect</span><strong>${money(d.needToCollect)}</strong></div>
+          <div class="financial-sheet-row financial-highlight">
+            <span>Need to Collect <small>Contract − (DP + Total Received)</small></span>
+            <strong>${money(d.billingNeedToCollect)}</strong>
+          </div>
         </section>
 
         <section class="financial-sheet-card">

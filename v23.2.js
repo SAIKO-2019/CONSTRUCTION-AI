@@ -243,14 +243,22 @@
     e.preventDefault();
     const c=calcBilling232();
     const type=$('bType').value;
+    const recordLabel=String($('bNo')?.value||'').trim();
+    if(!recordLabel){
+      alert('Please enter a Billing / VO name or number.');
+      $('bNo')?.focus();
+      return;
+    }
     const existing=editingBillingId
       ? (cache.billings||[]).find(x=>String(x.id)===String(editingBillingId))
       : null;
 
     const values={
       project_id:$('bProject').value,
-      billing_no:$('bRecordType').value!=='VO' ? $('bNo').value.trim() : null,
-      variation_no:$('bRecordType').value==='VO' ? $('bNo').value.trim() : null,
+      // DB requires billing_no NOT NULL. Preserve exactly what the user typed
+      // for every record type. A VO also mirrors the same label to variation_no.
+      billing_no:recordLabel,
+      variation_no:$('bRecordType').value==='VO' ? recordLabel : null,
       billing_type:type,
       billing_category:$('bRecordType').value||'Billing',
       transaction_side:type==='Client Billing'?'receivable':'payable',
