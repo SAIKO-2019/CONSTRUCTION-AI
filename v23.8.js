@@ -66,11 +66,31 @@
 
     const tablePanel=$('billingRows')?.closest('.panel');
 
-    // v28.15: both folders use the same Billing table.
+    // v28.23: both folders use the same Billing table AND both folders
+    // keep their own Add Billing button behavior.
     // GenCon shows Client Billing rows; Subcon shows Subcontractor Billing rows.
     if($('billingKPIs'))$('billingKPIs').style.display='grid';
     if(tablePanel)tablePanel.style.display='';
-    if($('addBillingBtn'))$('addBillingBtn').style.display=party==='subcon'?'none':'';
+    if($('addBillingBtn')){
+      $('addBillingBtn').style.display='';
+      $('addBillingBtn').textContent=party==='subcon'?'+ Add Subcon Billing':'+ Add GenCon Billing';
+      $('addBillingBtn').title=party==='subcon'
+        ? 'Add a manual Subcontractor Billing row for the Active Project Folder.'
+        : 'Add a Client Billing row. A matching blank Subcon row will also be created automatically.';
+    }
+
+    // v28.25: permanent Add Row button beside the Billing table.
+    // This stays visible even when the page header button is off-screen.
+    const tableAdd=$('billingAddRowBtn');
+    if(tableAdd){
+      tableAdd.style.display='';
+      tableAdd.textContent=party==='subcon'?'+ Add Subcon Row':'+ Add GenCon Row';
+      tableAdd.title=party==='subcon'
+        ? 'Add a Subcontractor Billing row.'
+        : 'Add a Client Billing row.';
+      tableAdd.onclick=()=>$('addBillingBtn')?.click();
+    }
+
     if($('subconCommercialSettings'))$('subconCommercialSettings').style.display='none';
 
     $('billingKPIs').innerHTML=(party==='gencon'

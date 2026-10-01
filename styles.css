@@ -6017,3 +6017,88 @@ html[data-theme] .excel-budget-sheet table td small{
 @media(max-width:900px){
   .excel-budget-sheet{min-width:1180px}
 }
+
+
+/* =========================================================
+   CONSTRUCTION MONITORING v28.24
+   COLLECTION DEDUCTIONS + RETENTION REPORT
+   ========================================================= */
+.excel-budget-header{
+  grid-template-columns:280px 1fr 1fr 250px 190px!important;
+}
+.excel-deduction-inputs{
+  display:grid;
+  gap:6px;
+}
+.excel-deduction-inputs>label:not(.excel-hide-empty){
+  display:grid;
+  grid-template-columns:1fr 95px;
+  gap:8px;
+  align-items:center;
+  font-weight:700;
+}
+.excel-deduction-inputs .excel-edit-cell{
+  border:1px solid #777!important;
+  background:#dcecf8!important;
+  text-align:right;
+  padding:3px 5px;
+}
+.excel-deduction-inputs .excel-hide-empty{
+  margin-top:2px;
+}
+.excel-chart-basis{
+  display:block;
+  margin:-5px 0 7px;
+  text-align:center;
+  color:#777!important;
+  font-size:7px!important;
+}
+.excel-collection-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+.excel-collection-card.retention h4{
+  background:#d8f0dd;
+}
+.retention-separate-note{
+  display:block;
+  margin-top:6px;
+  color:#326e42!important;
+  font-size:8px!important;
+  font-weight:700;
+}
+.collect-pie-legend .ret-billed{background:#62B36F}
+.collect-pie-legend .ret-unbilled{background:#85D5D0}
+.retention-pie::after{
+  background:#fff;
+}
+@media(max-width:1250px){
+  .excel-collection-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+}
+@media(max-width:950px){
+  .excel-collection-grid{
+    grid-template-columns:1fr!important;
+  }
+}
+
+
+/* =========================================================
+   CONSTRUCTION MONITORING v28.25
+   BILLING ADD ROW + HISTORICAL BILLING BASELINE
+   ========================================================= */
+#billingAddRowBtn{
+  margin-left:auto;
+  white-space:nowrap;
+}
+#billingAddRowBtn + #deleteSelectedBillingBtn{
+  margin-left:0;
+}
+.billing-baseline-note{
+  display:block;
+  margin:-1px 0 5px;
+  padding:0 4px;
+  color:#666!important;
+  font-size:7px!important;
+  font-style:italic;
+}

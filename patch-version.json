@@ -1,5 +1,5 @@
 {
-  "version": "28.22",
-  "label": "Construction Monitoring v28.22",
-  "message": "Budget Monitoring now mirrors the uploaded Construction Budget & Cost Tracker workbook: same summary structure, projected breakdowns, profit by phase, editable task rows and formulas. It also adds contract-capped Next Billing / Total Need-to-Collect formulas with a dedicated pie chart, restores Inventory Add Row, and removes the ONE PROJECT SOURCE badge."
+  "version": "28.25",
+  "label": "Construction Monitoring v28.25",
+  "message": "Budget collection/retention fix: per-project historical billed accomplishment baseline is supported, Melendrez is seeded at 47.25%, Retention/Recoupment remain per-project, and a permanent Add Row button is visible in both GenCon and Subcon billing tables."
 }

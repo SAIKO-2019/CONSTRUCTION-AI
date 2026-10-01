@@ -66,45 +66,70 @@
   }
 
   function collectionModel(contract,actualPct){
+    const p=project()||{};
     const rows=bills().filter(isClient);
     const regular=rows.filter(isRegularBilling);
     const nonDp=rows.filter(b=>!isDownpayment(b));
 
-    // User rule: SUM billed accomplishment percentages, capped at 100%.
-    const billedPct=clamp(regular.reduce((s,b)=>s+Math.max(0,n(b.accomplishment_percent)),0));
-    const retPct=latestRate(regular,'retention_percent');
-    const recPct=latestRate(regular,'recoupment_percent');
+    // Sum of billed accomplishment percentages, hard-capped at 100%.
+    // A per-project historical baseline can override the row sum when older
+    // billings were encoded before the current tracker.
+    const billedPctFromRows=clamp(regular.reduce((sum,b)=>sum+Math.max(0,n(b.accomplishment_percent)),0));
+    const billedOverride=(p.budget_billed_accomplishment_override==null || String(p.budget_billed_accomplishment_override)==='')
+      ? null
+      : clamp(p.budget_billed_accomplishment_override);
+    const billedPct=billedOverride==null?billedPctFromRows:billedOverride;
 
-    // Next Billing = Actual - Total Billed Accomplishment.
+    // Collection deductions are project settings, editable at the top
+    // of the Budget & Cost Tracker and persistent per Active Project Folder.
+    const retPct=clamp(p.budget_retention_percent,0,100);
+    const recPct=clamp(p.budget_recoupment_percent,0,100);
+
+    // NEXT BILLING:
+    // (Actual accomplishment - total billed accomplishment) x Contract
+    // less Retention and Recoupment.
     const nextPct=clamp(actualPct-billedPct);
     const nextGross=Math.max(0,contract*nextPct/100);
     const nextRetention=nextGross*retPct/100;
     const nextRecoupment=nextGross*recPct/100;
     const nextNet=Math.min(contract,Math.max(0,nextGross-nextRetention-nextRecoupment));
 
-    // Total Need to Collect = unpaid billed amount + net amount for remaining work after Actual.
+    // TOTAL AMOUNT NEED TO COLLECT:
+    // (100% - Actual accomplishment) x Contract
+    // less Retention and Recoupment
+    // plus remaining unpaid existing billings.
     const remainingPct=clamp(100-actualPct);
     const remainingGross=Math.max(0,contract*remainingPct/100);
     const remainingRetention=remainingGross*retPct/100;
     const remainingRecoupment=remainingGross*recPct/100;
     const remainingFutureNet=Math.max(0,remainingGross-remainingRetention-remainingRecoupment);
 
-    const unpaid=Math.max(0,nonDp.reduce((s,b)=>s+Math.max(0,n(b.outstanding_amount)),0));
+    const unpaid=Math.max(0,nonDp.reduce((sum,b)=>sum+Math.max(0,n(b.outstanding_amount)),0));
     const rawTotalNeed=Math.max(0,unpaid+remainingFutureNet);
 
-    // Hard safety requested by user: never exceed contract amount.
+    // Never allow the computed collection requirement to exceed Contract Amount.
     const totalNeed=Math.min(contract,rawTotalNeed);
 
-    // Pie components are also capped to the same total.
     const pieUnpaid=Math.min(unpaid,totalNeed);
     const pieFuture=Math.max(0,totalNeed-pieUnpaid);
 
-    const collected=Math.max(0,nonDp.reduce((s,b)=>s+Math.max(0,n(b.received_amount)),0));
+    const collected=Math.max(0,nonDp.reduce((sum,b)=>sum+Math.max(0,n(b.received_amount)),0));
+
+    // RETENTION TO COLLECT is intentionally SEPARATE from Total Amount Need to Collect.
+    // Billed Retention = actual retention already withheld on existing non-DP billings.
+    // Unbilled Retention = retention expected on the contract portion not yet billed.
+    const billedRetention=Math.max(0,nonDp.reduce((sum,b)=>sum+Math.max(0,n(b.retention_amount)),0));
+    const unbilledPct=clamp(100-billedPct);
+    const unbilledGross=Math.max(0,contract*unbilledPct/100);
+    const unbilledRetention=Math.max(0,unbilledGross*retPct/100);
+    const totalRetentionNeed=Math.min(contract,Math.max(0,billedRetention+unbilledRetention));
 
     return {
-      billedPct,retPct,recPct,nextPct,nextGross,nextRetention,nextRecoupment,nextNet,
+      billedPct,billedPctFromRows,billedOverride,retPct,recPct,
+      nextPct,nextGross,nextRetention,nextRecoupment,nextNet,
       remainingPct,remainingGross,remainingRetention,remainingRecoupment,remainingFutureNet,
-      unpaid,rawTotalNeed,totalNeed,pieUnpaid,pieFuture,collected
+      unpaid,rawTotalNeed,totalNeed,pieUnpaid,pieFuture,collected,
+      billedRetention,unbilledPct,unbilledGross,unbilledRetention,totalRetentionNeed
     };
   }
 
@@ -245,8 +270,24 @@
     const contractForCollection=Math.max(0,n(p.contract_amount||discountedAmount));
     const collection=collectionModel(contractForCollection,progress);
 
+    const categories=[...categoryMap.values()];
+    const projectedPhaseTotal=phases.reduce((sum,x)=>sum+Math.max(0,n(x.projected)),0);
+    const projectedCategoryTotal=categories.reduce((sum,x)=>sum+Math.max(0,n(x.projected)),0);
+
+    // Pies must always use available project data:
+    // projected data when BOQ exists, otherwise actual data from Inventory/Subcon.
+    const phaseChart=phases
+      .map(x=>({...x,chartAmount:projectedPhaseTotal>0?Math.max(0,n(x.projected)):Math.max(0,n(x.actual))}))
+      .filter(x=>x.chartAmount>0);
+    const categoryChart=categories
+      .map(x=>({...x,chartAmount:projectedCategoryTotal>0?Math.max(0,n(x.projected)):Math.max(0,n(x.actual))}))
+      .filter(x=>x.chartAmount>0);
+
     return {
-      p,rowData,phases,categories:[...categoryMap.values()],
+      p,rowData,phases,categories,
+      phaseChart,categoryChart,
+      phaseChartBasis:projectedPhaseTotal>0?'Projected':'Actual',
+      categoryChartBasis:projectedCategoryTotal>0?'Projected':'Actual',
       subtotalTotal,markupTotal,totalProjected,vatPct,miscPct,contractBeforeDiscount,
       discountPct,discountedAmount,totalActual,totalOverUnder,overUnderPct,
       progress,progressProjected,profitCost,unlinkedActual,subIssued,unallocatedSubIssued,
@@ -288,6 +329,23 @@
     </div>`;
   }
 
+  function retentionPie(c){
+    const total=Math.max(0,c.totalRetentionNeed);
+    if(total<=0){
+      return `<div class="collect-pie-wrap"><div class="collect-pie zero"><div><strong>${money0(0)}</strong><span>Retention to Collect</span></div></div><div class="collect-pie-legend"><span>No retention amount based on the current project settings.</span></div></div>`;
+    }
+    const billedPct=total?Math.min(100,c.billedRetention/total*100):0;
+    return `<div class="collect-pie-wrap">
+      <div class="collect-pie retention-pie" style="background:conic-gradient(#62B36F 0 ${billedPct}%,#85D5D0 ${billedPct}% 100%)">
+        <div><strong>${money0(total)}</strong><span>Total Retention Need to Collect</span></div>
+      </div>
+      <div class="collect-pie-legend">
+        <div><i class="ret-billed"></i><span>Billed Retention</span><strong>${money0(c.billedRetention)}</strong></div>
+        <div><i class="ret-unbilled"></i><span>Unbilled Retention</span><strong>${money0(c.unbilledRetention)}</strong></div>
+      </div>
+    </div>`;
+  }
+
   function input(value,field,type='text',extra=''){
     return `<input class="excel-edit-cell" data-budget-field="${field}" type="${type}" value="${escAttr(value??'')}" ${extra}>`;
   }
@@ -305,8 +363,8 @@
     if(!host)return;
     const m=model(),p=m.p||{},c=m.collection;
 
-    const phaseProjected=m.phases.filter(x=>x.projected>0);
-    const categoryProjected=m.categories.filter(x=>x.projected>0);
+    const phaseProjected=m.phaseChart;
+    const categoryProjected=m.categoryChart;
     const phaseBreakRows=m.phases.filter(x=>!x.system).map(ph=>`
       <tr>
         <td>${esc(ph.name)}</td>
@@ -380,9 +438,14 @@
             <label>End Date:${input(p.target_date||'','target_date','date')}</label>
             <label>% Progress:${input(m.progress,'budget_progress_override','number','step="0.01" min="0" max="100"')}</label>
           </div>
-          <label class="excel-hide-empty">Hide Empty Rows?
-            <input data-budget-field="budget_hide_empty_rows" type="checkbox" ${hideEmpty?'checked':''}>
-          </label>
+          <div class="excel-deduction-inputs">
+            <label>Billed Accomplishment Before %:${input(c.billedPct,'budget_billed_accomplishment_override','number','step="0.01" min="0" max="100"')}</label>
+            <label>Retention %:${input(c.retPct,'budget_retention_percent','number','step="0.01" min="0" max="100"')}</label>
+            <label>Recoupment %:${input(c.recPct,'budget_recoupment_percent','number','step="0.01" min="0" max="100"')}</label>
+            <label class="excel-hide-empty">Hide Empty Rows?
+              <input data-budget-field="budget_hide_empty_rows" type="checkbox" ${hideEmpty?'checked':''}>
+            </label>
+          </div>
           <div class="excel-example">EXCEL TEMPLATE:<strong>LIVE WEB VERSION</strong></div>
         </section>
 
@@ -402,8 +465,8 @@
           </div>
 
           <div class="excel-chart-stack">
-            <div class="excel-chart-card"><h3>Project Phase Breakdown</h3>${donut(phaseProjected,'projected')}</div>
-            <div class="excel-chart-card"><h3>Cost Category Breakdown</h3>${donut(categoryProjected,'projected')}</div>
+            <div class="excel-chart-card"><h3>Project Phase Breakdown</h3><small class="excel-chart-basis">${m.phaseChartBasis} cost basis</small>${donut(phaseProjected,'chartAmount')}</div>
+            <div class="excel-chart-card"><h3>Cost Category Breakdown</h3><small class="excel-chart-basis">${m.categoryChartBasis} cost basis</small>${donut(categoryProjected,'chartAmount')}</div>
           </div>
 
           <div class="excel-financial-stack">
@@ -426,6 +489,7 @@
               <div><span>Over/Under (%):</span><strong class="${m.totalOverUnder<0?'excel-neg':'excel-pos'}">${pct2(m.overUnderPct)}</strong></div>
               <div><span>Accomplishment Percentage:</span><strong>${pct2(m.progress)}</strong></div>
               <div><span>Total Projected Costs:</span><strong>${money0(m.progressProjected)}</strong></div>
+              <div><span>Total Retention Need to Collect:</span><strong>${money0(c.totalRetentionNeed)}</strong></div>
               <div><span>Profit Cost:</span><strong class="${m.profitCost<0?'excel-neg':'excel-pos'}">${money0(m.profitCost)}</strong></div>
             </div>
           </div>
@@ -454,6 +518,7 @@
               <h4>NEXT BILLING AMOUNT NEED TO COLLECT</h4>
               <div><span>Actual Accomplishment</span><strong>${pct2(m.progress)}</strong></div>
               <div><span>Less: Total Billed Accomplishment</span><strong>${pct2(c.billedPct)}</strong></div>
+              <small class="billing-baseline-note">${c.billedOverride==null?'Based on encoded Billing accomplishment %':'Historical billed accomplishment baseline for this project'}</small>
               <div class="formula-result"><span>Next Billable Accomplishment</span><strong>${pct2(c.nextPct)}</strong></div>
               <div><span>Gross: Contract × Next Billable %</span><strong>${money0(c.nextGross)}</strong></div>
               <div><span>Less Retention (${pct2(c.retPct)})</span><strong>-${money0(c.nextRetention)}</strong></div>
@@ -473,6 +538,17 @@
               ${c.rawTotalNeed>m.contractForCollection+.01?`<small class="contract-cap-note">Raw result ${money0(c.rawTotalNeed)} was capped at Contract Amount.</small>`:''}
             </div>
 
+            <div class="excel-collection-card retention">
+              <h4>TOTAL RETENTION NEED TO COLLECT</h4>
+              <div><span>Retention %</span><strong>${pct2(c.retPct)}</strong></div>
+              <div><span>Billed Retention Held</span><strong>${money0(c.billedRetention)}</strong></div>
+              <div><span>Unbilled Accomplishment</span><strong>${pct2(c.unbilledPct)}</strong></div>
+              <div><span>Unbilled Gross Contract Amount</span><strong>${money0(c.unbilledGross)}</strong></div>
+              <div class="formula-result"><span>Unbilled Retention Amount</span><strong>${money0(c.unbilledRetention)}</strong></div>
+              <div class="grand"><span>Total Retention Need to Collect</span><strong>${money0(c.totalRetentionNeed)}</strong></div>
+              <small class="retention-separate-note">Separate from Total Amount Need to Collect.</small>
+            </div>
+
             <div class="excel-collection-pie-card">
               <h4>Need to Collect Breakdown</h4>
               ${collectionPie(c)}
@@ -480,6 +556,16 @@
                 <span>Total Received (DP excluded)<strong>${money0(c.collected)}</strong></span>
                 <span>Unpaid Billing<strong>${money0(c.unpaid)}</strong></span>
                 <span>Next Billing Need<strong>${money0(c.nextNet)}</strong></span>
+              </div>
+            </div>
+
+            <div class="excel-collection-pie-card">
+              <h4>Retention to Collect Breakdown</h4>
+              ${retentionPie(c)}
+              <div class="excel-collection-mini">
+                <span>Retention Rate<strong>${pct2(c.retPct)}</strong></span>
+                <span>Billed Retention<strong>${money0(c.billedRetention)}</strong></span>
+                <span>Unbilled Retention<strong>${money0(c.unbilledRetention)}</strong></span>
               </div>
             </div>
           </div>
@@ -520,7 +606,7 @@
     let dbValue=value;
 
     if(field==='budget_hide_empty_rows')dbValue=!!value;
-    else if(['budget_vat_percent','budget_misc_percent','budget_discount_percent','budget_progress_override'].includes(field)){
+    else if(['budget_vat_percent','budget_misc_percent','budget_discount_percent','budget_progress_override','budget_retention_percent','budget_recoupment_percent','budget_billed_accomplishment_override'].includes(field)){
       dbValue=value===''?null:n(value);
     }else if(['project_name','budget_project_manager','budget_project_address'].includes(field)){
       dbValue=String(value??'').trim();
@@ -629,12 +715,15 @@
       btn.onclick=()=>addRow(btn.dataset.phase);
     });
 
-    $('budgetAddRowBtn')?.addEventListener('click',()=>addRow(),{once:true});
-    $('budgetAddPhaseBtn')?.addEventListener('click',async()=>{
+    const addRowBtn=$('budgetAddRowBtn');
+    if(addRowBtn)addRowBtn.onclick=()=>addRow();
+
+    const addPhaseBtn=$('budgetAddPhaseBtn');
+    if(addPhaseBtn)addPhaseBtn.onclick=async()=>{
       const name=prompt('New phase name:');
       if(!name)return;
       await addRow(String(name).trim().toUpperCase());
-    },{once:true});
+    };
   }
 
   // Final Budget renderer. It supersedes the older Budget panels/renderers.
