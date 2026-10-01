@@ -1,5 +1,5 @@
 {
-  "version": "28.16",
-  "label": "Construction Monitoring v28.16",
-  "message": "Cumulative Billing hotfix: re-ships the v28.14 null-render fixes together with the current v28.15 Subcon Issued Amount workflow so the patch works even if v28.15 was uploaded directly over v28.13."
+  "version": "28.17",
+  "label": "Construction Monitoring v28.17",
+  "message": "Button stability hotfix: removed legacy controls no longer abort app.js, bulk/action buttons bind correctly again, Billing delete safely clears payment child records, and the old MutationObserver DOM-rescan loop is removed."
 }

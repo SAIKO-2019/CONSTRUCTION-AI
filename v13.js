@@ -182,10 +182,13 @@ if($('loadBoqScopesBtn')) $('loadBoqScopesBtn').onclick=async()=>{
   await refreshAll();renderProgress();renderSchedule();toast(`${added} BOQ scope(s) loaded to Actual Progress.`);
 };
 
-const baseAddProgressClick=$('addProgressBtn').onclick;
-$('addProgressBtn').onclick=()=>{
-  if(!$('progressProject').value)return alert('Select a project.');
-  $('progressForm').reset();syncBoqActivityList();$('progressCostHint').textContent='Choose a BOQ scope. Weight and budget are auto-linked when a matching BOQ item is found.';$('progressDialog').showModal();
+const baseAddProgressClick=$('addProgressBtn')?.onclick||null;
+if($('addProgressBtn')) $('addProgressBtn').onclick=()=>{
+  if(!$('progressProject')?.value)return alert('Select a project.');
+  $('progressForm')?.reset();
+  syncBoqActivityList();
+  if($('progressCostHint'))$('progressCostHint').textContent='Choose a BOQ scope. Weight and budget are auto-linked when a matching BOQ item is found.';
+  $('progressDialog')?.showModal();
 };
 $('aActivity').addEventListener('change',()=>{
   const pid=$('progressProject').value,b=boqForProject(pid).find(x=>String(x.description).toLowerCase()===String($('aActivity').value).toLowerCase());
