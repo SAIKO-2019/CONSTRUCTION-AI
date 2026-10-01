@@ -5144,3 +5144,81 @@ dialog label:has(#iProject){
 @media(max-width:620px){
   .subcon-budget-summary{grid-template-columns:1fr}
 }
+
+
+/* =========================================================
+   CONSTRUCTION MONITORING v28.20
+   FULL SUBCON ROW EDIT
+   ========================================================= */
+.subcon-edit-payment-manager{
+  margin-top:12px;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:color-mix(in srgb,var(--surface-soft) 92%,transparent);
+}
+.subcon-edit-payment-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:14px;
+  margin-bottom:9px;
+}
+.subcon-edit-payment-head>div>span{
+  display:block;
+  color:var(--muted);
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.12em;
+}
+.subcon-edit-payment-head>div>strong{
+  display:block;
+  margin:3px 0 2px;
+  color:var(--heading,var(--text))!important;
+  font-size:11px!important;
+}
+.subcon-edit-payment-head small{
+  color:var(--muted)!important;
+  font-size:8px!important;
+}
+.subcon-edit-payment-list{
+  display:grid;
+  gap:6px;
+}
+.subcon-edit-payment-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:8px 9px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:var(--surface);
+}
+.subcon-edit-payment-item>div:first-child span{
+  display:block;
+  color:var(--muted);
+  font-size:8px;
+}
+.subcon-edit-payment-item>div:first-child strong{
+  display:block;
+  margin-top:2px;
+  font-size:10px!important;
+}
+.subcon-edit-payment-item>div:last-child{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.subcon-edit-payment-item small,
+.subcon-edit-payment-empty{
+  color:var(--muted)!important;
+  font-size:8px!important;
+}
+@media(max-width:700px){
+  .subcon-edit-payment-head,
+  .subcon-edit-payment-item{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+}

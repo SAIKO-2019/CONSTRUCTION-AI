@@ -1,5 +1,5 @@
 {
-  "version": "28.19",
-  "label": "Construction Monitoring v28.19",
-  "message": "Every GenCon Client Billing now automatically gets one matching Subcon row, including existing GenCon records. Subcon billing % is derived from billing amount versus Subcon contract, retention/recoupment deduct per billing, and Budget Monitoring has a live detailed Subcon billing report."
+  "version": "28.20",
+  "label": "Construction Monitoring v28.20",
+  "message": "Subcon Edit now exposes all user-entered row information in one dialog: billing/VO number, subcontractor, gross amount, request date, retention, recoupment and Encoded By, plus editable dated Issued/Paid history. Derived Billing %, Net Due, Outstanding and Status remain automatic."
 }

@@ -73,12 +73,127 @@
     syncSubconBillingPercent();
   },true);
 
+  function paymentRowsForBilling(billingId){
+    return (cache.payments||[])
+      .filter(p=>String(p.billing_id)===String(billingId))
+      .slice()
+      .sort((a,b)=>{
+        const da=String(a.payment_date||''),db=String(b.payment_date||'');
+        if(da!==db)return da.localeCompare(db);
+        return String(a.created_at||'').localeCompare(String(b.created_at||''));
+      });
+  }
+
+  function renderSubconEditPaymentManager(billingId){
+    const box=$('subconEditPaymentManager');
+    if(!box)return;
+
+    const b=(cache.billings||[]).find(x=>String(x.id)===String(billingId));
+    if(!b || b.billing_type!=='Subcontractor Billing'){
+      box.hidden=true;
+      box.innerHTML='';
+      return;
+    }
+
+    const rows=paymentRowsForBilling(b.id);
+    const paid=rows.reduce((sum,p)=>sum+Math.max(0,n(p.amount)),0);
+    const net=Math.max(0,n(b.net_due));
+    const balance=Math.max(0,net-paid);
+
+    box.hidden=false;
+    box.innerHTML=`
+      <div class="subcon-edit-payment-head">
+        <div>
+          <span>ISSUED / PAID HISTORY</span>
+          <strong>${money(paid)} issued · ${money(balance)} balance</strong>
+          <small>Each issued amount can be edited separately without rewriting the row computation.</small>
+        </div>
+        ${balance>.01
+          ? `<button type="button" class="primary-btn compact-btn" id="subconEditAddIssuedBtn">+ Add Issued Amount</button>`
+          : `<span class="subcon-mini-paid">Fully Paid</span>`}
+      </div>
+      <div class="subcon-edit-payment-list">
+        ${rows.length?rows.map((p,i)=>`
+          <div class="subcon-edit-payment-item">
+            <div>
+              <span>Issued ${i+1}</span>
+              <strong>${money(p.amount)}</strong>
+            </div>
+            <div>
+              <small>${esc(p.payment_date||'—')}${p.reference_no?` · ${esc(p.reference_no)}`:''}</small>
+              <button type="button" class="secondary-btn compact-btn" onclick="editPaymentRecord('${b.id}','${p.id}')">Edit</button>
+            </div>
+          </div>`).join(''):
+          '<div class="subcon-edit-payment-empty">No issued amount recorded yet.</div>'}
+      </div>`;
+
+    const add=$('subconEditAddIssuedBtn');
+    if(add)add.onclick=()=>window.addPayment?.(b.id);
+  }
+
   const priorEdit=window.editBilling;
   window.editBilling=function(id){
+    const b=(cache.billings||[]).find(x=>String(x.id)===String(id));
     const out=priorEdit?.apply(this,arguments);
-    requestAnimationFrame(syncSubconBillingPercent);
+
+    requestAnimationFrame(()=>{
+      syncSubconBillingPercent();
+
+      if(b?.billing_type==='Subcontractor Billing'){
+        // Keep the automatic GenCon↔Subcon link intact, while allowing all
+        // user-entered row information to be edited.
+        if($('bType')){
+          $('bType').value='Subcontractor Billing';
+          $('bType').disabled=true;
+          $('bType').title='System-linked Subcon row. Billing Type stays Subcontractor Billing.';
+        }
+        if($('bProject')){
+          $('bProject').disabled=true;
+          $('bProject').title='Uses the Active Project Folder.';
+        }
+        if($('bInputBy'))$('bInputBy').readOnly=false;
+
+        renderSubconEditPaymentManager(id);
+      }else{
+        if($('bType'))$('bType').disabled=false;
+        if($('bProject'))$('bProject').disabled=false;
+        if($('subconEditPaymentManager')){
+          $('subconEditPaymentManager').hidden=true;
+          $('subconEditPaymentManager').innerHTML='';
+        }
+      }
+    });
+
     return out;
   };
+
+  // Reset any Subcon edit locks when starting a new GenCon billing.
+  const addBillingButton=$('addBillingBtn');
+  if(addBillingButton){
+    const priorAddClick=addBillingButton.onclick;
+    addBillingButton.onclick=function(){
+      if($('bType'))$('bType').disabled=false;
+      if($('bProject'))$('bProject').disabled=false;
+      if($('subconEditPaymentManager')){
+        $('subconEditPaymentManager').hidden=true;
+        $('subconEditPaymentManager').innerHTML='';
+      }
+      return priorAddClick?.apply(this,arguments);
+    };
+  }
+
+
+  document.querySelectorAll('[data-close="billingDialog"]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      if($('bType'))$('bType').disabled=false;
+      if($('bProject'))$('bProject').disabled=false;
+      if($('bInputBy'))$('bInputBy').readOnly=true;
+      if($('subconEditPaymentManager')){
+        $('subconEditPaymentManager').hidden=true;
+        $('subconEditPaymentManager').innerHTML='';
+      }
+    },{passive:true});
+  });
 
   // ---------------- Detailed Budget-only Subcon report ----------------
   function billingLabel(b){

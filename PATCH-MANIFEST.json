@@ -1,10 +1,10 @@
 {
-  "from": "v28.18",
-  "to": "v28.19",
+  "from": "v28.19",
+  "to": "v28.20",
   "type": "patch-only",
+  "purpose": "Make all user-entered Subcon row information editable from the row Edit dialog.",
   "upload_overwrite_only": [
-    "v23.8.js",
-    "v28.11.js",
+    "v23.2.js",
     "v28.19.js",
     "styles.css",
     "index.html",
@@ -12,22 +12,36 @@
     "patch-watch.js",
     "patch-gate.js",
     "api/system-version.js",
-    "v28.19-auto-subcon-mirror.sql"
+    "v28.20-subcon-full-row-edit-release.sql"
   ],
   "delete_files": [],
-  "behavior": [
-    "Every GenCon Client Billing automatically has one corresponding Subcontractor Billing row.",
-    "Existing GenCon rows are backfilled by SQL; no manual re-encoding of row structure.",
-    "Subcon row values remain manual: subcontractor, billing amount, retention, recoupment, then Add Issued Amount.",
-    "Subcon Billing % = Subcon Billing Amount / Subcon Contract Amount x 100.",
-    "Retention and Recoupment amounts are calculated from each Subcon billing amount.",
-    "Budget Monitoring gets the detailed live Subcon Billing report and remaining contract balance.",
-    "Old linked Subcon allocation panel is hidden but its stored data is not deleted."
+  "editable_in_subcon_row": [
+    "Billing / VO No.",
+    "Record Type",
+    "Subcontractor / Payee",
+    "Gross Billing Amount",
+    "Date Request",
+    "Retention toggle and %",
+    "Recoupment toggle and %",
+    "Encoded By",
+    "Each Issued/Paid amount",
+    "Each Issued/Paid date",
+    "Each payment reference"
   ],
-  "after_upload": [
-    "Upload/overwrite these files.",
-    "Wait for Vercel Ready.",
-    "Run v28.19-auto-subcon-mirror.sql once in Supabase SQL Editor.",
-    "The release gate will refresh other open accounts."
-  ]
+  "automatic_not_manual": [
+    "Billing % = Gross / Subcon Contract",
+    "Retention amount",
+    "Recoupment amount",
+    "Net Due",
+    "Received/Paid total",
+    "Outstanding",
+    "Date Paid based on payments",
+    "Status"
+  ],
+  "system_locked": [
+    "Active Project Folder",
+    "Billing Type = Subcontractor Billing",
+    "GenCon\u2194Subcon source link"
+  ],
+  "after_upload": "Wait for Vercel Ready, then run v28.20-subcon-full-row-edit-release.sql once."
 }

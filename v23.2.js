@@ -63,14 +63,24 @@
 
   function setSubconFields(){
     const showSub=isSubcon();
-    ['bSubcontractorNameField','bIssuedAmountField','bIssuedDateField'].forEach(id=>{
-      const el=$(id);
-      if(el)el.style.display=showSub?'':'none';
-    });
+
+    // v28.20: Subcon payment/issued amount is now stored in payment history,
+    // not in the old one-off Issued / Contract Amount fields.
+    if($('bSubcontractorNameField'))$('bSubcontractorNameField').style.display=showSub?'':'none';
+    if($('bIssuedAmountField'))$('bIssuedAmountField').style.display='none';
+    if($('bIssuedDateField'))$('bIssuedDateField').style.display='none';
+
+    if($('bInputBy')){
+      $('bInputBy').readOnly=!showSub;
+      $('bInputBy').title=showSub
+        ? 'Editable for Subcon row.'
+        : 'Automatically based on the current user.';
+    }
+
     const note=$('billingRuleNote');
     if(note){
       note.textContent=showSub
-        ? 'Subcontractor Billing: encode the subcontractor/payee, total Issued / Contract Amount, Date Issued, and each billing amount. Remaining balance is computed automatically.'
+        ? 'Subcontractor Billing: Billing/VO No., subcontractor, gross billing amount, request date, retention, recoupment and Encoded By are editable. Billing %, Net Due, Outstanding and Status are computed automatically. Issued/Paid entries are managed below.'
         : 'Client Billing: retention and recoupment are optional. Tick only when applicable.';
     }
   }
@@ -233,7 +243,7 @@
       net_due:c.net,
       date_request:$('bRequestDate').value||null,
       date_submitted:$('bRequestDate').value||null,
-      input_by_name:existing?.input_by_name || (typeof profileName==='function'?profileName():(currentProfile?.full_name||'')),
+      input_by_name:(($('bInputBy')?.value||'').trim()) || existing?.input_by_name || (typeof profileName==='function'?profileName():(currentProfile?.full_name||'')),
       status:existing
         ? (c.net-Number(existing.received_amount||0)<=.01?'Paid':Number(existing.received_amount||0)>0?'Partially Paid':'Pending')
         : (c.out<=.01?'Paid':c.received>0?'Partially Paid':'Pending')
@@ -244,9 +254,14 @@
     // before the latest database migration has been applied.
     if(type==='Subcontractor Billing'){
       values.subcontractor_name=$('bSubcontractorName')?.value.trim()||null;
-      values.issued_amount=c.issued;
-      values.issued_date=$('bIssuedDate')?.value||null;
-      values.subcontract_balance=c.subcontractBalance;
+
+      // Legacy one-off issued fields are preserved only when the record already
+      // has them. Actual issued amounts are tracked through payments.
+      if(!existing?.source_gencon_billing_id){
+        values.issued_amount=c.issued;
+        values.issued_date=$('bIssuedDate')?.value||null;
+        values.subcontract_balance=c.subcontractBalance;
+      }
     }
 
     try{
