@@ -1,0 +1,35 @@
+{
+  "from": "v28.34",
+  "to": "v28.35",
+  "type": "PATCH ONLY / VISUAL ONLY",
+  "visual_changes": [
+    "Animated futuristic login scene: moving grid, scan beam, moon pulse, building lights, crane hook/cable motion, animated perimeter glow",
+    "Adaptive text contrast for light and dark theme families",
+    "Theme-responsive borders, focus rings, highlights and glow colors",
+    "Readable GenCon/Subcon billing folder tabs in both light and dark themes",
+    "Futuristic topbar scan, command/HUD accents and stronger theme polish",
+    "Existing animated page and sidebar ambience retained and enhanced",
+    "Theme names refreshed visually; data-theme keys unchanged"
+  ],
+  "protected_unchanged": [
+    "Project/business data",
+    "Supabase rows and tables",
+    "Billing formulas",
+    "Projected/Actual sync and calculations",
+    "Inventory logic",
+    "Quotation logic",
+    "Button IDs",
+    "Button event handlers",
+    "Existing DOM data bindings"
+  ],
+  "release_sql": "System release marker only; no data/schema migration.",
+  "files_to_overwrite": [
+    "index.html",
+    "styles.css",
+    "patch-version.json",
+    "patch-watch.js",
+    "patch-gate.js",
+    "api/system-version.js",
+    "v28.35-future-command-ui-release.sql"
+  ]
+}

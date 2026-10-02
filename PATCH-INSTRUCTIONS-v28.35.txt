@@ -1,0 +1,24 @@
+CONSTRUCTION MONITORING v28.35 — FUTURE COMMAND UI
+
+WHAT CHANGED
+- Login now has live motion: grid drift, scan beam, glowing moon, animated building lights, crane/hook movement and perimeter glow.
+- Text automatically uses stronger dark contrast on light themes and brighter contrast on dark themes.
+- Borders, focus rings, highlights and glow accents now follow the active theme instead of staying fixed.
+- GenCon/Subcon Billing folder cards were specifically corrected for readability on both light and dark themes.
+- Existing moving page/sidebar effects remain, with more futuristic command/HUD polish.
+- Theme display names were upgraded, but the existing theme keys and saved theme behavior remain unchanged.
+
+NOT CHANGED
+- No project/business data
+- No Supabase record changes
+- No schema migration
+- No Billing / Projected / Actual / Inventory / Quotation calculation changes
+- No button IDs or event handlers changed
+- Project Cost Folders remains hidden from the earlier patch
+
+APPLY
+1. Extract this ZIP.
+2. Upload/overwrite the included files in the same GitHub project.
+3. Commit and wait for Vercel deployment to show Ready.
+4. Run v28.35-future-command-ui-release.sql once in Supabase SQL Editor.
+5. Hard refresh / sign in again if requested by the patch notice.

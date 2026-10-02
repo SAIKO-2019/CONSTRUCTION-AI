@@ -1,5 +1,5 @@
 {
-  "version": "28.34",
-  "label": "Construction Monitoring v28.34",
-  "message": "Readability hotfix for all themes plus animated live sidebar backgrounds. Home hero and Project Pulse contrast restored; cards/charts/tables are more opaque and theme-safe. Visual-only patch; project data, Supabase records, calculations and button logic are untouched."
+  "version": "28.35",
+  "label": "Construction Monitoring v28.35 \u2014 Future Command UI",
+  "message": "Futuristic visual enhancement: animated login scene, stronger adaptive light/dark contrast, theme-responsive borders/highlights, readable GenCon/Subcon folders, and enhanced command/HUD styling. Visual-only patch; no project data, Supabase records, calculations, sync logic, or button handlers changed."
 }

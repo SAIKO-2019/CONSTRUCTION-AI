@@ -6880,3 +6880,616 @@ html[data-theme] .main > .view::after{
     animation-duration:16s,8s!important;
   }
 }
+
+/* =========================================================
+   CONSTRUCTION MONITORING v28.35
+   FUTURE COMMAND UI + ADAPTIVE CONTRAST + ANIMATED LOGIN
+   VISUAL-ONLY PATCH
+   ========================================================= */
+
+/* ---------- Adaptive contrast tokens ---------- */
+html,
+html[data-theme="light"]{
+  --cm-ui-text:#0c1b2a;
+  --cm-ui-muted:#52687e;
+  --cm-ui-panel:#ffffff;
+  --cm-ui-soft:#f2f7fb;
+  --cm-ui-border:rgba(25,48,70,.18);
+  --cm-ui-border-strong:rgba(31,78,121,.34);
+  --cm-ui-glow:rgba(47,111,228,.16);
+  --cm-ui-code:#0a2845;
+  --cm-login-a:#2257d5;
+  --cm-login-b:#00a8c9;
+  --cm-login-c:#7759d7;
+  --cm-login-surface:rgba(247,250,255,.96);
+  --cm-login-soft:#eef4fb;
+  --cm-login-text:#0a1827;
+  --cm-login-muted:#4f6378;
+  --cm-login-field:#ffffff;
+  --cm-login-border:rgba(24,50,76,.22);
+}
+html[data-theme="dark"]{
+  --cm-ui-text:#f6f9fd;
+  --cm-ui-muted:#b5c3d3;
+  --cm-ui-panel:#101820;
+  --cm-ui-soft:#16222e;
+  --cm-ui-border:rgba(187,211,232,.16);
+  --cm-ui-border-strong:rgba(96,165,250,.42);
+  --cm-ui-glow:rgba(96,165,250,.20);
+  --cm-ui-code:#d8ecff;
+  --cm-login-a:#3b82f6;
+  --cm-login-b:#22d3ee;
+  --cm-login-c:#8b5cf6;
+  --cm-login-surface:rgba(12,19,29,.97);
+  --cm-login-soft:#141f2c;
+  --cm-login-text:#f8fbff;
+  --cm-login-muted:#a9bbcf;
+  --cm-login-field:#101b27;
+  --cm-login-border:rgba(125,211,252,.24);
+}
+html[data-theme="midnight"]{
+  --cm-ui-text:#f7fbff;
+  --cm-ui-muted:#b6cbe0;
+  --cm-ui-panel:#0c1724;
+  --cm-ui-soft:#102236;
+  --cm-ui-border:rgba(125,211,252,.17);
+  --cm-ui-border-strong:rgba(94,234,212,.42);
+  --cm-ui-glow:rgba(94,234,212,.18);
+  --cm-ui-code:#dffcff;
+  --cm-login-a:#2563eb;
+  --cm-login-b:#14b8a6;
+  --cm-login-c:#f4c45f;
+  --cm-login-surface:rgba(7,17,29,.97);
+  --cm-login-soft:#0d1d2f;
+  --cm-login-text:#f6fbff;
+  --cm-login-muted:#a8c0d5;
+  --cm-login-field:#0c1a29;
+  --cm-login-border:rgba(94,234,212,.24);
+}
+html[data-theme="executive"]{
+  --cm-ui-text:#fff9ee;
+  --cm-ui-muted:#c4b79f;
+  --cm-ui-panel:#10151b;
+  --cm-ui-soft:#161d25;
+  --cm-ui-border:rgba(244,197,106,.18);
+  --cm-ui-border-strong:rgba(244,197,106,.48);
+  --cm-ui-glow:rgba(244,197,106,.20);
+  --cm-ui-code:#fff0c8;
+  --cm-login-a:#d7a84f;
+  --cm-login-b:#f4c56a;
+  --cm-login-c:#38c3a5;
+  --cm-login-surface:rgba(12,14,18,.98);
+  --cm-login-soft:#151a20;
+  --cm-login-text:#fffaf0;
+  --cm-login-muted:#c0b49f;
+  --cm-login-field:#121820;
+  --cm-login-border:rgba(244,197,106,.26);
+}
+html[data-theme="glass"]{
+  --cm-ui-text:#10293a;
+  --cm-ui-muted:#4d687a;
+  --cm-ui-panel:#f8fdff;
+  --cm-ui-soft:#eef8fc;
+  --cm-ui-border:rgba(31,96,128,.18);
+  --cm-ui-border-strong:rgba(36,137,184,.38);
+  --cm-ui-glow:rgba(36,137,184,.16);
+  --cm-ui-code:#0e4057;
+  --cm-login-a:#0e7490;
+  --cm-login-b:#22b8cf;
+  --cm-login-c:#4f7cff;
+  --cm-login-surface:rgba(244,251,255,.89);
+  --cm-login-soft:rgba(232,246,252,.90);
+  --cm-login-text:#0c2435;
+  --cm-login-muted:#4f6d7f;
+  --cm-login-field:rgba(255,255,255,.86);
+  --cm-login-border:rgba(36,137,184,.24);
+}
+html[data-theme="pastel"]{
+  --cm-ui-text:#30283e;
+  --cm-ui-muted:#655a76;
+  --cm-ui-panel:#fffafe;
+  --cm-ui-soft:#f8f0fb;
+  --cm-ui-border:rgba(91,68,116,.16);
+  --cm-ui-border-strong:rgba(126,97,185,.34);
+  --cm-ui-glow:rgba(156,122,230,.14);
+  --cm-ui-code:#44365c;
+  --cm-login-a:#7c5ed6;
+  --cm-login-b:#bd7eb8;
+  --cm-login-c:#5d9b7d;
+  --cm-login-surface:rgba(255,249,254,.96);
+  --cm-login-soft:#f7edf9;
+  --cm-login-text:#30263e;
+  --cm-login-muted:#665979;
+  --cm-login-field:#fffdfd;
+  --cm-login-border:rgba(126,97,185,.22);
+}
+html[data-theme="cute"]{
+  --cm-ui-text:#45293a;
+  --cm-ui-muted:#76586a;
+  --cm-ui-panel:#fffdfb;
+  --cm-ui-soft:#fff3f2;
+  --cm-ui-border:rgba(111,65,88,.15);
+  --cm-ui-border-strong:rgba(220,100,145,.34);
+  --cm-ui-glow:rgba(233,130,167,.14);
+  --cm-ui-code:#5a3147;
+  --cm-login-a:#df6f9c;
+  --cm-login-b:#efaa4f;
+  --cm-login-c:#70bfae;
+  --cm-login-surface:rgba(255,250,248,.97);
+  --cm-login-soft:#fff0f2;
+  --cm-login-text:#422839;
+  --cm-login-muted:#765b6a;
+  --cm-login-field:#ffffff;
+  --cm-login-border:rgba(223,111,156,.22);
+}
+html[data-theme="summer"]{
+  --cm-ui-text:#153341;
+  --cm-ui-muted:#4d6c76;
+  --cm-ui-panel:#fffdf8;
+  --cm-ui-soft:#f4eee4;
+  --cm-ui-border:rgba(83,73,54,.17);
+  --cm-ui-border-strong:rgba(183,123,54,.34);
+  --cm-ui-glow:rgba(41,166,160,.13);
+  --cm-ui-code:#244b52;
+  --cm-login-a:#9f6b2d;
+  --cm-login-b:#14918e;
+  --cm-login-c:#6d8e58;
+  --cm-login-surface:rgba(255,252,246,.97);
+  --cm-login-soft:#f4ede1;
+  --cm-login-text:#17333d;
+  --cm-login-muted:#5e6f69;
+  --cm-login-field:#fffdf9;
+  --cm-login-border:rgba(159,107,45,.22);
+}
+html[data-theme="ocean"]{
+  --cm-ui-text:#1b2e3d;
+  --cm-ui-muted:#506879;
+  --cm-ui-panel:#fbfdff;
+  --cm-ui-soft:#edf4f8;
+  --cm-ui-border:rgba(44,78,104,.17);
+  --cm-ui-border-strong:rgba(69,131,172,.37);
+  --cm-ui-glow:rgba(108,184,255,.15);
+  --cm-ui-code:#214d67;
+  --cm-login-a:#315f8c;
+  --cm-login-b:#1aa89b;
+  --cm-login-c:#65aef3;
+  --cm-login-surface:rgba(248,252,255,.97);
+  --cm-login-soft:#eaf2f7;
+  --cm-login-text:#1b2e3d;
+  --cm-login-muted:#506879;
+  --cm-login-field:#ffffff;
+  --cm-login-border:rgba(49,95,140,.22);
+}
+html[data-theme="forest"]{
+  --cm-ui-text:#293329;
+  --cm-ui-muted:#5b6657;
+  --cm-ui-panel:#fcfaf5;
+  --cm-ui-soft:#f0ede4;
+  --cm-ui-border:rgba(65,78,58,.17);
+  --cm-ui-border-strong:rgba(104,132,91,.36);
+  --cm-ui-glow:rgba(144,182,125,.14);
+  --cm-ui-code:#3d533c;
+  --cm-login-a:#607a55;
+  --cm-login-b:#a07f46;
+  --cm-login-c:#4f927d;
+  --cm-login-surface:rgba(251,249,243,.97);
+  --cm-login-soft:#efede4;
+  --cm-login-text:#293329;
+  --cm-login-muted:#5b6657;
+  --cm-login-field:#fffdf8;
+  --cm-login-border:rgba(96,122,85,.22);
+}
+html[data-theme="sunset"]{
+  --cm-ui-text:#33261d;
+  --cm-ui-muted:#6b5847;
+  --cm-ui-panel:#fff9f0;
+  --cm-ui-soft:#f4e7d6;
+  --cm-ui-border:rgba(91,64,42,.17);
+  --cm-ui-border-strong:rgba(181,114,62,.36);
+  --cm-ui-glow:rgba(217,149,82,.14);
+  --cm-ui-code:#5c3a25;
+  --cm-login-a:#b46f34;
+  --cm-login-b:#bf6453;
+  --cm-login-c:#5e8c69;
+  --cm-login-surface:rgba(255,248,239,.97);
+  --cm-login-soft:#f5e9dc;
+  --cm-login-text:#34261c;
+  --cm-login-muted:#705a48;
+  --cm-login-field:#fffdf8;
+  --cm-login-border:rgba(180,111,52,.22);
+}
+html[data-theme="lavender"]{
+  --cm-ui-text:#2f2b2e;
+  --cm-ui-muted:#635f61;
+  --cm-ui-panel:#fffdf8;
+  --cm-ui-soft:#f0ede5;
+  --cm-ui-border:rgba(75,69,78,.15);
+  --cm-ui-border-strong:rgba(117,104,142,.32);
+  --cm-ui-glow:rgba(143,126,174,.13);
+  --cm-ui-code:#4a4258;
+  --cm-login-a:#786799;
+  --cm-login-b:#78905e;
+  --cm-login-c:#b28754;
+  --cm-login-surface:rgba(253,250,245,.97);
+  --cm-login-soft:#efede6;
+  --cm-login-text:#302c30;
+  --cm-login-muted:#666164;
+  --cm-login-field:#fffefa;
+  --cm-login-border:rgba(120,103,153,.22);
+}
+
+/* ---------- Future shell / adaptive borders ---------- */
+html[data-theme] .topbar,
+html:not([data-theme]) .topbar{
+  color:var(--cm-ui-text)!important;
+  border-bottom:1px solid var(--cm-ui-border-strong)!important;
+  box-shadow:0 10px 30px rgba(0,0,0,.07),0 1px 0 var(--cm-ui-glow)!important;
+}
+html[data-theme] .topbar::after,
+html:not([data-theme]) .topbar::after{
+  content:"";
+  position:absolute;
+  left:0;right:0;bottom:-1px;height:1px;
+  pointer-events:none;
+  opacity:.78;
+  background:linear-gradient(90deg,transparent 0 12%,var(--cm-fx-b) 31%,var(--cm-fx-a) 51%,var(--cm-fx-c) 69%,transparent 88%);
+  background-size:220% 100%;
+  animation:cmFutureTopbarScan 8s linear infinite;
+}
+
+html[data-theme] .main > .view.active-view :is(.panel,.kpi,.folder-card,.schedule-health-card,.summary-cards>div,.v28-metric-card,.v28-finance-cell,.project-curve-card):not(.v281-home-pulse):not(.v28-home-hero),
+html:not([data-theme]) .main > .view.active-view :is(.panel,.kpi,.folder-card,.schedule-health-card,.summary-cards>div,.v28-metric-card,.v28-finance-cell,.project-curve-card):not(.v281-home-pulse):not(.v28-home-hero){
+  color:var(--cm-ui-text)!important;
+  border-color:var(--cm-ui-border-strong)!important;
+  box-shadow:
+    0 16px 40px rgba(0,0,0,.08),
+    inset 0 1px 0 rgba(255,255,255,.18),
+    0 0 0 1px var(--cm-ui-glow)!important;
+}
+
+html[data-theme] .main > .view.active-view :is(.panel,.kpi,.folder-card,.schedule-health-card,.summary-cards>div,.v28-metric-card,.v28-finance-cell,.project-curve-card):not(.v281-home-pulse):not(.v28-home-hero) :is(h1,h2,h3,h4,strong),
+html:not([data-theme]) .main > .view.active-view :is(.panel,.kpi,.folder-card,.schedule-health-card,.summary-cards>div,.v28-metric-card,.v28-finance-cell,.project-curve-card):not(.v281-home-pulse):not(.v28-home-hero) :is(h1,h2,h3,h4,strong){
+  color:var(--cm-ui-text)!important;
+  opacity:1!important;
+  text-shadow:none!important;
+}
+html[data-theme] .main > .view.active-view :is(.panel,.kpi,.folder-card,.schedule-health-card,.summary-cards>div,.v28-metric-card,.v28-finance-cell,.project-curve-card):not(.v281-home-pulse):not(.v28-home-hero) :is(p,small,label,.muted,.selection-count),
+html:not([data-theme]) .main > .view.active-view :is(.panel,.kpi,.folder-card,.schedule-health-card,.summary-cards>div,.v28-metric-card,.v28-finance-cell,.project-curve-card):not(.v281-home-pulse):not(.v28-home-hero) :is(p,small,label,.muted,.selection-count){
+  color:var(--cm-ui-muted)!important;
+  opacity:1!important;
+  text-shadow:none!important;
+}
+
+/* Dense data zones always win over decorative backgrounds. */
+html[data-theme] .main > .view.active-view :is(.table-wrap,.inventory-folder-ledger,.subcon-clean-table-wrap,.excel-budget-sheet,.report-page,.financial-sheet-card,.sheet-mirror-table),
+html:not([data-theme]) .main > .view.active-view :is(.table-wrap,.inventory-folder-ledger,.subcon-clean-table-wrap,.excel-budget-sheet,.report-page,.financial-sheet-card,.sheet-mirror-table){
+  color:var(--cm-ui-text)!important;
+  background:color-mix(in srgb,var(--cm-ui-panel) 99%,transparent)!important;
+  border-color:var(--cm-ui-border-strong)!important;
+  box-shadow:0 14px 36px rgba(0,0,0,.07),0 0 0 1px var(--cm-ui-glow)!important;
+}
+html[data-theme] .main > .view.active-view table td,
+html:not([data-theme]) .main > .view.active-view table td{
+  color:var(--cm-ui-text)!important;
+  background:transparent!important;
+}
+html[data-theme] .main > .view.active-view table th,
+html:not([data-theme]) .main > .view.active-view table th{
+  color:var(--cm-ui-muted)!important;
+  background:color-mix(in srgb,var(--cm-ui-soft) 98%,transparent)!important;
+}
+html[data-theme] .main > .view.active-view tbody tr:hover td,
+html:not([data-theme]) .main > .view.active-view tbody tr:hover td{
+  background:color-mix(in srgb,var(--cm-fx-b) 7%,var(--cm-ui-panel))!important;
+}
+
+/* Inputs: high contrast in both light and dark themes. */
+html[data-theme] :is(input,select,textarea),
+html:not([data-theme]) :is(input,select,textarea){
+  color:var(--cm-ui-text)!important;
+  caret-color:var(--cm-fx-b)!important;
+  border-color:var(--cm-ui-border)!important;
+}
+html[data-theme] :is(input,select,textarea):focus,
+html:not([data-theme]) :is(input,select,textarea):focus{
+  outline:none!important;
+  border-color:var(--cm-ui-border-strong)!important;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--cm-fx-b) 14%,transparent),0 0 18px var(--cm-ui-glow)!important;
+}
+
+/* Borders/highlights follow the theme instead of being fixed white. */
+html[data-theme] :is(.panel-head,.toolbar,.compact-toolbar,.dialog-head,.dialog-actions,.settings-section,.theme-preview,.billing-party-tab,.quick-theme-btn,.edit-mode-btn,.quotation-notif-btn,.profile-icon-btn),
+html:not([data-theme]) :is(.panel-head,.toolbar,.compact-toolbar,.dialog-head,.dialog-actions,.settings-section,.theme-preview,.billing-party-tab,.quick-theme-btn,.edit-mode-btn,.quotation-notif-btn,.profile-icon-btn){
+  border-color:var(--cm-ui-border)!important;
+}
+html[data-theme] :is(.secondary-btn,.icon-action,.quick-theme-btn,.edit-mode-btn,.quotation-notif-btn),
+html:not([data-theme]) :is(.secondary-btn,.icon-action,.quick-theme-btn,.edit-mode-btn,.quotation-notif-btn){
+  color:var(--cm-ui-text)!important;
+  background:color-mix(in srgb,var(--cm-ui-panel) 94%,transparent)!important;
+  border-color:var(--cm-ui-border)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 8px 20px rgba(0,0,0,.05)!important;
+}
+
+/* Futuristic active accent without sacrificing readability. */
+html[data-theme] .primary-btn,
+html:not([data-theme]) .primary-btn{
+  color:#fff!important;
+  border:1px solid color-mix(in srgb,var(--cm-fx-b) 55%,var(--cm-fx-a))!important;
+  background:linear-gradient(115deg,var(--cm-fx-b),color-mix(in srgb,var(--cm-fx-a) 75%,var(--cm-fx-b) 25%),var(--cm-fx-c))!important;
+  background-size:200% 100%!important;
+  box-shadow:0 10px 24px color-mix(in srgb,var(--cm-fx-b) 18%,transparent),inset 0 1px 0 rgba(255,255,255,.22)!important;
+  animation:cmFutureButtonFlow 7s ease-in-out infinite alternate;
+}
+html[data-theme="executive"] .primary-btn{color:#111318!important}
+
+/* Billing GenCon/Subcon folders: fixed readable contrast per background family. */
+html[data-theme="light"] .billing-party-tab.gencon-tab,
+html[data-theme="pastel"] .billing-party-tab.gencon-tab,
+html[data-theme="cute"] .billing-party-tab.gencon-tab,
+html[data-theme="summer"] .billing-party-tab.gencon-tab,
+html[data-theme="ocean"] .billing-party-tab.gencon-tab,
+html[data-theme="forest"] .billing-party-tab.gencon-tab,
+html[data-theme="sunset"] .billing-party-tab.gencon-tab,
+html[data-theme="lavender"] .billing-party-tab.gencon-tab,
+html[data-theme="glass"] .billing-party-tab.gencon-tab,
+html:not([data-theme]) .billing-party-tab.gencon-tab{
+  background:linear-gradient(135deg,#eef7ff,#f7fbff)!important;
+  border-color:rgba(37,99,235,.32)!important;
+}
+html[data-theme="light"] .billing-party-tab.subcon-tab,
+html[data-theme="pastel"] .billing-party-tab.subcon-tab,
+html[data-theme="cute"] .billing-party-tab.subcon-tab,
+html[data-theme="summer"] .billing-party-tab.subcon-tab,
+html[data-theme="ocean"] .billing-party-tab.subcon-tab,
+html[data-theme="forest"] .billing-party-tab.subcon-tab,
+html[data-theme="sunset"] .billing-party-tab.subcon-tab,
+html[data-theme="lavender"] .billing-party-tab.subcon-tab,
+html[data-theme="glass"] .billing-party-tab.subcon-tab,
+html:not([data-theme]) .billing-party-tab.subcon-tab{
+  background:linear-gradient(135deg,#fff7e6,#fffaf2)!important;
+  border-color:rgba(217,119,6,.34)!important;
+}
+html[data-theme] .billing-party-tab.gencon-tab strong,
+html[data-theme] .billing-party-tab.gencon-tab .folder-icon,
+html:not([data-theme]) .billing-party-tab.gencon-tab strong,
+html:not([data-theme]) .billing-party-tab.gencon-tab .folder-icon{color:#174ea6!important}
+html[data-theme] .billing-party-tab.gencon-tab small,
+html:not([data-theme]) .billing-party-tab.gencon-tab small{color:#466886!important}
+html[data-theme] .billing-party-tab.subcon-tab strong,
+html[data-theme] .billing-party-tab.subcon-tab .folder-icon,
+html:not([data-theme]) .billing-party-tab.subcon-tab strong,
+html:not([data-theme]) .billing-party-tab.subcon-tab .folder-icon{color:#8c4d0b!important}
+html[data-theme] .billing-party-tab.subcon-tab small,
+html:not([data-theme]) .billing-party-tab.subcon-tab small{color:#725a3e!important}
+
+html[data-theme="dark"] .billing-party-tab.gencon-tab,
+html[data-theme="midnight"] .billing-party-tab.gencon-tab,
+html[data-theme="executive"] .billing-party-tab.gencon-tab{
+  background:linear-gradient(135deg,rgba(30,64,175,.36),rgba(8,17,29,.96))!important;
+  border-color:rgba(96,165,250,.52)!important;
+  box-shadow:0 12px 28px rgba(37,99,235,.13),inset 0 0 0 1px rgba(96,165,250,.08)!important;
+}
+html[data-theme="dark"] .billing-party-tab.gencon-tab :is(strong,.folder-icon),
+html[data-theme="midnight"] .billing-party-tab.gencon-tab :is(strong,.folder-icon),
+html[data-theme="executive"] .billing-party-tab.gencon-tab :is(strong,.folder-icon){color:#dbeafe!important}
+html[data-theme="dark"] .billing-party-tab.gencon-tab small,
+html[data-theme="midnight"] .billing-party-tab.gencon-tab small,
+html[data-theme="executive"] .billing-party-tab.gencon-tab small{color:#9dc8f5!important}
+html[data-theme="dark"] .billing-party-tab.subcon-tab,
+html[data-theme="midnight"] .billing-party-tab.subcon-tab,
+html[data-theme="executive"] .billing-party-tab.subcon-tab{
+  background:linear-gradient(135deg,rgba(180,83,9,.30),rgba(13,18,24,.97))!important;
+  border-color:rgba(245,158,11,.52)!important;
+  box-shadow:0 12px 28px rgba(217,119,6,.11),inset 0 0 0 1px rgba(245,158,11,.07)!important;
+}
+html[data-theme="dark"] .billing-party-tab.subcon-tab :is(strong,.folder-icon),
+html[data-theme="midnight"] .billing-party-tab.subcon-tab :is(strong,.folder-icon),
+html[data-theme="executive"] .billing-party-tab.subcon-tab :is(strong,.folder-icon){color:#ffedc2!important}
+html[data-theme="dark"] .billing-party-tab.subcon-tab small,
+html[data-theme="midnight"] .billing-party-tab.subcon-tab small,
+html[data-theme="executive"] .billing-party-tab.subcon-tab small{color:#e9c386!important}
+
+/* Tab side rails and highlights now pulse in their own color family. */
+.billing-party-tab.active .billing-tab-side{height:68%!important}
+.gencon-tab .billing-tab-side{box-shadow:0 0 18px rgba(37,99,235,.55)!important}
+.subcon-tab .billing-tab-side{box-shadow:0 0 18px rgba(217,119,6,.52)!important}
+
+/* Sidebar: stronger future HUD treatment, still click-safe. */
+html[data-theme] .sidebar nav button.active::after,
+html:not([data-theme]) .sidebar nav button.active::after{
+  content:"";
+  position:absolute;
+  right:12px;top:50%;
+  width:5px;height:5px;border-radius:50%;
+  transform:translateY(-50%);
+  background:var(--cm-fx-b);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--cm-fx-b) 12%,transparent),0 0 15px var(--cm-fx-b);
+  animation:cmFutureStatusPulse 1.8s ease-in-out infinite;
+  pointer-events:none;
+}
+html[data-theme] .sidebar .brand,
+html:not([data-theme]) .sidebar .brand{
+  border-bottom-color:color-mix(in srgb,var(--cm-fx-b) 20%,rgba(255,255,255,.08))!important;
+}
+html[data-theme] .sidebar-user,
+html:not([data-theme]) .sidebar-user{
+  border-top-color:color-mix(in srgb,var(--cm-fx-a) 18%,rgba(255,255,255,.08))!important;
+}
+
+/* ---------- Animated futuristic login ---------- */
+.auth-overlay{
+  --cm-auth-grid:rgba(126,211,255,.08);
+  background:
+    radial-gradient(circle at 14% 20%,color-mix(in srgb,var(--cm-login-a) 18%,transparent),transparent 28%),
+    radial-gradient(circle at 86% 76%,color-mix(in srgb,var(--cm-login-b) 14%,transparent),transparent 30%),
+    linear-gradient(135deg,color-mix(in srgb,var(--cm-login-surface) 82%,#dce6f2 18%),color-mix(in srgb,var(--cm-login-soft) 88%,#bfcbd9 12%))!important;
+  background-size:130% 130%,130% 130%,100% 100%!important;
+  animation:cmFutureAuthBackdrop 14s ease-in-out infinite alternate!important;
+}
+.v28-auth-card{
+  background:var(--cm-login-surface)!important;
+  border:1px solid var(--cm-login-border)!important;
+  box-shadow:
+    0 34px 90px rgba(5,12,22,.24),
+    0 0 0 1px color-mix(in srgb,var(--cm-login-b) 13%,transparent),
+    0 0 48px color-mix(in srgb,var(--cm-login-a) 10%,transparent)!important;
+}
+.v28-login-visual{
+  isolation:isolate!important;
+  background:
+    radial-gradient(circle at 72% 23%,color-mix(in srgb,var(--cm-login-c) 36%,transparent),transparent 27%),
+    linear-gradient(145deg,color-mix(in srgb,var(--cm-login-a) 78%,#0b1530),color-mix(in srgb,var(--cm-login-b) 30%,#101425) 58%,#0a0f1c)!important;
+}
+.v28-login-visual::before{
+  content:"";
+  position:absolute;inset:-18%;z-index:0;pointer-events:none;
+  opacity:.82;
+  background:
+    radial-gradient(circle at 20% 16%,color-mix(in srgb,var(--cm-login-b) 62%,transparent) 0 1px,transparent 6px),
+    radial-gradient(circle at 77% 62%,color-mix(in srgb,var(--cm-login-c) 52%,transparent) 0 1px,transparent 7px),
+    repeating-linear-gradient(0deg,transparent 0 31px,var(--cm-auth-grid) 32px,transparent 33px),
+    repeating-linear-gradient(90deg,transparent 0 31px,var(--cm-auth-grid) 32px,transparent 33px),
+    linear-gradient(120deg,transparent 0 46%,color-mix(in srgb,var(--cm-login-b) 28%,transparent) 46.25%,transparent 46.7%);
+  background-size:230px 190px,280px 220px,32px 32px,32px 32px,170% 170%;
+  animation:cmFutureLoginGrid 16s linear infinite,cmFutureLoginPulse 5.5s ease-in-out infinite alternate;
+}
+.v28-login-visual::after{
+  content:"";
+  position:absolute;left:-30%;right:-30%;top:-18%;height:28%;z-index:2;pointer-events:none;
+  opacity:.58;
+  background:linear-gradient(180deg,transparent, color-mix(in srgb,var(--cm-login-b) 24%,transparent),transparent);
+  filter:blur(8px);
+  transform:rotate(-9deg);
+  animation:cmFutureLoginScan 7.5s cubic-bezier(.5,0,.5,1) infinite;
+}
+.v281-site-art{z-index:1!important}
+.v281-site-moon{
+  background:color-mix(in srgb,var(--cm-login-c) 24%,transparent)!important;
+  box-shadow:0 0 70px color-mix(in srgb,var(--cm-login-c) 28%,transparent)!important;
+  animation:cmFutureMoon 6s ease-in-out infinite alternate!important;
+}
+.v281-building{
+  border-top-color:color-mix(in srgb,var(--cm-login-b) 24%,rgba(255,255,255,.08))!important;
+  box-shadow:0 0 28px color-mix(in srgb,var(--cm-login-a) 8%,transparent);
+}
+.v281-building::after{
+  background:repeating-linear-gradient(90deg,color-mix(in srgb,var(--cm-login-b) 34%,transparent) 0 5px,transparent 5px 18px)!important;
+  background-size:72px 100%!important;
+  animation:cmFutureWindowFlow 5s linear infinite!important;
+}
+.v281-building.b2::after{animation-delay:-1.6s!important}
+.v281-building.b3::after{animation-delay:-3.1s!important}
+.v281-crane{
+  transform-origin:20px 20px;
+  animation:cmFutureCraneFloat 7s ease-in-out infinite alternate!important;
+}
+.v281-crane:before,.v281-crane:after{background:color-mix(in srgb,var(--cm-login-b) 58%,#9aa7ff)!important;box-shadow:0 0 11px color-mix(in srgb,var(--cm-login-b) 26%,transparent)}
+.v281-crane i{background:color-mix(in srgb,var(--cm-login-c) 62%,#8f87cf)!important;animation:cmFutureCable 4.4s ease-in-out infinite alternate!important}
+.v281-crane b{border-color:color-mix(in srgb,var(--cm-login-c) 72%,#9d95d8)!important;animation:cmFutureHook 4.4s ease-in-out infinite alternate!important}
+.v281-ground{animation:cmFutureGroundDrift 12s ease-in-out infinite alternate!important}
+.v281-login-brand{color:#fff!important;text-shadow:0 0 16px color-mix(in srgb,var(--cm-login-b) 42%,transparent),0 2px 10px rgba(0,0,0,.42)!important}
+.v281-login-copy h2{color:#fff!important;text-shadow:0 0 18px color-mix(in srgb,var(--cm-login-a) 20%,transparent),0 2px 10px rgba(0,0,0,.44)!important}
+.v281-login-copy p{color:rgba(245,250,255,.84)!important}
+.v281-login-dots i{background:rgba(255,255,255,.26)!important;box-shadow:0 0 10px rgba(255,255,255,.06)}
+.v281-login-dots i.active{background:var(--cm-login-b)!important;box-shadow:0 0 14px color-mix(in srgb,var(--cm-login-b) 70%,transparent)!important;animation:cmFutureStatusPulse 1.8s ease-in-out infinite}
+
+.v28-auth-form-side{
+  background:
+    linear-gradient(180deg,color-mix(in srgb,var(--cm-login-surface) 98%,transparent),color-mix(in srgb,var(--cm-login-soft) 96%,transparent))!important;
+  color:var(--cm-login-text)!important;
+  border-left:1px solid var(--cm-login-border)!important;
+}
+.v28-auth-form-side h1{color:var(--cm-login-text)!important;text-shadow:none!important}
+.v28-auth-form-side :is(p,label,.muted,small){color:var(--cm-login-muted)!important}
+.v28-auth-form-side .auth-tabs{
+  background:color-mix(in srgb,var(--cm-login-soft) 96%,transparent)!important;
+  border:1px solid var(--cm-login-border)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important;
+}
+.v28-auth-form-side .auth-tabs button{color:var(--cm-login-muted)!important}
+.v28-auth-form-side .auth-tabs button.active{
+  color:#fff!important;
+  background:linear-gradient(115deg,var(--cm-login-a),var(--cm-login-c))!important;
+  box-shadow:0 8px 20px color-mix(in srgb,var(--cm-login-a) 22%,transparent),inset 0 1px 0 rgba(255,255,255,.20)!important;
+}
+html[data-theme="executive"] .v28-auth-form-side .auth-tabs button.active{color:#111318!important}
+.v28-auth-form-side :is(input,select,textarea){
+  color:var(--cm-login-text)!important;
+  background:var(--cm-login-field)!important;
+  border-color:var(--cm-login-border)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06)!important;
+}
+.v28-auth-form-side :is(input,select,textarea):focus{
+  border-color:color-mix(in srgb,var(--cm-login-b) 66%,var(--cm-login-border))!important;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--cm-login-b) 13%,transparent),0 0 22px color-mix(in srgb,var(--cm-login-b) 11%,transparent)!important;
+}
+.v28-auth-form-side input::placeholder{color:color-mix(in srgb,var(--cm-login-muted) 75%,transparent)!important}
+.v28-auth-form-side .primary-btn{
+  background:linear-gradient(115deg,var(--cm-login-a),var(--cm-login-c),var(--cm-login-b))!important;
+  background-size:200% 100%!important;
+  border:1px solid color-mix(in srgb,var(--cm-login-b) 50%,var(--cm-login-a))!important;
+  color:#fff!important;
+  box-shadow:0 10px 24px color-mix(in srgb,var(--cm-login-a) 18%,transparent)!important;
+  animation:cmFutureButtonFlow 7s ease-in-out infinite alternate!important;
+}
+html[data-theme="executive"] .v28-auth-form-side .primary-btn{color:#111318!important}
+.v28-auth-form-side .password-toggle{
+  color:var(--cm-login-text)!important;
+  background:var(--cm-login-field)!important;
+  border:1px solid var(--cm-login-border)!important;
+  box-shadow:0 5px 16px rgba(0,0,0,.06)!important;
+}
+
+/* Login card moving perimeter glow. */
+.v28-auth-card{position:relative}
+.v28-auth-card::after{
+  content:"";
+  position:absolute;inset:0;pointer-events:none;z-index:10;border-radius:inherit;
+  padding:1px;
+  background:linear-gradient(115deg,transparent 4%,var(--cm-login-b) 28%,transparent 46%,var(--cm-login-c) 69%,transparent 92%);
+  background-size:230% 230%;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+  opacity:.55;
+  animation:cmFutureBorderOrbit 10s linear infinite;
+}
+
+/* ---------- Futuristic panel polish ---------- */
+html[data-theme] .page-head small,
+html:not([data-theme]) .page-head small{
+  color:var(--cm-fx-b)!important;
+  text-shadow:0 0 14px color-mix(in srgb,var(--cm-fx-b) 18%,transparent)!important;
+}
+html[data-theme] .panel-head,
+html:not([data-theme]) .panel-head{
+  background:linear-gradient(90deg,color-mix(in srgb,var(--cm-ui-soft) 72%,transparent),transparent)!important;
+}
+html[data-theme] .main > .view.active-view .panel:hover,
+html:not([data-theme]) .main > .view.active-view .panel:hover{
+  border-color:color-mix(in srgb,var(--cm-fx-b) 42%,var(--cm-ui-border-strong))!important;
+}
+html[data-theme] .status-active,
+html:not([data-theme]) .status-active{filter:drop-shadow(0 0 8px rgba(34,197,94,.20))}
+
+/* ---------- Future motion ---------- */
+@keyframes cmFutureTopbarScan{0%{background-position:0 0}100%{background-position:220% 0}}
+@keyframes cmFutureButtonFlow{0%{background-position:0% 50%}100%{background-position:100% 50%}}
+@keyframes cmFutureStatusPulse{0%,100%{opacity:.70;transform:translateY(-50%) scale(.90)}50%{opacity:1;transform:translateY(-50%) scale(1.12)}}
+@keyframes cmFutureAuthBackdrop{0%{background-position:0% 0%,100% 100%,0 0}100%{background-position:14% 10%,82% 76%,0 0}}
+@keyframes cmFutureLoginGrid{0%{background-position:0 0,100% 100%,0 0,0 0,-50% 50%}100%{background-position:230px -190px,-280px 220px,32px 32px,-32px 32px,150% 50%}}
+@keyframes cmFutureLoginPulse{0%{filter:saturate(.95) brightness(.96)}100%{filter:saturate(1.18) brightness(1.08)}}
+@keyframes cmFutureLoginScan{0%{transform:translateY(-160%) rotate(-9deg);opacity:0}18%{opacity:.52}75%{opacity:.52}100%{transform:translateY(520%) rotate(-9deg);opacity:0}}
+@keyframes cmFutureMoon{0%{transform:scale(.96);opacity:.70}100%{transform:scale(1.05);opacity:1}}
+@keyframes cmFutureWindowFlow{0%{background-position:0 0}100%{background-position:72px 0}}
+@keyframes cmFutureCraneFloat{0%{transform:translate3d(0,-1px,0) rotate(-.18deg)}100%{transform:translate3d(2px,2px,0) rotate(.22deg)}}
+@keyframes cmFutureCable{0%{height:64px}100%{height:78px}}
+@keyframes cmFutureHook{0%{transform:translateY(-4px)}100%{transform:translateY(10px)}}
+@keyframes cmFutureGroundDrift{0%{transform:skewY(-4deg) translateX(-1%)}100%{transform:skewY(-4deg) translateX(1.2%)}}
+@keyframes cmFutureBorderOrbit{0%{background-position:0% 0%}100%{background-position:230% 230%}}
+
+/* Reduced motion remains respected. */
+@media (prefers-reduced-motion:reduce){
+  .auth-overlay,.v28-login-visual::before,.v28-login-visual::after,.v281-site-moon,.v281-building::after,.v281-crane,.v281-crane i,.v281-crane b,.v281-ground,.v281-login-dots i.active,.v28-auth-card::after,.topbar::after,.primary-btn{animation:none!important}
+}
+
