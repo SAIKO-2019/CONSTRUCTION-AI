@@ -7,17 +7,34 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Construction Monitoring</title>
-  <link rel="stylesheet" href="styles.css?v=28371" />
-    <script src="patch-gate.js?v=28371"></script>
-<script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
+  <link rel="stylesheet" href="styles.css?v=28381" />
+    <script src="patch-gate.js?v=28381"></script>
+<script>
+  // v28.38 — Installed app uses direct authenticated sign-in without reCAPTCHA.
+  // Normal browser/web login keeps the existing reCAPTCHA verification.
+  window.__CM_STANDALONE_APP__ =
+    window.matchMedia?.('(display-mode: standalone)').matches === true ||
+    window.navigator.standalone === true;
+  window.__CM_MOBILE_DEVICE__ =
+    /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ||
+    ((navigator.maxTouchPoints || 0) > 1 && Math.min(screen.width, screen.height) < 1400);
 
-  <link rel="manifest" href="manifest.webmanifest?v=28371">
+  if (!window.__CM_STANDALONE_APP__) {
+    const cmCaptchaScript = document.createElement('script');
+    cmCaptchaScript.src = 'https://www.google.com/recaptcha/api.js?render=explicit';
+    cmCaptchaScript.async = true;
+    cmCaptchaScript.defer = true;
+    document.head.appendChild(cmCaptchaScript);
+  }
+</script>
+
+  <link rel="manifest" href="manifest.webmanifest?v=28381">
   <meta name="theme-color" content="#0b1420">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Construction Monitoring">
-  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=28371">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=28381">
 </head>
 <body>
   <div id="loginGate" class="auth-overlay">
@@ -1034,13 +1051,17 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
   <script>if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";}</script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script src="config.js"></script>
-  <script src="app.js?v=28371"></script>
-  <script src="v13.js?v=28371"></script>
-  <script src="v14.js?v=28371"></script>
-  <script src="v14.2.js?v=28371"></script>
-  <script src="v14.3.js?v=28371"></script>
-  <script src="v14.4.js?v=28371"></script>
-  <script src="v14.5.js?v=28371"></script>
+  <script src="app.js?v=28381"></script>
+  <script src="v13.js?v=28381"></script>
+  <script src="v14.js?v=28381"></script>
+  <script src="v14.2.js?v=28381"></script>
+  <script src="v14.3.js?v=28381"></script>
+  <script src="v14.4.js?v=28381"></script>
+  <script>
+  if (!window.__CM_STANDALONE_APP__) {
+    document.write('<script src="v14.5.js?v=28381"><\/script>');
+  }
+</script>
 
 
       <section id="profile" class="view">
@@ -1309,13 +1330,13 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </div>
   </dialog>
 
-  <script src="v14.7.js?v=28371"></script>
-  <script src="v14.8.js?v=28371"></script>
-  <script src="v15.9.js?v=28371"></script>
-  <script src="v17-core.js?v=28371"></script>
-  <script src="v18.js?v=28371"></script>
-  <script src="v19.js?v=28371"></script>
-  <script src="v20.js?v=28371"></script>
+  <script src="v14.7.js?v=28381"></script>
+  <script src="v14.8.js?v=28381"></script>
+  <script src="v15.9.js?v=28381"></script>
+  <script src="v17-core.js?v=28381"></script>
+  <script src="v18.js?v=28381"></script>
+  <script src="v19.js?v=28381"></script>
+  <script src="v20.js?v=28381"></script>
 
   <dialog id="quotationNotifDialog">
     <div class="dialog-card quotation-notif-dialog">
@@ -1342,9 +1363,9 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </div>
   </dialog>
 
-  <script src="v20.3.js?v=28371"></script>
-  <script src="v20.5.js?v=28371"></script>
-  <script src="v20.6.js?v=28371"></script>
+  <script src="v20.3.js?v=28381"></script>
+  <script src="v20.5.js?v=28381"></script>
+  <script src="v20.6.js?v=28381"></script>
 
   <dialog id="editQuotationDialog">
     <form id="editQuotationForm" class="dialog-card quotation-edit-dialog">
@@ -1367,25 +1388,25 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </form>
   </dialog>
 
-  <script src="v20.7.js?v=28371"></script>
-  <script src="v21.js?v=28371"></script>
-  <script src="patch-watch.js?v=28371"></script>
-  <script src="v21.3.js?v=28371"></script>
-  <script src="v21.4.js?v=28371"></script>
-  <script src="v21.5.js?v=28371"></script>
-  <script src="v21.6.js?v=28371"></script>
-  <script src="v22.6.js?v=28371"></script>
-  <script src="v22.9.js?v=28371"></script>
-  <script src="v23.0.js?v=28371"></script>
-  <script src="v23.2.js?v=28371"></script>
-  <script src="v23.3.js?v=28371"></script>
-  <script src="v23.4.js?v=28371"></script>
-  <script src="v23.5.js?v=28371"></script>
-  <script src="v23.6.js?v=28371"></script>
-  <script src="v23.7.js?v=28371"></script>
-  <script src="v23.8.js?v=28371"></script>
-  <script src="v23.9.js?v=28371"></script>
-  <script src="v24.0.js?v=28371"></script>
+  <script src="v20.7.js?v=28381"></script>
+  <script src="v21.js?v=28381"></script>
+  <script src="patch-watch.js?v=28381"></script>
+  <script src="v21.3.js?v=28381"></script>
+  <script src="v21.4.js?v=28381"></script>
+  <script src="v21.5.js?v=28381"></script>
+  <script src="v21.6.js?v=28381"></script>
+  <script src="v22.6.js?v=28381"></script>
+  <script src="v22.9.js?v=28381"></script>
+  <script src="v23.0.js?v=28381"></script>
+  <script src="v23.2.js?v=28381"></script>
+  <script src="v23.3.js?v=28381"></script>
+  <script src="v23.4.js?v=28381"></script>
+  <script src="v23.5.js?v=28381"></script>
+  <script src="v23.6.js?v=28381"></script>
+  <script src="v23.7.js?v=28381"></script>
+  <script src="v23.8.js?v=28381"></script>
+  <script src="v23.9.js?v=28381"></script>
+  <script src="v24.0.js?v=28381"></script>
 
   <dialog id="linkedSubconDialog">
     <form id="linkedSubconForm" class="dialog-card wide">
@@ -1412,42 +1433,45 @@ onclick="const p=document.getElementById('loginPassword');const show=p.type==='p
     </form>
   </dialog>
 
-  <script src="v24.1.js?v=28371"></script>
-  <script src="v24.4.js?v=28371"></script>
-  <script src="v24.5.js?v=28371"></script>
-  <script src="v24.6.js?v=28371"></script>
-  <script src="v24.7.js?v=28371"></script>
-  <script src="v24.8.js?v=28371"></script>
-  <script src="v25.0.js?v=28371"></script>
-  <script src="v25.1.js?v=28371"></script>
-  <script src="v25.4.js?v=28371"></script>
-  <script src="v25.5.js?v=28371"></script>
-  <script src="v25.8.js?v=28371"></script>
-  <script src="v26.0.js?v=28371"></script>
-  <script src="v26.1.js?v=28371"></script>
-  <script src="v26.2.js?v=28371"></script>
-  <script src="v26.3.js?v=28371"></script>
-  <script src="v26.4.js?v=28371"></script>
-  <script src="v26.5.js?v=28371"></script>
-  <script src="v26.8.js?v=28371"></script>
-  <script src="v26.9.js?v=28371"></script>
-  <script src="v27.0.js?v=28371"></script>
-  <script src="v27.1.js?v=28371"></script>
-  <script src="v27.2.js?v=28371"></script>
-  <script src="v27.3.js?v=28371"></script>
-  <script src="v27.4.js?v=28371"></script>
-  <script src="v27.5.js?v=28371"></script>
-  <script src="v28.0.js?v=28371"></script>
-  <script src="v28.1.js?v=28371"></script>
-  <script src="v28.2.js?v=28371"></script>
-  <script src="v28.3.js?v=28371"></script>
-  <script src="v28.4.js?v=28371"></script>
-  <script src="v28.5.js?v=28371"></script>
-  <script src="v28.8.js?v=28371"></script>
-  <script src="v28.10.js?v=28371"></script>
-  <script src="v28.11.js?v=28371"></script>
-  <script src="v28.19.js?v=28371"></script>
-  <script src="v28.22.js?v=28371"></script>
-  <script src="pwa-app.js?v=28371"></script>
+  <script src="v24.1.js?v=28381"></script>
+  <script src="v24.4.js?v=28381"></script>
+  <script src="v24.5.js?v=28381"></script>
+  <script src="v24.6.js?v=28381"></script>
+  <script src="v24.7.js?v=28381"></script>
+  <script src="v24.8.js?v=28381"></script>
+  <script src="v25.0.js?v=28381"></script>
+  <script src="v25.1.js?v=28381"></script>
+  <script src="v25.4.js?v=28381"></script>
+  <script src="v25.5.js?v=28381"></script>
+  <script src="v25.8.js?v=28381"></script>
+  <script src="v26.0.js?v=28381"></script>
+  <script src="v26.1.js?v=28381"></script>
+  <script src="v26.2.js?v=28381"></script>
+  <script src="v26.3.js?v=28381"></script>
+  <script src="v26.4.js?v=28381"></script>
+  <script src="v26.5.js?v=28381"></script>
+  <script src="v26.8.js?v=28381"></script>
+  <script src="v26.9.js?v=28381"></script>
+  <script src="v27.0.js?v=28381"></script>
+  <script src="v27.1.js?v=28381"></script>
+  <script src="v27.2.js?v=28381"></script>
+  <script src="v27.3.js?v=28381"></script>
+  <script src="v27.4.js?v=28381"></script>
+  <script src="v27.5.js?v=28381"></script>
+  <script src="v28.0.js?v=28381"></script>
+  <script src="v28.1.js?v=28381"></script>
+  <script src="v28.2.js?v=28381"></script>
+  <script src="v28.3.js?v=28381"></script>
+  <script src="v28.4.js?v=28381"></script>
+  <script src="v28.5.js?v=28381"></script>
+  <script src="v28.8.js?v=28381"></script>
+  <script src="v28.10.js?v=28381"></script>
+  <script src="v28.11.js?v=28381"></script>
+  <script src="v28.19.js?v=28381"></script>
+  <script src="v28.22.js?v=28381"></script>
+  <script src="pwa-app.js?v=28381"></script>
+  <script src="mobile-auth.js?v=28381"></script>
+  <script src="mobile-shell.js?v=28381"></script>
+  <script src="push-client.js?v=28381"></script>
 </body>
 </html>

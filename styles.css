@@ -7752,4 +7752,207 @@ html[data-theme="executive"] .main > .view.active-view :is(.warning,.pending,.at
   .cm-install-login-btn{margin-top:12px}
 }
 @media(prefers-reduced-motion:reduce){.cm-voice-orb{animation:none!important}.cm-voice-greeting-toast{transition:none!important}}
+/* =========================================================
+   CONSTRUCTION MONITORING v28.38
+   PHONE / TABLET APP MODE + SMOOTH SWIPE + PUSH UI
+   Same web data/features; responsive interaction shell only.
+   ========================================================= */
 
+.cm-mobile-header,.cm-mobile-bottom-nav,.cm-mobile-drawer-wrap,.cm-mobile-project-bar{display:none}
+.cm-app-security-badge{display:none}
+
+html.cm-mobile-app{
+  --cm-mobile-header-h:64px;
+  --cm-mobile-nav-h:72px;
+  --cm-mobile-safe-top:env(safe-area-inset-top,0px);
+  --cm-mobile-safe-bottom:env(safe-area-inset-bottom,0px);
+  -webkit-tap-highlight-color:transparent;
+}
+html.cm-mobile-app body{
+  padding-top:calc(var(--cm-mobile-header-h) + var(--cm-mobile-safe-top));
+  padding-bottom:calc(var(--cm-mobile-nav-h) + var(--cm-mobile-safe-bottom));
+  overscroll-behavior-y:none;
+  touch-action:pan-y pinch-zoom;
+}
+html.cm-mobile-app .app-shell{min-height:calc(100dvh - var(--cm-mobile-header-h));display:block!important}
+html.cm-mobile-app .sidebar{display:none!important}
+html.cm-mobile-app .main{margin-left:0!important;min-height:auto!important;width:100%!important}
+
+/* Mobile header */
+html.cm-mobile-app .cm-mobile-header{
+  display:flex;position:fixed;left:0;right:0;top:0;z-index:920;
+  min-height:calc(var(--cm-mobile-header-h) + var(--cm-mobile-safe-top));
+  padding:calc(9px + var(--cm-mobile-safe-top)) 12px 9px;
+  align-items:center;justify-content:space-between;gap:10px;
+  color:var(--text);background:color-mix(in srgb,var(--surface) 95%,transparent);
+  border-bottom:1px solid color-mix(in srgb,var(--text) 12%,var(--line));
+  box-shadow:0 8px 24px rgba(0,0,0,.09);
+  backdrop-filter:blur(14px) saturate(1.08);-webkit-backdrop-filter:blur(14px) saturate(1.08);
+}
+.cm-mobile-brand{display:flex;align-items:center;gap:9px;min-width:0;padding:0;border:0;background:transparent;color:var(--text);text-align:left}
+.cm-mobile-brand img{width:38px;height:38px;border-radius:11px;box-shadow:0 7px 18px rgba(0,0,0,.11)}
+.cm-mobile-brand span{display:grid;min-width:0}.cm-mobile-brand small{font-size:8px;letter-spacing:.14em;color:var(--muted);font-weight:900}.cm-mobile-brand strong{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:44vw;color:var(--heading,var(--text))}
+.cm-mobile-header-actions{display:flex;gap:6px;align-items:center}
+.cm-mobile-icon-btn{position:relative;width:40px;height:40px;display:grid;place-items:center;border-radius:13px;border:1px solid color-mix(in srgb,var(--text) 12%,var(--line));background:color-mix(in srgb,var(--surface) 97%,transparent);color:var(--text);font-size:17px;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.cm-mobile-badge{position:absolute;right:-2px;top:-3px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;display:grid;place-items:center;background:#ef4444;color:#fff;font-size:9px;font-weight:900;border:2px solid var(--surface)}
+
+/* Preserve original topbar features, reorganized for touch */
+html.cm-mobile-app .topbar{display:none!important}
+html.cm-mobile-app .cm-mobile-project-bar{
+  display:grid;grid-template-columns:minmax(0,1.25fr) minmax(150px,.75fr);gap:9px;
+  position:sticky;top:calc(var(--cm-mobile-header-h) + var(--cm-mobile-safe-top));z-index:88;
+  padding:9px 12px;background:color-mix(in srgb,var(--bg) 95%,transparent);
+  border-bottom:1px solid color-mix(in srgb,var(--text) 8%,var(--line));
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
+.cm-mobile-search-wrap{display:flex;align-items:center;gap:8px;min-width:0;padding:0 11px;border:1px solid color-mix(in srgb,var(--text) 12%,var(--line));border-radius:13px;background:color-mix(in srgb,var(--surface) 98%,transparent)}
+.cm-mobile-search-wrap>span{font-size:18px;color:var(--muted)}
+#cmMobileSearchHost{min-width:0;flex:1}#cmMobileSearchHost #globalSearch{width:100%!important;min-width:0!important;border:0!important;background:transparent!important;box-shadow:none!important;padding:10px 0!important;color:var(--text)!important}
+.cm-mobile-project-host{min-width:0}.cm-mobile-project-host .workspace-project{display:grid!important;gap:2px!important;height:100%;font-size:7px!important;letter-spacing:.08em;color:var(--muted)!important;padding:5px 8px!important;border:1px solid color-mix(in srgb,var(--blue) 24%,var(--line));border-radius:13px;background:color-mix(in srgb,var(--surface) 98%,transparent)}
+.cm-mobile-project-host .workspace-project select{width:100%!important;min-width:0!important;padding:5px 3px!important;border:0!important;background:transparent!important;color:var(--text)!important;font-size:11px!important;font-weight:800!important;box-shadow:none!important}
+
+/* Touch-first content */
+html.cm-mobile-app .view{padding:14px 12px 18px!important;min-width:0!important;contain:layout style}
+html.cm-mobile-app .page-head{margin-bottom:14px!important;gap:10px!important}
+html.cm-mobile-app .page-head h1{font-size:clamp(24px,6vw,32px)!important;margin:3px 0!important}
+html.cm-mobile-app .page-head p{font-size:11px!important;line-height:1.45!important}
+html.cm-mobile-app :is(button,.primary-btn,.secondary-btn,.text-btn,.icon-action){min-height:42px;touch-action:manipulation}
+html.cm-mobile-app :is(input,select,textarea){font-size:16px!important;min-height:44px}
+html.cm-mobile-app .panel{border-radius:17px!important;overflow:hidden}
+html.cm-mobile-app .panel-head{padding:13px 14px!important;gap:8px!important;align-items:flex-start!important}
+html.cm-mobile-app .panel-head h2{font-size:15px!important}
+html.cm-mobile-app .panel-head .muted{font-size:9px!important;line-height:1.35!important}
+
+/* Smooth page transitions use transform+opacity only (GPU-friendly). */
+html.cm-mobile-app .view.cm-page-enter-forward{animation:cmMobilePageForward .22s cubic-bezier(.2,.8,.2,1) both}
+html.cm-mobile-app .view.cm-page-enter-back{animation:cmMobilePageBack .22s cubic-bezier(.2,.8,.2,1) both}
+@keyframes cmMobilePageForward{from{opacity:.58;transform:translate3d(22px,0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes cmMobilePageBack{from{opacity:.58;transform:translate3d(-22px,0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+
+/* Home mobile command center */
+html.cm-mobile-app #home .v28-home-hero{display:grid!important;grid-template-columns:1fr!important;gap:10px!important;min-height:0!important;padding:12px!important;border-radius:20px!important}
+html.cm-mobile-app #home .v28-home-hero-copy{max-width:none!important;padding:18px!important;border-radius:16px!important}
+html.cm-mobile-app #home .v28-home-hero-copy h1{font-size:clamp(28px,8vw,42px)!important;line-height:1!important}
+html.cm-mobile-app #home .v28-home-actions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important}
+html.cm-mobile-app #home .v28-home-actions .primary-btn{grid-column:1/-1}
+html.cm-mobile-app #home .v281-home-selected-card{padding:14px!important;border-radius:16px!important}
+html.cm-mobile-app #home .v281-hero-metrics{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}
+html.cm-mobile-app #home .v281-hero-metrics>div{padding:9px 6px!important}
+html.cm-mobile-app #home .v281-hero-metrics strong{font-size:14px!important}
+html.cm-mobile-app #home .v28-home-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+html.cm-mobile-app #home .v281-home-control-grid,html.cm-mobile-app #home .v28-home-grid{grid-template-columns:1fr!important;gap:10px!important}
+
+/* Dashboard & cards */
+html.cm-mobile-app .kpi-grid,html.cm-mobile-app .summary-cards{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+html.cm-mobile-app .kpi{padding:13px!important;border-radius:15px!important}
+html.cm-mobile-app .kpi strong{font-size:20px!important}
+html.cm-mobile-app .dashboard-grid,html.cm-mobile-app .project-curve-grid{grid-template-columns:1fr!important;gap:10px!important}
+html.cm-mobile-app .project-curve-card{padding:10px!important;border-radius:14px!important}
+
+/* Forms/toolbars */
+html.cm-mobile-app .toolbar{display:grid!important;grid-template-columns:1fr!important;gap:9px!important;padding:11px!important;align-items:stretch!important}
+html.cm-mobile-app .toolbar>*{width:100%!important;min-width:0!important}
+html.cm-mobile-app .toolbar :is(select,input,button){width:100%!important;min-width:0!important}
+html.cm-mobile-app .form-grid,html.cm-mobile-app .calc-box{grid-template-columns:1fr!important}
+html.cm-mobile-app .dialog-actions{position:sticky;bottom:0;padding-top:10px;background:linear-gradient(transparent,color-mix(in srgb,var(--surface) 96%,transparent) 24%);z-index:3}
+html.cm-mobile-app dialog{width:min(100vw - 16px,720px)!important;max-height:calc(100dvh - 24px)!important;border-radius:22px!important}
+html.cm-mobile-app dialog .dialog-card,html.cm-mobile-app dialog .dialog-card.wide{width:100%!important;max-height:calc(100dvh - 24px)!important;overflow:auto!important;padding:16px!important}
+
+/* Preserve every table column; swipe the table instead of deleting data. */
+html.cm-mobile-app .table-wrap{overflow:auto!important;-webkit-overflow-scrolling:touch!important;border-radius:14px!important;scrollbar-width:thin;touch-action:pan-x pan-y}
+html.cm-mobile-app table{min-width:760px!important}
+html.cm-mobile-app th,html.cm-mobile-app td{padding:11px 10px!important;font-size:11px!important;white-space:nowrap}
+html.cm-mobile-app th{font-size:9px!important}
+
+/* AI/chat */
+html.cm-mobile-app .chat-shell{height:calc(100dvh - 220px)!important;min-height:430px!important}
+html.cm-mobile-app .chat-messages{padding:12px!important}
+html.cm-mobile-app .bot,html.cm-mobile-app .user-msg{max-width:90%!important}
+html.cm-mobile-app .chat-input{padding:10px!important;gap:7px!important}
+html.cm-mobile-app .chat-input textarea{min-height:54px!important}
+
+/* Bottom nav */
+html.cm-mobile-app .cm-mobile-bottom-nav{
+  display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:8px;right:8px;bottom:calc(8px + var(--cm-mobile-safe-bottom));z-index:930;
+  min-height:64px;padding:5px;border:1px solid color-mix(in srgb,var(--text) 12%,var(--line));border-radius:20px;
+  background:color-mix(in srgb,var(--surface) 94%,transparent);box-shadow:0 14px 38px rgba(0,0,0,.18);
+  backdrop-filter:blur(14px) saturate(1.08);-webkit-backdrop-filter:blur(14px) saturate(1.08);
+}
+.cm-mobile-bottom-nav button{position:relative;display:grid;place-items:center;align-content:center;gap:2px;min-width:0;border:0;border-radius:15px;background:transparent;color:var(--muted);padding:5px 2px}
+.cm-mobile-bottom-nav button>span{font-size:19px;line-height:1}.cm-mobile-bottom-nav button>small{font-size:8px;font-weight:800;white-space:nowrap}
+.cm-mobile-bottom-nav button.active{color:var(--text);background:color-mix(in srgb,var(--blue) 12%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--blue) 24%,transparent)}
+.cm-mobile-bottom-nav button.active::before{content:'';position:absolute;top:2px;width:18px;height:2px;border-radius:99px;background:var(--cyan,var(--blue));box-shadow:0 0 8px color-mix(in srgb,var(--cyan,var(--blue)) 45%,transparent)}
+
+/* More drawer: all web features remain available */
+html.cm-mobile-app .cm-mobile-drawer-wrap{display:block;position:fixed;inset:0;z-index:990;pointer-events:none;visibility:hidden}
+.cm-mobile-drawer-backdrop{position:absolute;inset:0;border:0;background:rgba(2,8,16,.58);opacity:0;transition:opacity .2s ease;backdrop-filter:blur(3px)}
+.cm-mobile-drawer{position:absolute;left:8px;right:8px;bottom:calc(8px + var(--cm-mobile-safe-bottom));max-height:min(82dvh,760px);overflow:auto;padding:8px 14px 14px;border-radius:26px;color:var(--text);background:color-mix(in srgb,var(--surface) 98%,transparent);border:1px solid color-mix(in srgb,var(--text) 13%,var(--line));box-shadow:0 30px 80px rgba(0,0,0,.32);transform:translate3d(0,calc(100% + 24px),0);transition:transform .27s cubic-bezier(.2,.8,.2,1);will-change:transform}
+.cm-mobile-drawer-wrap.open{pointer-events:auto;visibility:visible}.cm-mobile-drawer-wrap.open .cm-mobile-drawer-backdrop{opacity:1}.cm-mobile-drawer-wrap.open .cm-mobile-drawer{transform:translate3d(0,0,0)}
+.cm-mobile-drawer-handle{width:42px;height:4px;border-radius:99px;margin:1px auto 10px;background:color-mix(in srgb,var(--text) 22%,transparent)}
+.cm-mobile-drawer-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:5px 0 12px}
+.cm-mobile-user{display:flex;align-items:center;gap:10px;min-width:0}.cm-mobile-user>div:last-child{display:grid;min-width:0}.cm-mobile-user strong{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cm-mobile-user small{font-size:9px;color:var(--muted)}
+.cm-mobile-avatar{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,var(--blue),var(--cyan,var(--blue)));color:#fff;font-weight:900;box-shadow:0 8px 20px color-mix(in srgb,var(--blue) 20%,transparent)}
+.cm-mobile-project-strip{padding:10px 12px;margin-bottom:10px;border-radius:14px;background:color-mix(in srgb,var(--blue) 7%,var(--surface));border:1px solid color-mix(in srgb,var(--blue) 16%,var(--line));display:grid;gap:2px}.cm-mobile-project-strip small{font-size:8px;letter-spacing:.12em;color:var(--muted)}.cm-mobile-project-strip strong{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cm-mobile-feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.cm-mobile-feature-item{display:grid;gap:6px;align-content:center;min-height:76px!important;padding:9px 6px;border-radius:15px;border:1px solid color-mix(in srgb,var(--text) 10%,var(--line));background:color-mix(in srgb,var(--soft) 70%,var(--surface));color:var(--text);text-align:center}
+.cm-mobile-feature-item>span{font-size:20px;color:var(--blue)}.cm-mobile-feature-item>strong{font-size:9px;line-height:1.25}
+.cm-mobile-quick-actions{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:10px;padding-top:10px;border-top:1px solid color-mix(in srgb,var(--text) 9%,var(--line))}
+.cm-mobile-quick-actions button{display:grid;place-items:center;gap:3px;padding:8px 2px;border-radius:13px;border:1px solid color-mix(in srgb,var(--text) 10%,var(--line));background:var(--surface);color:var(--text)}
+.cm-mobile-quick-actions button>span{font-size:8px}.cm-mobile-quick-actions button.danger{color:#e5484d}
+
+/* Installed app login keeps all animated web features but switches layout for device. */
+html.cm-standalone-app .captcha-wrap{display:none!important}
+html.cm-standalone-app .cm-app-security-badge{display:flex;align-items:center;gap:9px;padding:9px 11px;margin-top:8px;border-radius:12px;border:1px solid color-mix(in srgb,var(--cm-login-b,#22d3ee) 22%,var(--cm-login-border));background:color-mix(in srgb,var(--cm-login-b,#22d3ee) 6%,var(--cm-login-field));color:var(--cm-login-text)}
+.cm-app-security-icon{width:27px;height:27px;display:grid;place-items:center;border-radius:9px;background:color-mix(in srgb,#22c55e 16%,transparent);border:1px solid color-mix(in srgb,#22c55e 34%,transparent);color:#16a34a;font-weight:900}
+.cm-app-security-badge>div{display:grid}.cm-app-security-badge strong{font-size:10px}.cm-app-security-badge small{font-size:8px!important;color:var(--cm-login-muted)!important}
+
+@media(max-width:760px){
+  html.cm-mobile-app .auth-card.v28-auth-card{width:calc(100vw - 18px)!important;max-height:calc(100dvh - 18px)!important;grid-template-columns:1fr!important;overflow:auto!important;border-radius:22px!important}
+  html.cm-mobile-app .v28-login-visual{min-height:235px!important;height:30dvh!important;max-height:285px!important}
+  html.cm-mobile-app .v28-auth-form-side{padding:20px!important;border-left:0!important;border-top:1px solid var(--cm-login-border)!important}
+  html.cm-mobile-app .v281-login-copy{bottom:16px!important;left:18px!important;right:18px!important}
+  html.cm-mobile-app .v281-login-copy h2{font-size:24px!important}
+  html.cm-mobile-app .cm-mobile-project-bar{grid-template-columns:minmax(0,1fr) 138px}
+  .cm-mobile-feature-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
+/* Tablet mode: same features, wider command layout. */
+@media(min-width:761px) and (max-width:1180px){
+  html.cm-mobile-app{--cm-mobile-header-h:70px;--cm-mobile-nav-h:78px}
+  html.cm-mobile-app .view{padding:18px 20px 24px!important}
+  html.cm-mobile-app .cm-mobile-project-bar{padding:10px 20px;grid-template-columns:minmax(0,1.5fr) minmax(240px,.7fr)}
+  html.cm-mobile-app #home .v28-home-hero{grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr)!important}
+  html.cm-mobile-app #home .v28-home-kpis,html.cm-mobile-app .kpi-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  html.cm-mobile-app #home .v281-home-control-grid,html.cm-mobile-app .dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  html.cm-mobile-app .cm-mobile-bottom-nav{left:50%;right:auto;transform:translateX(-50%);width:min(640px,calc(100vw - 40px))}
+  .cm-mobile-drawer{left:auto;right:14px;width:min(540px,calc(100vw - 28px));bottom:calc(92px + var(--cm-mobile-safe-bottom))}
+  .cm-mobile-feature-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  html.cm-mobile-app .auth-card.v28-auth-card{width:min(920px,calc(100vw - 30px))!important;grid-template-columns:.9fr 1.1fr!important}
+}
+
+/* Push center */
+.cm-push-center{border:0;padding:0;background:transparent;max-width:min(460px,calc(100vw - 24px));width:100%}
+.cm-push-center::backdrop{background:rgba(2,8,16,.66);backdrop-filter:blur(5px)}
+.cm-push-card{position:relative;padding:24px;border-radius:24px;color:var(--text);background:color-mix(in srgb,var(--surface) 98%,transparent);border:1px solid color-mix(in srgb,var(--text) 13%,var(--line));box-shadow:0 28px 80px rgba(0,0,0,.34)}
+.cm-push-close{position:absolute;right:13px;top:12px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--text);font-size:19px}
+.cm-push-head{display:flex;gap:11px;align-items:center;margin-bottom:12px}.cm-push-head small{display:block;font-size:8px;letter-spacing:.12em;color:var(--muted)}.cm-push-head h2{margin:2px 0 0;font-size:23px}.cm-push-orb{width:48px;height:48px;display:grid;place-items:center;border-radius:16px;background:color-mix(in srgb,var(--blue) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--blue) 18%,var(--line));font-size:20px}
+.cm-push-card p{font-size:11px;line-height:1.55;color:var(--muted)}.cm-push-status{padding:10px 12px;margin:12px 0;border-radius:12px;background:var(--soft);border:1px solid var(--line);font-size:10px;font-weight:800}.cm-push-status.enabled{color:#15803d;border-color:color-mix(in srgb,#22c55e 35%,var(--line))}.cm-push-status.disabled{color:var(--muted)}
+.cm-push-actions{display:flex;gap:8px}.cm-push-actions>*{flex:1}.cm-push-note{display:block;margin-top:10px;font-size:8px;color:var(--muted);line-height:1.45}
+.cm-push-optin{position:fixed;left:12px;right:12px;bottom:calc(88px + env(safe-area-inset-bottom,0px));z-index:970;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:12px 13px;border-radius:16px;border:1px solid color-mix(in srgb,var(--blue) 26%,var(--line));background:color-mix(in srgb,var(--surface) 97%,transparent);color:var(--text);box-shadow:0 18px 48px rgba(0,0,0,.24);transform:translateY(20px);opacity:0;transition:.26s ease;text-align:left}.cm-push-optin.show{transform:translateY(0);opacity:1}.cm-push-optin>span{font-size:22px}.cm-push-optin>div{display:grid}.cm-push-optin strong{font-size:11px}.cm-push-optin small{font-size:8px;color:var(--muted)}.cm-push-optin>b{font-size:9px;color:var(--blue)}
+
+/* Mobile performance: tone down expensive continuous effects while keeping motion. */
+@media(max-width:1180px){
+  html.cm-mobile-app .main > .view::before{opacity:.18!important;animation-duration:24s!important}
+  html.cm-mobile-app .main > .view::after{opacity:.22!important;animation-duration:20s,8s!important}
+  html.cm-mobile-app .v28-login-visual::before{opacity:.62!important;animation-duration:22s,8s!important}
+  html.cm-mobile-app .v28-login-visual::after{filter:blur(5px)!important;animation-duration:10s!important}
+  html.cm-mobile-app .panel{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  html.cm-mobile-app .cm-mobile-header,
+  html.cm-mobile-app .cm-mobile-bottom-nav{backdrop-filter:blur(10px)!important;-webkit-backdrop-filter:blur(10px)!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html.cm-mobile-app .view.cm-page-enter-forward,
+  html.cm-mobile-app .view.cm-page-enter-back{animation:none!important}
+  .cm-mobile-drawer,.cm-mobile-drawer-backdrop,.cm-push-optin{transition:none!important}
+}

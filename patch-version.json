@@ -1,5 +1,5 @@
 {
-  "version": "28.37",
-  "label": "Construction Monitoring v28.37 \u2014 Mobile App + Voice Welcome",
-  "message": "Adds spoken login greeting using the signed-in display name and turns Construction Monitoring into an installable PWA for Android/iPhone. Includes install UI, app manifest, icons and network-first service worker. No project data, Supabase schema/rows, calculations, sync logic or existing button handlers changed."
+  "version": "28.38",
+  "label": "Construction Monitoring v28.38 \u2014 Phone/Tablet App + Background Push",
+  "message": "Mobile/tablet shell with same web features/data, installed-app direct login without reCAPTCHA, smooth swipe/page transitions, and background Web Push notifications when the installed app is closed. Includes performance tuning for mobile. No existing project/business data or core calculation logic is modified."
 }
