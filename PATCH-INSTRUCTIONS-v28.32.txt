@@ -1,0 +1,16 @@
+CONSTRUCTION MONITORING v28.32 PATCH
+
+Purpose:
+- Hide the entire "Project Cost Folders" panel from the Projects page.
+- Existing Materials/Labor/Overhead/Equipment/Subcontractor/Other data is NOT deleted.
+- No Supabase schema/data migration.
+
+Apply:
+1. Upload/replace index.html in the same GitHub project, just like previous Construction Monitoring patches.
+2. Commit the change and wait for Vercel deployment to become Ready.
+3. Run v28.32-release.sql in Supabase SQL Editor to broadcast the new release/refresh notice.
+4. Hard refresh the Construction Monitoring site.
+
+Patch files:
+- index.html
+- v28.32-release.sql
