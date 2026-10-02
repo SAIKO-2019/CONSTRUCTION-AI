@@ -1,0 +1,29 @@
+CONSTRUCTION MONITORING v28.34 — READABILITY + LIVE SIDEBAR
+
+WHAT THIS PATCH DOES
+- Fixes the washed-out text shown in the Home screenshot.
+- Restores a dark readable Home hero and Project Pulse.
+- Makes cards, tables and charts more opaque/readable on every theme.
+- Adds continuous moving lights/grid/architectural drift to the LEFT SIDEBAR on every theme.
+- Keeps the main architectural page background static; only decorative light/grid layers move.
+- Keeps Project Cost Folders hidden.
+
+WHAT IT DOES NOT CHANGE
+- No project/business data
+- No Supabase record data
+- No schema migration
+- No billing formulas
+- No Projected/Actual logic
+- No inventory logic
+- No quotation logic
+- No button IDs / event-handler logic
+
+APPLY
+1. Extract this ZIP.
+2. Upload/overwrite the included files in the same GitHub project.
+3. Commit and wait for Vercel deployment to show Ready.
+4. Run v28.34-readability-live-sidebar-release.sql once in Supabase SQL Editor.
+5. Hard refresh / sign in again if the patch notice asks.
+
+ROLLBACK
+- Re-upload the v28.33 files if you want to return to the previous visual version.

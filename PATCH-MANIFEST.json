@@ -1,10 +1,11 @@
 {
-  "from": "v28.31",
-  "to": "v28.33",
-  "type": "CUMULATIVE PATCH ONLY",
-  "includes": [
-    "v28.32: hide Project Cost Folders UI only",
-    "v28.33: cinematic animated theme effects"
+  "from": "v28.33",
+  "to": "v28.34",
+  "type": "PATCH ONLY",
+  "purpose": [
+    "Fix washed-out/unreadable Home hero and Project Pulse",
+    "Increase card/chart/table contrast on every existing theme",
+    "Add continuous moving background/effect layer to the left sidebar for every theme"
   ],
   "upload_overwrite_only": [
     "index.html",
@@ -13,16 +14,14 @@
     "patch-watch.js",
     "patch-gate.js",
     "api/system-version.js",
-    "v28.33-cinematic-theme-effects-release.sql"
+    "v28.34-readability-live-sidebar-release.sql"
   ],
-  "data_changes": "NONE to project/business data. No schema migration. Release SQL only bumps the existing system release marker.",
-  "visual_scope": [
-    "Static architectural background remains still",
-    "Animated light streaks, grid motion and glow move per page",
-    "Every existing theme gets tuned glass/contrast behavior",
-    "Executive Dark and Midnight are closest to the supplied reference video",
-    "Charts, tables, forms and text keep higher-opacity readable surfaces",
-    "Decorative layers use pointer-events:none and do not intercept buttons"
-  ],
-  "after_upload": "Wait for Vercel Ready, then run v28.33-cinematic-theme-effects-release.sql once, then hard refresh/login."
+  "data_changes": "NONE. No project/business/Supabase record changes. Release SQL only bumps the existing system release marker.",
+  "logic_changes": "NONE to billing, projected, actual, inventory, quotation, calculations, sync, buttons or event handlers.",
+  "safety": [
+    "Decorative layers use pointer-events:none",
+    "Project Cost Folders stays hidden from v28.32",
+    "Existing DOM IDs are preserved",
+    "Existing button/event-handler code is preserved"
+  ]
 }
