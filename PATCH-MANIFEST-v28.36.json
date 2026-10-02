@@ -1,0 +1,24 @@
+{
+  "from": "v28.35",
+  "to": "v28.36",
+  "type": "VISUAL-ONLY PATCH",
+  "root_cause_fixed": "Previous cinematic Home rules forced white text. Light themes could therefore render white text on cream/light architectural backgrounds.",
+  "fixes": [
+    "Home hero text now follows active theme --text/--muted colors",
+    "Hero copy and selected-project area use adaptive frosted HUD plates",
+    "Project Pulse now follows active theme text/surface colors instead of forced white/dark styling",
+    "Panel borders/highlights adapt from active text/accent variables",
+    "All index local resource cache tokens bumped to v=28361"
+  ],
+  "protected_unchanged": [
+    "project data",
+    "Supabase rows/schema",
+    "billing formulas",
+    "Projected/Actual sync",
+    "inventory",
+    "quotation logic",
+    "button IDs",
+    "event handlers"
+  ],
+  "release_sql": "System release marker only."
+}

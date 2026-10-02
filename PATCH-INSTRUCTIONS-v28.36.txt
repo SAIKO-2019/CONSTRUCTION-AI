@@ -1,0 +1,26 @@
+CONSTRUCTION MONITORING v28.36 — ADAPTIVE READABILITY HOTFIX
+
+THIS FIX IS SPECIFICALLY FOR THE SCREENSHOT WHERE:
+- Welcome back / Home hero was white on a light background
+- Project Pulse text was white on a light panel
+
+WHAT CHANGED
+- Removed the hard-coded white readability behavior by overriding it at the end of styles.css.
+- Home hero now follows the current theme's --text / --muted / --surface values.
+- Added a theme-adaptive frosted HUD plate behind the hero copy and selected project.
+- Project Pulse now uses the active theme's readable text and surface colors.
+- Borders/highlights also adapt to the theme.
+- Bumped every local resource cache token in index.html to ?v=28361 so the new CSS cannot be hidden by browser cache.
+
+NOT CHANGED
+- No project/business data
+- No Supabase rows or schema
+- No Billing / Projected / Actual / Inventory / Quotation logic
+- No button IDs or event handlers
+
+APPLY
+1. Extract this ZIP.
+2. Upload/overwrite all included files in the same GitHub project.
+3. Commit and wait for Vercel to show Ready.
+4. Run v28.36-adaptive-readability-hotfix-release.sql once in Supabase SQL Editor.
+5. Hard refresh (Ctrl+Shift+R) or re-login when prompted.

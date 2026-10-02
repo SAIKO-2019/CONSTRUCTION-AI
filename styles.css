@@ -7492,4 +7492,209 @@ html:not([data-theme]) .status-active{filter:drop-shadow(0 0 8px rgba(34,197,94,
 @media (prefers-reduced-motion:reduce){
   .auth-overlay,.v28-login-visual::before,.v28-login-visual::after,.v281-site-moon,.v281-building::after,.v281-crane,.v281-crane i,.v281-crane b,.v281-ground,.v281-login-dots i.active,.v28-auth-card::after,.topbar::after,.primary-btn{animation:none!important}
 }
+/* =========================================================
+   CONSTRUCTION MONITORING v28.36
+   HARD READABILITY HOTFIX — ADAPTIVE CONTRAST
+   Visual only. No project/business data or app logic changes.
+   ========================================================= */
 
+/*
+  IMPORTANT:
+  Previous cinematic rules used hard-coded white text for the Home hero
+  and Project Pulse. On light architectural themes that produced white-on-
+  cream text. This final override intentionally follows the active theme's
+  existing --text / --muted / --surface variables instead.
+*/
+
+/* ---------- Home hero: adaptive glass HUD instead of hard-coded white ---------- */
+#home .v28-home-hero{
+  position:relative!important;
+  isolation:isolate!important;
+  overflow:hidden!important;
+  color:var(--text,#17202b)!important;
+  border-color:color-mix(in srgb,var(--text,#17202b) 18%,var(--line,#c9d2dc))!important;
+  box-shadow:
+    0 22px 56px rgba(0,0,0,.12),
+    0 0 0 1px color-mix(in srgb,var(--text,#17202b) 5%,transparent)!important;
+}
+
+/* A soft theme-adaptive veil guarantees the architectural image never eats text. */
+#home .v28-home-hero::after{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:0!important;
+  pointer-events:none!important;
+  background:
+    linear-gradient(90deg,
+      color-mix(in srgb,var(--surface,#fff) 72%,transparent) 0%,
+      color-mix(in srgb,var(--surface,#fff) 54%,transparent) 48%,
+      color-mix(in srgb,var(--surface,#fff) 34%,transparent) 100%)!important;
+  backdrop-filter:saturate(.96)!important;
+  -webkit-backdrop-filter:saturate(.96)!important;
+}
+#home .v28-home-hero::before{z-index:1!important;opacity:.28!important}
+#home .v28-home-hero > *{position:relative!important;z-index:2!important}
+
+/* The hero copy gets its own readable futuristic plate. */
+#home .v28-home-hero-copy{
+  max-width:min(700px,58%)!important;
+  padding:24px 26px!important;
+  border-radius:22px!important;
+  color:var(--text,#17202b)!important;
+  background:color-mix(in srgb,var(--surface,#fff) 91%,transparent)!important;
+  border:1px solid color-mix(in srgb,var(--text,#17202b) 14%,var(--line,#cbd5e1))!important;
+  box-shadow:
+    0 18px 42px rgba(0,0,0,.10),
+    inset 0 1px 0 color-mix(in srgb,#fff 32%,transparent),
+    0 0 26px color-mix(in srgb,var(--blue,#3b82f6) 8%,transparent)!important;
+  backdrop-filter:blur(15px) saturate(1.08)!important;
+  -webkit-backdrop-filter:blur(15px) saturate(1.08)!important;
+}
+html[data-theme] #home .v28-home-hero-copy :is(h1,h2,h3,strong),
+#home .v28-home-hero-copy :is(h1,h2,h3,strong){
+  color:var(--heading,var(--text,#17202b))!important;
+  opacity:1!important;
+  text-shadow:none!important;
+}
+html[data-theme] #home .v28-home-hero-copy :is(p,small,span),
+#home .v28-home-hero-copy :is(p,small,span){
+  color:var(--muted,#64748b)!important;
+  opacity:1!important;
+  text-shadow:none!important;
+}
+
+/* Hero action buttons adapt to light/dark theme instead of fixed white. */
+html[data-theme] #home .v28-home-hero .secondary-btn,
+#home .v28-home-hero .secondary-btn{
+  color:var(--text,#17202b)!important;
+  background:color-mix(in srgb,var(--surface,#fff) 96%,transparent)!important;
+  border-color:color-mix(in srgb,var(--text,#17202b) 18%,var(--line,#cbd5e1))!important;
+  text-shadow:none!important;
+}
+html[data-theme] #home .v28-home-hero .primary-btn,
+#home .v28-home-hero .primary-btn{
+  color:#fff!important;
+  background:linear-gradient(115deg,var(--blue,#2563eb),color-mix(in srgb,var(--blue,#2563eb) 70%,var(--cyan,#06b6d4)))!important;
+  border-color:color-mix(in srgb,var(--blue,#2563eb) 68%,var(--text,#17202b))!important;
+  text-shadow:none!important;
+}
+
+/* Selected project card: same adaptive contrast system. */
+html[data-theme] #home .v281-home-selected-card,
+#home .v281-home-selected-card{
+  color:var(--text,#17202b)!important;
+  background:color-mix(in srgb,var(--surface,#fff) 93%,transparent)!important;
+  border-color:color-mix(in srgb,var(--text,#17202b) 14%,var(--line,#cbd5e1))!important;
+  box-shadow:0 18px 42px rgba(0,0,0,.10),0 0 22px color-mix(in srgb,var(--blue,#2563eb) 7%,transparent)!important;
+}
+html[data-theme] #home .v281-home-selected-card :is(strong,h1,h2,h3),
+#home .v281-home-selected-card :is(strong,h1,h2,h3){
+  color:var(--heading,var(--text,#17202b))!important;
+  opacity:1!important;
+  text-shadow:none!important;
+}
+html[data-theme] #home .v281-home-selected-card :is(span,small),
+#home .v281-home-selected-card :is(span,small){
+  color:var(--muted,#64748b)!important;
+  opacity:1!important;
+  text-shadow:none!important;
+}
+html[data-theme] #home .v281-hero-metrics>div,
+#home .v281-hero-metrics>div{
+  color:var(--text,#17202b)!important;
+  background:color-mix(in srgb,var(--surface,#fff) 92%,var(--soft,#eef2f7))!important;
+  border-color:color-mix(in srgb,var(--text,#17202b) 10%,var(--line,#cbd5e1))!important;
+}
+html[data-theme] #home .v281-hero-open,
+#home .v281-hero-open{
+  color:var(--text,#17202b)!important;
+  background:color-mix(in srgb,var(--surface,#fff) 97%,transparent)!important;
+  border:1px solid color-mix(in srgb,var(--text,#17202b) 16%,var(--line,#cbd5e1))!important;
+}
+
+/* ---------- Project Pulse: always theme-readable ---------- */
+html[data-theme] #home .v281-home-pulse,
+#home .v281-home-pulse{
+  color:var(--text,#17202b)!important;
+  background:color-mix(in srgb,var(--surface,#fff) 98%,transparent)!important;
+  border-color:color-mix(in srgb,var(--text,#17202b) 18%,var(--line,#cbd5e1))!important;
+  box-shadow:
+    0 18px 42px rgba(0,0,0,.09),
+    inset 0 1px 0 color-mix(in srgb,#fff 24%,transparent),
+    0 0 0 1px color-mix(in srgb,var(--blue,#2563eb) 5%,transparent)!important;
+}
+html[data-theme] #home .v281-home-pulse :is(h1,h2,h3,h4,strong),
+#home .v281-home-pulse :is(h1,h2,h3,h4,strong){
+  color:var(--heading,var(--text,#17202b))!important;
+  opacity:1!important;
+  text-shadow:none!important;
+}
+html[data-theme] #home .v281-home-pulse :is(p,small,.muted,span:not(.positive):not(.negative):not(.warning)),
+#home .v281-home-pulse :is(p,small,.muted,span:not(.positive):not(.negative):not(.warning)){
+  color:var(--muted,#64748b)!important;
+  opacity:1!important;
+  text-shadow:none!important;
+}
+html[data-theme] #home .v281-home-pulse .text-btn,
+#home .v281-home-pulse .text-btn{
+  color:var(--blue,#2563eb)!important;
+  text-shadow:none!important;
+}
+html[data-theme] #home .v281-home-pulse :is(.project-mini-scurve,.scurve-svg,svg),
+#home .v281-home-pulse :is(.project-mini-scurve,.scurve-svg,svg){
+  background:transparent!important;
+}
+
+/* ---------- Strong readability safety for all dashboard/page panels ---------- */
+.main > .view.active-view :is(.panel,.kpi,.folder-card,.schedule-health-card,.v28-metric-card,.v28-finance-cell,.project-curve-card) :is(h1,h2,h3,h4,strong){
+  color:var(--heading,var(--text,#17202b))!important;
+  opacity:1!important;
+  text-shadow:none!important;
+}
+.main > .view.active-view :is(.panel,.kpi,.folder-card,.schedule-health-card,.v28-metric-card,.v28-finance-cell,.project-curve-card) :is(p,small,label,.muted){
+  color:var(--muted,#64748b)!important;
+  opacity:1!important;
+  text-shadow:none!important;
+}
+.main > .view.active-view :is(.panel,.kpi,.folder-card,.schedule-health-card,.v28-metric-card,.v28-finance-cell,.project-curve-card){
+  border-color:color-mix(in srgb,var(--text,#17202b) 16%,var(--line,#cbd5e1))!important;
+}
+
+/* Preserve intentional semantic colors after the readability safety rules. */
+.main > .view.active-view :is(.positive,.status-paid,.ahead,.variance-positive){color:#15803d!important}
+.main > .view.active-view :is(.negative,.behind,.variance-negative){color:#dc2626!important}
+.main > .view.active-view :is(.warning,.pending,.attention){color:#b45309!important}
+html[data-theme="dark"] .main > .view.active-view :is(.positive,.status-paid,.ahead,.variance-positive),
+html[data-theme="midnight"] .main > .view.active-view :is(.positive,.status-paid,.ahead,.variance-positive),
+html[data-theme="executive"] .main > .view.active-view :is(.positive,.status-paid,.ahead,.variance-positive){color:#6ee7a8!important}
+html[data-theme="dark"] .main > .view.active-view :is(.negative,.behind,.variance-negative),
+html[data-theme="midnight"] .main > .view.active-view :is(.negative,.behind,.variance-negative),
+html[data-theme="executive"] .main > .view.active-view :is(.negative,.behind,.variance-negative){color:#ff8a8a!important}
+html[data-theme="dark"] .main > .view.active-view :is(.warning,.pending,.attention),
+html[data-theme="midnight"] .main > .view.active-view :is(.warning,.pending,.attention),
+html[data-theme="executive"] .main > .view.active-view :is(.warning,.pending,.attention){color:#f8c66f!important}
+
+/* ---------- Adaptive border/highlight language ---------- */
+.main > .view.active-view :is(.panel,.table-wrap,.toolbar,.compact-toolbar,.kpi,.billing-party-tab,.folder-card){
+  outline:0!important;
+  box-shadow:
+    0 14px 36px rgba(0,0,0,.07),
+    0 0 0 1px color-mix(in srgb,var(--text,#17202b) 4%,transparent)!important;
+}
+.main > .view.active-view :is(.panel,.table-wrap,.toolbar,.compact-toolbar,.kpi,.billing-party-tab,.folder-card):hover{
+  border-color:color-mix(in srgb,var(--blue,#2563eb) 34%,var(--text,#17202b) 12%)!important;
+}
+.main > .view.active-view :is(button,input,select,textarea):focus-visible{
+  outline:2px solid color-mix(in srgb,var(--blue,#2563eb) 62%,transparent)!important;
+  outline-offset:2px!important;
+  box-shadow:0 0 0 5px color-mix(in srgb,var(--blue,#2563eb) 12%,transparent)!important;
+}
+
+/* Keep visual layers click-safe. */
+#home .v28-home-hero::before,
+#home .v28-home-hero::after{pointer-events:none!important;user-select:none!important}
+
+@media(max-width:900px){
+  #home .v28-home-hero-copy{max-width:100%!important;padding:20px!important}
+}

@@ -1,5 +1,5 @@
 {
-  "version": "28.35",
-  "label": "Construction Monitoring v28.35 \u2014 Future Command UI",
-  "message": "Futuristic visual enhancement: animated login scene, stronger adaptive light/dark contrast, theme-responsive borders/highlights, readable GenCon/Subcon folders, and enhanced command/HUD styling. Visual-only patch; no project data, Supabase records, calculations, sync logic, or button handlers changed."
+  "version": "28.36",
+  "label": "Construction Monitoring v28.36 \u2014 Adaptive Readability Hotfix",
+  "message": "Fixes white-on-light Home hero and Project Pulse text by following the active theme text/surface variables. Adds adaptive hero HUD plates and theme-responsive borders. Visual only; no project data, Supabase rows, calculations, sync logic, or button handlers changed."
 }
