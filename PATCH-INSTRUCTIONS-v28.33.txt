@@ -1,0 +1,27 @@
+CONSTRUCTION MONITORING v28.33 — CINEMATIC LIVE THEME PATCH
+
+This is a visual-only cumulative patch from v28.31.
+It also keeps the v28.32 change that hides Project Cost Folders on Projects.
+
+UPLOAD / OVERWRITE:
+- index.html
+- styles.css
+- patch-version.json
+- patch-watch.js
+- patch-gate.js
+- api/system-version.js
+- v28.33-cinematic-theme-effects-release.sql
+
+THEN:
+1) Commit/upload the files in the same GitHub project as the previous patches.
+2) Wait until Vercel says Ready.
+3) Run v28.33-cinematic-theme-effects-release.sql once in Supabase SQL Editor.
+4) Open the web app, hard refresh, then login again if the patch gate asks.
+
+IMPORTANT:
+- No project, billing, schedule, inventory, quotation or user data is deleted/changed.
+- No Supabase schema migration is included.
+- Decorative overlays use pointer-events:none so they do not cover or block buttons.
+- Static architecture stays still; only grid/light/glow layers move.
+- Dense tables/forms/charts remain more opaque for readability.
+- Executive Dark and Midnight are the closest to the supplied reference video.

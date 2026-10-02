@@ -1,22 +1,28 @@
 {
-  "from": "v28.30",
-  "to": "v28.31",
-  "type": "PATCH ONLY",
+  "from": "v28.31",
+  "to": "v28.33",
+  "type": "CUMULATIVE PATCH ONLY",
+  "includes": [
+    "v28.32: hide Project Cost Folders UI only",
+    "v28.33: cinematic animated theme effects"
+  ],
   "upload_overwrite_only": [
-    "v23.2.js",
-    "v28.11.js",
     "index.html",
+    "styles.css",
     "patch-version.json",
     "patch-watch.js",
     "patch-gate.js",
     "api/system-version.js",
-    "v28.31-billing-need-to-collect-and-vo-label-release.sql"
+    "v28.33-cinematic-theme-effects-release.sql"
   ],
-  "billing_need_to_collect": "MAX(0, Contract Amount - (Downpayment Received + Total Received [DP excluded]))",
-  "billing_label_fix": [
-    "Any non-empty Billing / VO label typed by the user is accepted.",
-    "billing_no always receives that exact label to satisfy the database NOT NULL constraint.",
-    "For VO, variation_no also receives the same label."
+  "data_changes": "NONE to project/business data. No schema migration. Release SQL only bumps the existing system release marker.",
+  "visual_scope": [
+    "Static architectural background remains still",
+    "Animated light streaks, grid motion and glow move per page",
+    "Every existing theme gets tuned glass/contrast behavior",
+    "Executive Dark and Midnight are closest to the supplied reference video",
+    "Charts, tables, forms and text keep higher-opacity readable surfaces",
+    "Decorative layers use pointer-events:none and do not intercept buttons"
   ],
-  "after_upload": "Wait for Vercel Ready, then run v28.31-billing-need-to-collect-and-vo-label-release.sql once."
+  "after_upload": "Wait for Vercel Ready, then run v28.33-cinematic-theme-effects-release.sql once, then hard refresh/login."
 }

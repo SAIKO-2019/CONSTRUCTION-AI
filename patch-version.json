@@ -1,5 +1,5 @@
 {
-  "version": "28.31",
-  "label": "Construction Monitoring v28.31",
-  "message": "Billing Need to Collect is now Contract Amount minus (Downpayment Received + Total Received) per Active Project Folder. Billing/VO labels accept the user's exact text and always populate the required billing_no field, fixing the null billing_no save error."
+  "version": "28.33",
+  "label": "Construction Monitoring v28.33",
+  "message": "Cinematic live theme effects added across every page: animated light/grid overlays, theme-aware glass panels and readable charts/text. Project Cost Folders remains hidden. Visual-only patch; project data and Supabase records are untouched."
 }

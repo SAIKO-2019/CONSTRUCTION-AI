@@ -6133,3 +6133,386 @@ html,body,.app-shell,.main-shell,.view{
   font-weight:900;
   letter-spacing:.08em;
 }
+
+/* =========================================================
+   CONSTRUCTION MONITORING v28.33
+   CINEMATIC LIVE THEME EFFECTS — VISUAL ONLY
+   Static architectural background stays still. Only light,
+   grid and energy-line overlays move. No data/UI logic touched.
+   ========================================================= */
+
+/* ---------- Theme-safe ambient system ---------- */
+html,
+html[data-theme="light"]{
+  --cm-fx-a:#d79a2b;
+  --cm-fx-b:#3b82f6;
+  --cm-fx-c:#10b981;
+  --cm-fx-grid:rgba(33,53,74,.11);
+  --cm-fx-line:rgba(194,133,34,.20);
+  --cm-card-alpha:93%;
+  --cm-chart-alpha:96%;
+  --cm-topbar-alpha:93%;
+  --cm-fx-opacity:.48;
+}
+html[data-theme="dark"]{
+  --cm-fx-a:#f6c76b;
+  --cm-fx-b:#60a5fa;
+  --cm-fx-c:#34d399;
+  --cm-fx-grid:rgba(148,163,184,.105);
+  --cm-fx-line:rgba(246,199,107,.24);
+  --cm-card-alpha:84%;
+  --cm-chart-alpha:91%;
+  --cm-topbar-alpha:86%;
+  --cm-fx-opacity:.72;
+}
+html[data-theme="midnight"]{
+  --cm-fx-a:#ffd166;
+  --cm-fx-b:#5eead4;
+  --cm-fx-c:#7dd3fc;
+  --cm-fx-grid:rgba(125,211,252,.10);
+  --cm-fx-line:rgba(255,209,102,.26);
+  --cm-card-alpha:82%;
+  --cm-chart-alpha:90%;
+  --cm-topbar-alpha:84%;
+  --cm-fx-opacity:.78;
+}
+html[data-theme="executive"]{
+  --cm-fx-a:#f4c56a;
+  --cm-fx-b:#ffd98a;
+  --cm-fx-c:#52d3b8;
+  --cm-fx-grid:rgba(244,197,106,.10);
+  --cm-fx-line:rgba(244,197,106,.30);
+  --cm-card-alpha:78%;
+  --cm-chart-alpha:88%;
+  --cm-topbar-alpha:82%;
+  --cm-fx-opacity:.88;
+}
+html[data-theme="glass"]{
+  --cm-fx-a:#2588b7;
+  --cm-fx-b:#42b7c8;
+  --cm-fx-c:#62a9ff;
+  --cm-fx-grid:rgba(36,137,184,.11);
+  --cm-fx-line:rgba(36,137,184,.18);
+  --cm-card-alpha:74%;
+  --cm-chart-alpha:88%;
+  --cm-topbar-alpha:72%;
+  --cm-fx-opacity:.56;
+}
+html[data-theme="pastel"]{
+  --cm-fx-a:#9c7ae6;
+  --cm-fx-b:#d69ac4;
+  --cm-fx-c:#6aa68a;
+  --cm-fx-grid:rgba(109,91,143,.09);
+  --cm-fx-line:rgba(156,122,230,.15);
+  --cm-card-alpha:91%;
+  --cm-chart-alpha:95%;
+  --cm-topbar-alpha:91%;
+  --cm-fx-opacity:.40;
+}
+html[data-theme="cute"]{
+  --cm-fx-a:#e982a7;
+  --cm-fx-b:#f1b45a;
+  --cm-fx-c:#7bcbb8;
+  --cm-fx-grid:rgba(142,92,116,.08);
+  --cm-fx-line:rgba(233,130,167,.15);
+  --cm-card-alpha:92%;
+  --cm-chart-alpha:96%;
+  --cm-topbar-alpha:92%;
+  --cm-fx-opacity:.39;
+}
+html[data-theme="summer"]{
+  --cm-fx-a:#b77b36;
+  --cm-fx-b:#29a6a0;
+  --cm-fx-c:#5aa36b;
+  --cm-fx-grid:rgba(20,56,69,.08);
+  --cm-fx-line:rgba(183,123,54,.14);
+  --cm-card-alpha:91%;
+  --cm-chart-alpha:95%;
+  --cm-topbar-alpha:91%;
+  --cm-fx-opacity:.41;
+}
+html[data-theme="ocean"]{
+  --cm-fx-a:#6cb8ff;
+  --cm-fx-b:#2dd4bf;
+  --cm-fx-c:#7dd3fc;
+  --cm-fx-grid:rgba(47,95,143,.10);
+  --cm-fx-line:rgba(64,150,225,.17);
+  --cm-card-alpha:89%;
+  --cm-chart-alpha:94%;
+  --cm-topbar-alpha:89%;
+  --cm-fx-opacity:.50;
+}
+html[data-theme="forest"]{
+  --cm-fx-a:#90b67d;
+  --cm-fx-b:#c6a66a;
+  --cm-fx-c:#6aa88d;
+  --cm-fx-grid:rgba(82,114,70,.09);
+  --cm-fx-line:rgba(110,144,89,.16);
+  --cm-card-alpha:91%;
+  --cm-chart-alpha:95%;
+  --cm-topbar-alpha:91%;
+  --cm-fx-opacity:.43;
+}
+html[data-theme="sunset"]{
+  --cm-fx-a:#d99552;
+  --cm-fx-b:#c96f5d;
+  --cm-fx-c:#6d9b75;
+  --cm-fx-grid:rgba(140,87,46,.09);
+  --cm-fx-line:rgba(217,149,82,.17);
+  --cm-card-alpha:90%;
+  --cm-chart-alpha:95%;
+  --cm-topbar-alpha:90%;
+  --cm-fx-opacity:.47;
+}
+html[data-theme="lavender"]{
+  --cm-fx-a:#8f7eae;
+  --cm-fx-b:#8a9d67;
+  --cm-fx-c:#c7a36d;
+  --cm-fx-grid:rgba(84,74,105,.08);
+  --cm-fx-line:rgba(143,126,174,.15);
+  --cm-card-alpha:92%;
+  --cm-chart-alpha:96%;
+  --cm-topbar-alpha:92%;
+  --cm-fx-opacity:.40;
+}
+
+/* ---------- Every page gets its own live accent ---------- */
+.main > #home{--cm-page-a:#f2bf5b;--cm-page-b:#4fd1b5;--cm-page-angle:112deg}
+.main > #dashboard{--cm-page-a:#f6c76b;--cm-page-b:#60a5fa;--cm-page-angle:104deg}
+.main > #projects{--cm-page-a:#e6a34f;--cm-page-b:#54c6b0;--cm-page-angle:118deg}
+.main > #billing{--cm-page-a:#f0b95d;--cm-page-b:#34d399;--cm-page-angle:99deg}
+.main > #schedule{--cm-page-a:#60a5fa;--cm-page-b:#f6c76b;--cm-page-angle:108deg}
+.main > #progress{--cm-page-a:#2dd4bf;--cm-page-b:#7dd3fc;--cm-page-angle:101deg}
+.main > #inventory{--cm-page-a:#a78bfa;--cm-page-b:#f2bd66;--cm-page-angle:121deg}
+.main > #budget{--cm-page-a:#34d399;--cm-page-b:#f6c76b;--cm-page-angle:114deg}
+.main > #reports{--cm-page-a:#7dd3fc;--cm-page-b:#c4a46a;--cm-page-angle:106deg}
+.main > #quotation{--cm-page-a:#f59e0b;--cm-page-b:#60a5fa;--cm-page-angle:116deg}
+.main > #files{--cm-page-a:#38bdf8;--cm-page-b:#a78bfa;--cm-page-angle:103deg}
+.main > #templates{--cm-page-a:#94a3b8;--cm-page-b:#f6c76b;--cm-page-angle:110deg}
+.main > #assistant{--cm-page-a:#5eead4;--cm-page-b:#818cf8;--cm-page-angle:97deg}
+.main > #users{--cm-page-a:#34d399;--cm-page-b:#60a5fa;--cm-page-angle:119deg}
+.main > #profile{--cm-page-a:#f6c76b;--cm-page-b:#a78bfa;--cm-page-angle:107deg}
+
+/* ---------- Static architecture + moving light/grid only ---------- */
+html[data-theme] .main > .view,
+html:not([data-theme]) .main > .view{
+  position:relative;
+  isolation:isolate;
+  background:transparent!important;
+}
+html[data-theme] .main > .view.active-view::before,
+html:not([data-theme]) .main > .view.active-view::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none!important;
+  opacity:var(--cm-fx-opacity,.48);
+  background-image:
+    radial-gradient(circle at 14% 82%,color-mix(in srgb,var(--cm-page-a,var(--cm-fx-a)) 42%,transparent) 0 1px,transparent 8px),
+    radial-gradient(circle at 78% 18%,color-mix(in srgb,var(--cm-page-b,var(--cm-fx-b)) 36%,transparent) 0 1px,transparent 9px),
+    radial-gradient(circle at 64% 68%,color-mix(in srgb,var(--cm-fx-c) 30%,transparent) 0 1px,transparent 8px),
+    repeating-linear-gradient(0deg,transparent 0 31px,var(--cm-fx-grid) 32px,transparent 33px),
+    repeating-linear-gradient(90deg,transparent 0 31px,var(--cm-fx-grid) 32px,transparent 33px);
+  background-size:250px 190px,320px 240px,280px 220px,32px 32px,32px 32px;
+  filter:saturate(1.08);
+  animation:cmFxGridDrift 20s linear infinite,cmFxPulse 7s ease-in-out infinite alternate;
+}
+html[data-theme] .main > .view.active-view::after,
+html:not([data-theme]) .main > .view.active-view::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none!important;
+  opacity:.44;
+  background:
+    linear-gradient(var(--cm-page-angle,108deg),transparent 0 44%,color-mix(in srgb,var(--cm-page-a,var(--cm-fx-a)) 58%,transparent) 44.35%,color-mix(in srgb,var(--cm-page-a,var(--cm-fx-a)) 18%,transparent) 44.72%,transparent 45.15%),
+    linear-gradient(calc(var(--cm-page-angle,108deg) - 78deg),transparent 0 57%,color-mix(in srgb,var(--cm-page-b,var(--cm-fx-b)) 48%,transparent) 57.28%,transparent 57.78%),
+    radial-gradient(ellipse at 42% 54%,color-mix(in srgb,var(--cm-page-a,var(--cm-fx-a)) 20%,transparent),transparent 36%),
+    radial-gradient(ellipse at 74% 34%,color-mix(in srgb,var(--cm-page-b,var(--cm-fx-b)) 18%,transparent),transparent 30%);
+  filter:blur(.15px) drop-shadow(0 0 9px color-mix(in srgb,var(--cm-page-a,var(--cm-fx-a)) 20%,transparent));
+  background-size:170% 170%,170% 170%,140% 140%,140% 140%;
+  background-position:-28% 50%,128% 48%,42% 54%,74% 34%;
+  animation:cmFxSweep 13s cubic-bezier(.45,0,.55,1) infinite alternate,cmFxPulse 8.5s ease-in-out infinite alternate-reverse;
+}
+html[data-theme] .main > .view.active-view > *,
+html:not([data-theme]) .main > .view.active-view > *{
+  position:relative;
+  z-index:1;
+}
+
+/* ---------- Glass/readability like the supplied cinematic reference ---------- */
+html[data-theme] .topbar,
+html:not([data-theme]) .topbar{
+  background:color-mix(in srgb,var(--topbar) var(--cm-topbar-alpha,92%),transparent)!important;
+  backdrop-filter:blur(20px) saturate(1.12)!important;
+  -webkit-backdrop-filter:blur(20px) saturate(1.12)!important;
+  border-bottom-color:color-mix(in srgb,var(--line) 82%,transparent)!important;
+}
+html[data-theme] .main > .view.active-view .panel,
+html[data-theme] .main > .view.active-view .kpi,
+html[data-theme] .main > .view.active-view .folder-card,
+html[data-theme] .main > .view.active-view .schedule-health-card,
+html[data-theme] .main > .view.active-view .summary-cards > div,
+html[data-theme] .main > .view.active-view .v28-metric-card,
+html[data-theme] .main > .view.active-view .v28-finance-cell,
+html[data-theme] .main > .view.active-view .project-curve-card,
+html:not([data-theme]) .main > .view.active-view .panel,
+html:not([data-theme]) .main > .view.active-view .kpi,
+html:not([data-theme]) .main > .view.active-view .folder-card{
+  background:color-mix(in srgb,var(--surface) var(--cm-card-alpha,92%),transparent)!important;
+  border-color:color-mix(in srgb,var(--line) 72%,var(--cm-page-a,var(--cm-fx-a)) 28%)!important;
+  backdrop-filter:blur(14px) saturate(1.08)!important;
+  -webkit-backdrop-filter:blur(14px) saturate(1.08)!important;
+  box-shadow:
+    0 18px 44px color-mix(in srgb,var(--navy) 16%,transparent),
+    inset 0 1px 0 rgba(255,255,255,.09),
+    0 0 0 1px color-mix(in srgb,var(--cm-page-a,var(--cm-fx-a)) 5%,transparent)!important;
+}
+
+/* Home command center: strong cinematic treatment, but background image itself does not move. */
+html[data-theme] .v28-home-hero,
+html:not([data-theme]) .v28-home-hero{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  box-shadow:0 24px 58px rgba(0,0,0,.18),0 0 0 1px color-mix(in srgb,var(--cm-page-a,#f2bf5b) 22%,transparent)!important;
+}
+html[data-theme] .v28-home-hero::before,
+html:not([data-theme]) .v28-home-hero::before{
+  content:"";
+  position:absolute;
+  inset:-18%;
+  z-index:0;
+  pointer-events:none!important;
+  opacity:.62;
+  background:
+    repeating-linear-gradient(0deg,transparent 0 38px,rgba(255,255,255,.045) 39px,transparent 40px),
+    repeating-linear-gradient(90deg,transparent 0 38px,rgba(255,255,255,.045) 39px,transparent 40px),
+    linear-gradient(112deg,transparent 0 47%,rgba(246,199,107,.20) 47.3%,transparent 47.8%),
+    radial-gradient(circle at 72% 24%,rgba(246,199,107,.22),transparent 18%);
+  animation:cmFxHeroLines 15s linear infinite,cmFxPulse 6.5s ease-in-out infinite alternate;
+}
+html[data-theme] .v28-home-hero > *,
+html:not([data-theme]) .v28-home-hero > *{position:relative;z-index:1}
+
+/* Executive/Midnight become the closest match to the reference video. */
+html[data-theme="dark"] .main > .view.active-view::after{opacity:.48}
+html[data-theme="midnight"] .main > .view.active-view::after{opacity:.54}
+html[data-theme="executive"] .main > .view.active-view::after{opacity:.60}
+
+html[data-theme="executive"] .main > .view.active-view .panel,
+html[data-theme="executive"] .main > .view.active-view .kpi,
+html[data-theme="midnight"] .main > .view.active-view .panel,
+html[data-theme="midnight"] .main > .view.active-view .kpi{
+  box-shadow:
+    0 22px 55px rgba(0,0,0,.34),
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 0 22px color-mix(in srgb,var(--cm-page-a,var(--cm-fx-a)) 6%,transparent)!important;
+}
+html[data-theme="executive"] nav button.active,
+html[data-theme="midnight"] nav button.active{
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cm-fx-a) 18%,transparent),0 0 28px color-mix(in srgb,var(--cm-fx-a) 12%,transparent);
+}
+
+/* ---------- Chart & text contrast safety ---------- */
+html[data-theme]{
+  --chart-surface:color-mix(in srgb,var(--surface) var(--cm-chart-alpha,95%),transparent);
+}
+html[data-theme] .main > .view.active-view .chart-box,
+html[data-theme] .main > .view.active-view #v28ProjectSCurve,
+html[data-theme] .main > .view.active-view #dashboardMatchedSCurve,
+html[data-theme] .main > .view.active-view .project-mini-scurve,
+html[data-theme] .main > .view.active-view .scurve-svg{
+  background:var(--chart-surface)!important;
+  backdrop-filter:blur(12px) saturate(1.06)!important;
+  -webkit-backdrop-filter:blur(12px) saturate(1.06)!important;
+}
+html[data-theme] .main > .view.active-view h1,
+html[data-theme] .main > .view.active-view h2,
+html[data-theme] .main > .view.active-view h3,
+html[data-theme] .main > .view.active-view h4,
+html[data-theme] .main > .view.active-view strong{
+  text-shadow:0 1px 0 color-mix(in srgb,var(--surface) 22%,transparent);
+}
+html[data-theme] .main > .view.active-view table,
+html[data-theme] .main > .view.active-view td,
+html[data-theme] .main > .view.active-view th,
+html[data-theme] .main > .view.active-view input,
+html[data-theme] .main > .view.active-view select,
+html[data-theme] .main > .view.active-view textarea,
+html[data-theme] .main > .view.active-view .excel-budget-sheet,
+html[data-theme] .main > .view.active-view .excel-budget-sheet *{
+  text-shadow:none!important;
+}
+
+/* Keep dense record areas intentionally more opaque than ambient cards. */
+html[data-theme] .main > .view.active-view .table-wrap,
+html[data-theme] .main > .view.active-view .inventory-folder-ledger,
+html[data-theme] .main > .view.active-view .subcon-clean-table-wrap,
+html[data-theme] .main > .view.active-view .excel-budget-sheet,
+html[data-theme] .main > .view.active-view .report-page{
+  background:color-mix(in srgb,var(--surface) 96%,transparent)!important;
+  backdrop-filter:blur(10px)!important;
+  -webkit-backdrop-filter:blur(10px)!important;
+}
+
+/* ---------- Micro-motion: cards feel alive without moving layout ---------- */
+html[data-theme] .main > .view.active-view .kpi,
+html[data-theme] .main > .view.active-view .v28-metric-card,
+html[data-theme] .main > .view.active-view .folder-card{
+  transition:transform .18s ease,box-shadow .28s ease,border-color .28s ease,background-color .28s ease!important;
+}
+html[data-theme] .main > .view.active-view .kpi:hover,
+html[data-theme] .main > .view.active-view .v28-metric-card:hover,
+html[data-theme] .main > .view.active-view .folder-card:hover{
+  transform:translateY(-2px);
+  border-color:color-mix(in srgb,var(--cm-page-a,var(--cm-fx-a)) 42%,var(--line))!important;
+  box-shadow:0 22px 52px color-mix(in srgb,var(--navy) 17%,transparent),0 0 26px color-mix(in srgb,var(--cm-page-a,var(--cm-fx-a)) 9%,transparent)!important;
+}
+
+/* ---------- Animations ---------- */
+@keyframes cmFxGridDrift{
+  0%{background-position:0 0,0 0,0 0,0 0,0 0}
+  100%{background-position:250px -190px,-320px 240px,280px 220px,32px 32px,-32px 32px}
+}
+@keyframes cmFxSweep{
+  0%{background-position:-28% 50%,128% 48%,42% 54%,74% 34%}
+  50%{background-position:48% 54%,58% 45%,55% 50%,62% 38%}
+  100%{background-position:126% 48%,-24% 52%,66% 47%,48% 42%}
+}
+@keyframes cmFxPulse{
+  0%{filter:saturate(1.00) brightness(.96)}
+  100%{filter:saturate(1.14) brightness(1.08)}
+}
+@keyframes cmFxHeroLines{
+  0%{background-position:0 0,0 0,-260px 0,0 0}
+  100%{background-position:0 40px,40px 0,520px 0,0 0}
+}
+
+/* Keep motion purely decorative and non-blocking. */
+.main > .view::before,
+.main > .view::after,
+.v28-home-hero::before{
+  user-select:none!important;
+  pointer-events:none!important;
+}
+
+/* Existing accessibility preference remains authoritative. */
+@media (prefers-reduced-motion:reduce){
+  html[data-theme] .main > .view.active-view::before,
+  html[data-theme] .main > .view.active-view::after,
+  html[data-theme] .v28-home-hero::before{
+    animation:none!important;
+  }
+}
+
+/* Mobile/GPU guard: keep the look, reduce layer cost. */
+@media(max-width:760px){
+  html[data-theme] .main > .view.active-view::before{opacity:.28}
+  html[data-theme] .main > .view.active-view::after{opacity:.18;filter:none}
+  html[data-theme] .main > .view.active-view .panel,
+  html[data-theme] .main > .view.active-view .kpi,
+  html[data-theme] .main > .view.active-view .folder-card{backdrop-filter:blur(8px)!important;-webkit-backdrop-filter:blur(8px)!important}
+}
