@@ -1,0 +1,36 @@
+CONSTRUCTION MONITORING v28.37 — MOBILE APP + VOICE WELCOME
+
+NEW
+1. After a successful sign-in, the app says: "Hello, welcome <name>."
+   - Uses the signed-in display name and speaks the first name naturally.
+   - Speaks once per signed-in browser/app session, not on every page change.
+   - Also shows a short futuristic welcome toast.
+
+2. Construction Monitoring is now an installable PWA.
+   ANDROID / CHROME:
+   - Open the deployed site in Chrome.
+   - Use the new Install App button when it appears, or Chrome menu > Install app.
+
+   IPHONE / IPAD:
+   - Open the deployed site in Safari.
+   - Tap the new Install App button for instructions.
+   - Safari Share > Add to Home Screen > Add.
+
+3. The installed app opens in standalone mode like a phone app.
+
+DATA / LOGIC SAFETY
+- No project data changed.
+- No Supabase rows/schema changed.
+- No Billing / Projected / Actual / Inventory / Quotation calculation logic changed.
+- Existing button IDs and existing event handlers were not replaced.
+
+DEPLOY
+1. Extract this ZIP.
+2. Upload/overwrite ALL included files/folders in the same GitHub project root.
+   IMPORTANT: include the new /icons folder, manifest.webmanifest, service-worker.js and pwa-app.js.
+3. Commit and wait for Vercel deployment to show Ready.
+4. Run v28.37-mobile-app-voice-welcome-release.sql once in Supabase SQL Editor.
+5. Hard refresh once (Ctrl+Shift+R on desktop). On mobile, close/reopen the site.
+
+NOTE
+- iPhone installation is done through Safari's Add to Home Screen; iOS does not expose the same automatic install prompt as Android Chrome.

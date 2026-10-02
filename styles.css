@@ -7698,3 +7698,58 @@ html[data-theme="executive"] .main > .view.active-view :is(.warning,.pending,.at
 @media(max-width:900px){
   #home .v28-home-hero-copy{max-width:100%!important;padding:20px!important}
 }
+
+/* =========================================================
+   CONSTRUCTION MONITORING v28.37
+   MOBILE PWA + VOICE WELCOME UI — VISUAL ONLY
+   ========================================================= */
+.cm-voice-greeting-toast{
+  position:fixed;right:24px;top:90px;z-index:5000;
+  display:flex;align-items:center;gap:12px;min-width:270px;max-width:min(420px,calc(100vw - 32px));
+  padding:13px 16px;border-radius:18px;
+  color:var(--text,#f8fafc);
+  background:color-mix(in srgb,var(--surface,#0f172a) 94%,transparent);
+  border:1px solid color-mix(in srgb,var(--blue,#3b82f6) 32%,var(--line,#334155));
+  box-shadow:0 18px 48px rgba(0,0,0,.24),0 0 30px color-mix(in srgb,var(--blue,#3b82f6) 12%,transparent);
+  backdrop-filter:blur(18px) saturate(1.15);-webkit-backdrop-filter:blur(18px) saturate(1.15);
+  opacity:0;transform:translateY(-12px) scale(.96);pointer-events:none;
+  transition:opacity .28s ease,transform .34s cubic-bezier(.2,.8,.2,1);
+}
+.cm-voice-greeting-toast.show{opacity:1;transform:translateY(0) scale(1)}
+.cm-voice-greeting-toast small{display:block;color:var(--muted,#94a3b8);font-size:9px;font-weight:900;letter-spacing:.12em}
+.cm-voice-greeting-toast strong{display:block;color:var(--heading,var(--text,#f8fafc));font-size:14px;margin-top:2px}
+.cm-voice-orb{width:28px;height:28px;flex:0 0 28px;border-radius:50%;background:radial-gradient(circle at 38% 35%,#fff 0 5%,var(--cyan,#22d3ee) 8% 26%,var(--blue,#3b82f6) 48%,transparent 72%);box-shadow:0 0 0 6px color-mix(in srgb,var(--cyan,#22d3ee) 8%,transparent),0 0 22px color-mix(in srgb,var(--cyan,#22d3ee) 38%,transparent);animation:cmVoiceOrb 1.8s ease-in-out infinite}
+@keyframes cmVoiceOrb{0%,100%{transform:scale(.92);filter:brightness(.95)}50%{transform:scale(1.08);filter:brightness(1.18)}}
+
+.cm-install-btn{position:relative;overflow:hidden}
+.cm-install-btn::after{content:"";position:absolute;inset:2px;border-radius:inherit;border:1px solid color-mix(in srgb,var(--cyan,#22d3ee) 26%,transparent);pointer-events:none}
+.cm-install-btn .icon-glyph{display:inline-block;transform:translateY(-1px);font-size:18px;color:var(--cyan,#22d3ee)}
+.cm-install-login-btn{
+  display:flex;align-items:center;gap:11px;width:100%;margin-top:16px;padding:10px 12px;
+  border-radius:14px;border:1px solid var(--cm-login-border,rgba(125,211,252,.24));
+  color:var(--cm-login-text,#f8fbff);background:color-mix(in srgb,var(--cm-login-field,#101b27) 94%,transparent);
+  cursor:pointer;text-align:left;box-shadow:0 10px 28px rgba(0,0,0,.08);transition:.22s ease;
+}
+.cm-install-login-btn:hover{transform:translateY(-1px);border-color:color-mix(in srgb,var(--cm-login-b,#22d3ee) 55%,var(--cm-login-border));box-shadow:0 14px 30px rgba(0,0,0,.12),0 0 22px color-mix(in srgb,var(--cm-login-b,#22d3ee) 10%,transparent)}
+.cm-install-login-btn img{width:36px;height:36px;border-radius:10px}
+.cm-install-login-btn span{display:grid;gap:1px}
+.cm-install-login-btn strong{font-size:12px;color:var(--cm-login-text,#f8fbff)}
+.cm-install-login-btn small{font-size:9px;color:var(--cm-login-muted,#a9bbcf)}
+
+.cm-install-dialog{border:0;padding:0;background:transparent;max-width:min(440px,calc(100vw - 28px));width:100%;overflow:visible}
+.cm-install-dialog::backdrop{background:rgba(3,8,14,.68);backdrop-filter:blur(7px)}
+.cm-install-card{position:relative;padding:28px;border-radius:24px;color:var(--text,#eaf3ff);background:color-mix(in srgb,var(--surface,#0d1722) 97%,transparent);border:1px solid color-mix(in srgb,var(--blue,#3b82f6) 30%,var(--line,#334155));box-shadow:0 32px 90px rgba(0,0,0,.38),0 0 40px color-mix(in srgb,var(--cyan,#22d3ee) 10%,transparent)}
+.cm-install-card>small{display:block;color:var(--muted,#94a3b8);font-size:9px;font-weight:900;letter-spacing:.13em;margin-bottom:5px}
+.cm-install-card h2{margin:0 0 16px;color:var(--heading,var(--text,#eaf3ff));font-size:24px}
+.cm-install-card p,.cm-install-card li{color:var(--muted,#b4c3d2);line-height:1.55}
+.cm-install-card ol{padding-left:22px;margin:8px 0 20px}.cm-install-card li+li{margin-top:7px}
+.cm-install-icon{width:62px;height:62px;margin-bottom:16px}.cm-install-icon img{width:100%;height:100%;border-radius:16px;box-shadow:0 10px 28px rgba(0,0,0,.18),0 0 24px color-mix(in srgb,var(--cyan,#22d3ee) 12%,transparent)}
+.cm-install-close{position:absolute;right:14px;top:12px;width:34px;height:34px;border-radius:50%;border:1px solid var(--line,#334155);background:color-mix(in srgb,var(--surface,#0d1722) 92%,transparent);color:var(--text,#eaf3ff);font-size:20px;cursor:pointer}
+.cm-install-done{width:100%}
+
+@media(max-width:760px){
+  .cm-voice-greeting-toast{left:16px;right:16px;top:16px;max-width:none;min-width:0}
+  .cm-install-login-btn{margin-top:12px}
+}
+@media(prefers-reduced-motion:reduce){.cm-voice-orb{animation:none!important}.cm-voice-greeting-toast{transition:none!important}}
+

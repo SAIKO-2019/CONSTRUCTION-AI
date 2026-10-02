@@ -1,5 +1,5 @@
 {
-  "version": "28.36",
-  "label": "Construction Monitoring v28.36 \u2014 Adaptive Readability Hotfix",
-  "message": "Fixes white-on-light Home hero and Project Pulse text by following the active theme text/surface variables. Adds adaptive hero HUD plates and theme-responsive borders. Visual only; no project data, Supabase rows, calculations, sync logic, or button handlers changed."
+  "version": "28.37",
+  "label": "Construction Monitoring v28.37 \u2014 Mobile App + Voice Welcome",
+  "message": "Adds spoken login greeting using the signed-in display name and turns Construction Monitoring into an installable PWA for Android/iPhone. Includes install UI, app manifest, icons and network-first service worker. No project data, Supabase schema/rows, calculations, sync logic or existing button handlers changed."
 }
